@@ -11,7 +11,8 @@ int main(int argc, char** argv)
         return 1;
 
     // Define and initialize variables
-    int COL,ROW,DEP,counter=0;
+    int COL,ROW,DEP;
+    char counter= 0;
 
     // Save arguments into variables
     sscanf(argv[1], "%d", &COL);
@@ -25,7 +26,7 @@ int main(int argc, char** argv)
 
     // Define array (can also initialize here if contents are known)
     // int arr[DEP][ROW][COL] = {{{0,1},{2,3}},{{4,5},{6,7}}};
-    int arr[DEP][ROW][COL];
+    char arr[DEP][ROW][COL];
 
     // Initialize array
     for(int z=0; z<DEP; z++) //Cycle through depths
@@ -35,7 +36,10 @@ int main(int argc, char** argv)
             for(int x=0; x<COL; x++) //Cycle through columns
             {
                 arr[z][y][x] = counter;
-                counter++;
+                if(counter==0)
+                    counter=1;
+                else
+                    counter=0;
             }
         }
     }
