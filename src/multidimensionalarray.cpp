@@ -20,7 +20,7 @@ int main(int argc, char** argv)
 
     printf("%d %d %d\n",COL, ROW, DEP);
 
-    int arr[DEPT][ROW][COL] = {0,1,2,3,4,5,6,7};
+    int arr[DEP][ROW][COL] = {{{0,1},{2,3}},{{4,5},{6,7}}};
 
     for(int z=0; z<DEP; z++) //Cycle through depths
     {
