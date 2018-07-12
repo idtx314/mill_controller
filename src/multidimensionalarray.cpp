@@ -1,19 +1,26 @@
 #include<iostream>
 #include<cstdio>
 
+#define DEPT 2
 
 // Usage $ ./multi_dimensional_array.exe Columns Rows Depth
 
 int main(int argc, char** argv)
 {
-    int arr[DEP][ROW][COL] = {0,1,2,3,4,5,6,7};
-
     if(argc != 4)
         return 1;
 
-    int COL = *argv[1];
-    int ROW = *argv[2];
-    int DEP = *argv[3];
+    int COL,ROW,DEP;
+
+    sscanf(argv[1], "%d", &COL);
+    sscanf(argv[2], "%d", &ROW);
+    sscanf(argv[3], "%d", &DEP);
+
+    // std::cout << (char)COL << " " << (char)ROW << " " << (char)DEP << std::endl;
+
+    printf("%d %d %d\n",COL, ROW, DEP);
+
+    int arr[DEPT][ROW][COL] = {0,1,2,3,4,5,6,7};
 
     for(int z=0; z<DEP; z++) //Cycle through depths
     {
@@ -27,6 +34,7 @@ int main(int argc, char** argv)
         }
         printf("\n");
     }
+
 
     char holder;
     std::cin >> holder;
