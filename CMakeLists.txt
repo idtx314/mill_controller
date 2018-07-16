@@ -7,10 +7,8 @@ project(mill_controller)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  sensor_msgs
-)
+find_package(catkin REQUIRED)
+find_package(octomap REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -118,6 +116,7 @@ include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
 )
+include_directories(${OCTOMAP_INCLUDE_DIRS})
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
@@ -133,14 +132,16 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/mill_controller_node.cpp)
-add_executable(${PROJECT_NAME}_octomap_to_array src/octomap_to_array.cpp)
+#add_executable(${PROJECT_NAME}_octomap_to_array src/octomap_to_array.cpp)
+add_executable(${PROJECT_NAME}_octomap_example src/octomap_example.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
 ## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
 # set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME node PREFIX "")
-set_target_properties(${PROJECT_NAME}_octomap_to_array PROPERTIES OUTPUT_NAME octomap_to_array PREFIX "")
+#set_target_properties(${PROJECT_NAME}_octomap_to_array PROPERTIES OUTPUT_NAME octomap_to_array PREFIX "")
+set_target_properties(${PROJECT_NAME}_octomap_example PROPERTIES OUTPUT_NAME octomap_example PREFIX "")
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
@@ -150,7 +151,8 @@ set_target_properties(${PROJECT_NAME}_octomap_to_array PROPERTIES OUTPUT_NAME oc
 # target_link_libraries(${PROJECT_NAME}_node
 #   ${catkin_LIBRARIES}
 # )
-target_link_libraries(${PROJECT_NAME}_octomap_to_array ${catkin_LIBRARIES})
+#target_link_libraries(${PROJECT_NAME}_octomap_to_array ${catkin_LIBRARIES})
+target_link_libraries(${PROJECT_NAME}_octomap_example ${catkin_LIBRARIES} ${OCTOMAP_LIBRARIES})
 
 #############
 ## Install ##

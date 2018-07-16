@@ -24,15 +24,15 @@ void callback(const sensor_msgs::PointCloud2ConstPtr & msg)
     //Cycle through i, j, k as x,y,z of both octomap and array. If octomap cell is occupied, bit is 1, else bit is 0.
     // Using coordinates x columns (left to right), y rows (top to bottom), z depth(into plane)
     // Cycle columns
-    for(int x=0; x<width; x++)
-        // Cycle rows
-        for(int y=0; y<height; y++)
-            // Cycle depths
-            for(int z=0; z<depth; z++)
-            {
-                unsigned char byte = array[x][y][z/8]
-                bool value = byte<<z%8 & 0b00000001
-            }
+    // for(int x=0; x<width; x++)
+    //     // Cycle rows
+    //     for(int y=0; y<height; y++)
+    //         // Cycle depths
+    //         for(int z=0; z<depth; z++)
+    //         {
+    //             unsigned char byte = array[x][y][z/8]
+    //             bool value = byte<<z%8 & 0b00000001
+    //         }
 
     // Translate the array into some sort of message
 
