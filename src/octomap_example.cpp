@@ -1,15 +1,40 @@
 // Includes
 #include<ros/ros.h>
-#include <octomap_msgs/Octomap.h>
+#include<octomap_msgs/Octomap.h>
+#include<octomap_msgs/conversions.h>
+#include<iostream>
+#include<typeinfo>
 
 
 
 
+// Meet corey
+// order groceries
+// clean out lab
+
+ros::Publisher pub;
 
 
 
-void callback(const octomap_msgs::OctomapConstPtr & msg)
+void callback(const octomap_msgs::Octomap &msg)
 {
+    octomap::AbstractOcTree* treeptr = octomap_msgs::binaryMsgToMap(msg);
+    octomap::OcTree* octree = dynamic_cast<octomap::OcTree*>(treeptr);
+    octomap_msgs::Octomap msg2;
+
+    std::cout << typeid(msg).name() << std::endl;
+    if(msg.binary)
+    {
+        std::cout << "True" << std::endl;
+        octomap_msgs::binaryMapToMsg(*octree, msg2);
+    }
+    else
+    {
+        std::cout << "False" << std::endl;
+        octomap_msgs::fullMapToMsg(*octree, msg2);
+    }
+
+    pub.publish(msg2);
 
 }
 
@@ -26,7 +51,7 @@ int main(int argc, char** argv)
     ros::Subscriber sub = nh.subscribe("input", 1, callback);
 
     // Announce publisher
-    ros::Publisher pub = nh.advertise<octomap_msgs::Octomap>("output", 1);
+    pub = nh.advertise<octomap_msgs::Octomap>("output", 1);
 
     ros::spin();
 
