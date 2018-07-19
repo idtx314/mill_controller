@@ -8,24 +8,21 @@
 
 
 
-// Meet corey
-// order groceries
-// clean out lab
-
 ros::Publisher pub;
 
 
 
 void callback(const octomap_msgs::Octomap &msg)
 {
-    octomap::AbstractOcTree* treeptr = octomap_msgs::binaryMsgToMap(msg);
+    octomap::AbstractOcTree* treeptr = octomap_msgs::msgToMap(msg);
     octomap::OcTree* octree = dynamic_cast<octomap::OcTree*>(treeptr);
     octomap_msgs::Octomap msg2;
 
-    std::cout << typeid(msg).name() << std::endl;
+    // std::cout << typeid(msg).name() << std::endl << typeid(msg2).name() << std::endl;
     if(msg.binary)
     {
         std::cout << "True" << std::endl;
+        // Pass in octree and message. These are automatically passed in as references?
         octomap_msgs::binaryMapToMsg(*octree, msg2);
     }
     else
@@ -33,6 +30,7 @@ void callback(const octomap_msgs::Octomap &msg)
         std::cout << "False" << std::endl;
         octomap_msgs::fullMapToMsg(*octree, msg2);
     }
+
 
     pub.publish(msg2);
 
@@ -48,10 +46,10 @@ int main(int argc, char** argv)
     ros::NodeHandle nh;
 
     // Subscribe to octomap topic
-    ros::Subscriber sub = nh.subscribe("input", 1, callback);
+    ros::Subscriber sub = nh.subscribe("octomap_full", 1, callback);
 
     // Announce publisher
-    pub = nh.advertise<octomap_msgs::Octomap>("output", 1);
+    pub = nh.advertise<octomap_msgs::Octomap>("octomap_conversion_test", 1);
 
     ros::spin();
 
