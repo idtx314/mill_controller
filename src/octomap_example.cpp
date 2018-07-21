@@ -58,21 +58,46 @@ void callback(const octomap_msgs::Octomap &msg)
     inner_count = 0;
     method_count = octree->getNumLeafNodes();
 
-    // Cycle through the leaves of the tree and count them. Count any leaves that aren't at maximum depth.
+    // Cycle through the leaves of the tree and count them. Count any leaves that aren't at maximum depth separately.
     for(octomap::OcTree::leaf_iterator it = octree->begin_leafs(),
         end = octree->end_leafs();
         it != end;
         ++it)
     {
         count++;
+        //Get the coordinates of the centerpoints. Divide by resolution to produce something like whole number indexes. Note that since these are centerpoints, the numbers produced this way are half numbers instead of whole numbers. Think of a line from 0 to 1 with a .5 resolution. If you divide the coord of the centerpoints of each line segment by resolution then you get half indexes.
+        std::cout << it.getX()/res << " " << it.getY()/res << " " << it.getZ()/res << " " << it->getOccupancy() << std::endl;
         if(it.getDepth() != max_depth)
             inner_count++;
     }
 
     // Print out the number of leaves counted, the number returned by the tree method getNumLeafNodes() and the number of leaves not at maximum depth.
+    std::cout << "Res: " << res << std::endl << "Depth: " << max_depth << std::endl;
     std::cout << "Number counted after expanding: " << count << std::endl;
     std::cout << "Number of property after expanding: " << method_count << std::endl;
     std::cout << "Number of inner after expanding: " << inner_count << std::endl;
+    std::cout << "Occupancy Threshold: " << octree->getOccupancyThresh();
+
+    double x, y, z;
+
+    octree->getMetricSize(x, y, z);
+    std::cout << "x: " << x << " y: " << y << " z: " << z << std::endl;
+    //1.85, 1.5, 3    37, 30, 60
+
+    octree->getMetricMin(x, y, z);
+    std::cout << "x: " << x << " y: " << y << " z: " << z << std::endl;
+
+    octree->getMetricMax(x, y, z);
+    std::cout << "x: " << x << " y: " << y << " z: " << z << std::endl;
+
+    // index = (value-MetricMin)/res-0.5
+    // size of array dimension is maximum index + 1
+    //     or MetricSize/res
+
+
+
+
+
 
 
 /*
@@ -83,7 +108,7 @@ void callback(const octomap_msgs::Octomap &msg)
     if(msg.binary)
     {
         std::cout << "True" << std::endl;
-        // Pass in octree and message. These are automatically passed in as references?
+        // Pass in octree and message. These are used as reference variables.
         octomap_msgs::binaryMapToMsg(*octree, msg2);
     }
     else
