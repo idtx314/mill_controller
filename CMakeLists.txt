@@ -153,7 +153,7 @@ set_target_properties(${PROJECT_NAME}_octomap_example PROPERTIES OUTPUT_NAME oct
 # target_link_libraries(${PROJECT_NAME}_node
 #   ${catkin_LIBRARIES}
 # )
-target_link_libraries(${PROJECT_NAME}_octomap_to_array ${catkin_LIBRARIES})
+target_link_libraries(${PROJECT_NAME}_octomap_to_array ${catkin_LIBRARIES} ${OCTOMAP_LIBRARIES})
 target_link_libraries(${PROJECT_NAME}_octomap_example ${catkin_LIBRARIES} ${OCTOMAP_LIBRARIES})
 
 #############

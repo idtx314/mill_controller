@@ -1,6 +1,8 @@
 // Includes
 #include<ros/ros.h>
 #include <sensor_msgs/PointCloud2.h>
+#include<octomap_msgs/Octomap.h>
+#include<octomap_msgs/conversions.h>
     /*
     Octomap messages
     */
@@ -15,7 +17,7 @@ set up package.xml
 
 
 
-void callback(const sensor_msgs::PointCloud2ConstPtr & msg)
+void callback(const octomap_msgs::Octomap &msg)
 {
     // Receive Octomap
 
@@ -55,7 +57,7 @@ int main(int argc, char** argv)
     ros::Subscriber sub = nh.subscribe("input", 1, callback);
 
     // Announce publisher
-    ros::Publisher pub = nh.advertise<sensor_msgs::PointCloud2>("output", 1);
+    ros::Publisher pub = nh.advertise<octomap_msgs::Octomap>("output", 1);
 
     // Spin until shut down
     ros::spin();
