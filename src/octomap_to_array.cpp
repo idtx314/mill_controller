@@ -19,10 +19,31 @@ set up package.xml
 
 void callback(const octomap_msgs::Octomap &msg)
 {
-    // Receive Octomap
+    // Receive Octomap as octree
+    // Expand the octree
+    // get tree resolution
+    // check max depth & number of leaves
 
-    // Allocate memory for a 3 dimenion char array of size length, height, width/8
+    // Allocate memory for a 3 dimension char array with dimensions based on octomap sizes
+        // size of array dimension is maximum index + 1 || MetricSize/res
 
+    // for each leaf of octree (based on leaf iterators)
+    {
+        // convert the node center coords to indexes for the array.
+            // index = (value-MetricMin)/res-0.5
+        // if node is occupied
+            // set the char at those index values to 1
+        // else
+            // set the char at those index values to 0
+    }
+
+    // Output the array in some fashion
+
+    // Finish callback
+
+
+
+    // Old outline
     //Cycle through i, j, k as x,y,z of both octomap and array. If octomap cell is occupied, bit is 1, else bit is 0.
     // Using coordinates x columns (left to right), y rows (top to bottom), z depth(into plane)
     // Cycle columns
