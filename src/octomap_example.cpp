@@ -64,9 +64,14 @@ void callback(const octomap_msgs::Octomap &msg)
         it != end;
         ++it)
     {
+
         count++;
         //Get the coordinates of the centerpoints. Divide by resolution to produce something like whole number indexes. Note that since these are centerpoints, the numbers produced this way are half numbers instead of whole numbers. Think of a line from 0 to 1 with a .5 resolution. If you divide the coord of the centerpoints of each line segment by resolution then you get half indexes.
-        std::cout << it.getX()/res << " " << it.getY()/res << " " << it.getZ()/res << " " << it->getOccupancy() << std::endl;
+        std::cout << it.getX()/res << " " << it.getY()/res << " " << it.getZ()/res << " " << it->getOccupancy();
+        if(octree->isNodeOccupied(*it))
+            std::cout << " Occupied" << std::endl;
+        else
+            std::cout << " Unoccupied" << std::endl;
         if(it.getDepth() != max_depth)
             inner_count++;
     }
@@ -76,7 +81,8 @@ void callback(const octomap_msgs::Octomap &msg)
     std::cout << "Number counted after expanding: " << count << std::endl;
     std::cout << "Number of property after expanding: " << method_count << std::endl;
     std::cout << "Number of inner after expanding: " << inner_count << std::endl;
-    std::cout << "Occupancy Threshold: " << octree->getOccupancyThresh();
+
+    std::cout << "Occupancy Threshold: " << octree->getOccupancyThres() << std::endl;
 
     double x, y, z;
 
