@@ -8,9 +8,8 @@
     */
 
 /* TODO
-input topic
-publisher message type, output topic
-figure out width, height, depth
+figure out width, height, depth. May be backwards right now
+Clear memory to 0
 set up package.xml
 */
 
@@ -20,21 +19,58 @@ set up package.xml
 void callback(const octomap_msgs::Octomap &msg)
 {
     // Receive Octomap as octree
-    // Expand the octree
-    // get tree resolution
-    // check max depth & number of leaves
+    octomap::AbstractOcTree* treeptr = octomap_msgs::msgToMap(msg);
+    octomap::OcTree* octree = dynamic_cast<octomap::OcTree*>(treeptr);
+
+    // Expand the tree, so that all leaves are at maximum depth.
+    octree->expand();
+
+    // get tree information
+    size_t method_count = octree->getNumLeafNodes();
+    double res = octree->getResolution();
+    unsigned int max_depth = octree->getTreeDepth();
+
+    // Determine x,y,z dimensions and translate into needed array size
+    double x, y, z;
+    double xmin, ymin, zmin;
+    octree->getMetricSize(x, y, z);
+    octree->getMetricMin(xmin, ymin, zmin);
+    x = x/res;
+    y = y/res;
+    z = z/res;
 
     // Allocate memory for a 3 dimension char array with dimensions based on octomap sizes
         // size of array dimension is maximum index + 1 || MetricSize/res
+    char arr[(int)x][(int)y][(int)z];
+
+    // Loop through array and set all values to 0. Unknown space will be 0 this way.
+
+    // Create index values
+    int xind=0, yind=0, zind=0;
 
     // for each leaf of octree (based on leaf iterators)
+    for(octomap::OcTree::leaf_iterator it = octree->begin_leafs(),
+        end = octree->end_leafs();
+        it != end;
+        ++it)
     {
         // convert the node center coords to indexes for the array.
             // index = (value-MetricMin)/res-0.5
+        xind = (it.getX()-xmin)/res - 0.5;
+        yind = (it.getY()-ymin)/res - 0.5;
+        zind = (it.getZ()-zmin)/res - 0.5; it->getOccupancy();
+
         // if node is occupied
+        if(octree->isNodeOccupied(*it))
+        {
             // set the char at those index values to 1
-        // else
+            arr[xind][yind][zind] = 1;
+        }
+        else
+        {
             // set the char at those index values to 0
+            arr[xind][yind][zind] = 0;
+        }
     }
 
     // Output the array in some fashion
