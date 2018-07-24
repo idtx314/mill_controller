@@ -1,0 +1,12 @@
+<launch>
+  <param name="use_sim_time" type="bool" value="true"/>
+
+  <arg name="rosbag_file" default="/home/id314/bagfiles/k1_sd_cal.bag"/>
+
+
+  <node pkg="rosbag" name="bag_player" type="play" args="-l $(arg rosbag_file) --clock" />
+
+
+
+  <!-- rviz -->
+</launch>
