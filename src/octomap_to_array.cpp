@@ -9,7 +9,6 @@
 
 /* TODO
 figure out width, height, depth. May be backwards right now
-Clear memory to 0
 set up package.xml
 */
 
@@ -39,11 +38,12 @@ void callback(const octomap_msgs::Octomap &msg)
     y = y/res;
     z = z/res;
 
-    // Allocate memory for a 3 dimension char array with dimensions based on octomap sizes
+    // Allocate memory for a 3 dimension char array with dimensions based on octomap sizes. Orientation is x to right, y down, z into page.
         // size of array dimension is maximum index + 1 || MetricSize/res
     char arr[(int)x][(int)y][(int)z];
 
-    // Loop through array and set all values to 0. Unknown space will be 0 this way.
+    // Loop through array and set all values to 0. Both unknown and empty space will be 0 this way.
+    memset(arr, '\0', (int)x*(int)y*(int)z);
 
     // Create index values
     int xind=0, yind=0, zind=0;
@@ -54,11 +54,11 @@ void callback(const octomap_msgs::Octomap &msg)
         it != end;
         ++it)
     {
-        // convert the node center coords to indexes for the array.
+        // convert the node center coords to integer indexes for the array.
             // index = (value-MetricMin)/res-0.5
         xind = (it.getX()-xmin)/res - 0.5;
         yind = (it.getY()-ymin)/res - 0.5;
-        zind = (it.getZ()-zmin)/res - 0.5; it->getOccupancy();
+        zind = (it.getZ()-zmin)/res - 0.5;
 
         // if node is occupied
         if(octree->isNodeOccupied(*it))
@@ -69,11 +69,25 @@ void callback(const octomap_msgs::Octomap &msg)
         else
         {
             // set the char at those index values to 0
+            // TODO This is not necessary if all values are initialized to 0.
             arr[xind][yind][zind] = 0;
         }
     }
 
     // Output the array in some fashion
+    // Print array
+    for(int dep=0; dep<(int)z; dep++) //Cycle through depths
+    {
+        for(int row=0; row<(int)y; row++) //Cycle through rows
+        {
+            for(int col=0; col<int(x); col++) //Cycle through columns
+            {
+                printf("%d ",arr[col][row][dep]);
+            }
+            printf("\n");
+        }
+        printf("\n");
+    }
 
     // Finish callback
 
@@ -111,7 +125,7 @@ int main(int argc, char** argv)
     ros::NodeHandle nh;
 
     // Subscribe to octomap topic
-    ros::Subscriber sub = nh.subscribe("input", 1, callback);
+    ros::Subscriber sub = nh.subscribe("octomap_full", 1, callback);
 
     // Announce publisher
     ros::Publisher pub = nh.advertise<octomap_msgs::Octomap>("output", 1);
