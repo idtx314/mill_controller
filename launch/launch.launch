@@ -4,7 +4,11 @@
   <arg name="rosbag_file" default="/home/id314/bagfiles/k1_sd_cal.bag"/>
 
 
-  <node pkg="rosbag" name="bag_player" type="play" args="-l $(arg rosbag_file) --clock" />
+  <node pkg="rosbag" type="play" name="bag_player" args="-l $(arg rosbag_file) --clock" />
+
+  <node pkg="tf" type="static_transform_publisher" name="base_cam_tf" args="0 0 0 0 0 0 base camera_depth_optical_frame 100"/>
+  <node pkg="tf" type="static_transform_publisher" name="map_cam_tf" args="0 0 0 0 0 0 map camera_depth_optical_frame 100"/>
+  <node pkg="tf" type="static_transform_publisher" name="base_map_tf" args="0 0 0 0 0 0 base map 100"/>
 
 
 
