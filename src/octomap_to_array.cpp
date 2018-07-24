@@ -1,6 +1,8 @@
 // Includes
 #include<ros/ros.h>
-#include <sensor_msgs/PointCloud2.h>
+#include<sensor_msgs/PointCloud2.h>
+#include<visualization_msgs/Marker.h>
+#include<geometry_msgs/Point.h>
 #include<octomap_msgs/Octomap.h>
 #include<octomap_msgs/conversions.h>
     /*
@@ -12,6 +14,8 @@ figure out width, height, depth. May be backwards right now
 set up package.xml
 */
 
+visualization_msgs::Marker rviz_msg;
+ros::Publisher pub;
 
 
 
@@ -75,6 +79,8 @@ void callback(const octomap_msgs::Octomap &msg)
     }
 
     // Output the array in some fashion
+    geometry_msgs::Point p;
+
     // Print array
     for(int dep=0; dep<(int)z; dep++) //Cycle through depths
     {
@@ -82,34 +88,30 @@ void callback(const octomap_msgs::Octomap &msg)
         {
             for(int col=0; col<int(x); col++) //Cycle through columns
             {
-                printf("%d ",arr[col][row][dep]);
+                // printf("%d ",arr[col][row][dep]);
+                if(arr[col][row][dep])
+                {
+                    p.x = col*res;
+                    p.y = row*res;
+                    p.z = dep*res;
+                    rviz_msg.points.push_back(p);
+                }
             }
-            printf("\n");
+            // printf("\n");
         }
-        printf("\n");
+        // printf("\n");
     }
+
+
+
+    rviz_msg.header.stamp = ros::Time(); //Sets to time zero, if not displaying try ros::Time::now()
+
+    pub.publish(rviz_msg);
 
     // Finish callback
 
 
 
-    // Old outline
-    //Cycle through i, j, k as x,y,z of both octomap and array. If octomap cell is occupied, bit is 1, else bit is 0.
-    // Using coordinates x columns (left to right), y rows (top to bottom), z depth(into plane)
-    // Cycle columns
-    // for(int x=0; x<width; x++)
-    //     // Cycle rows
-    //     for(int y=0; y<height; y++)
-    //         // Cycle depths
-    //         for(int z=0; z<depth; z++)
-    //         {
-    //             unsigned char byte = array[x][y][z/8]
-    //             bool value = byte<<z%8 & 0b00000001
-    //         }
-
-    // Translate the array into some sort of message
-
-    //Output the array
 }
 
 
@@ -119,6 +121,24 @@ void callback(const octomap_msgs::Octomap &msg)
 int main(int argc, char** argv)
 {
     // Initilize variables
+    rviz_msg.header.frame_id = "base";
+    rviz_msg.id = 10;
+    rviz_msg.type = visualization_msgs::Marker::POINTS;
+    rviz_msg.pose.position.x = 0;
+    rviz_msg.pose.position.y = 2;
+    rviz_msg.pose.position.z = 0;
+    rviz_msg.pose.orientation.x = 0.0;
+    rviz_msg.pose.orientation.y = 0.0;
+    rviz_msg.pose.orientation.z = 0.0;
+    rviz_msg.pose.orientation.w = 1.0;
+    rviz_msg.scale.x = .01;
+    rviz_msg.scale.y = .01;
+    rviz_msg.scale.z = .01;
+    rviz_msg.color.a = 1.0; // Don't forget to set the alpha!
+    rviz_msg.color.r = 0.0;
+    rviz_msg.color.g = 1.0;
+    rviz_msg.color.b = 0.0;
+
 
     // Initialize ROS node
     ros::init(argc, argv, "map_to_array_node");
@@ -128,7 +148,7 @@ int main(int argc, char** argv)
     ros::Subscriber sub = nh.subscribe("octomap_full", 1, callback);
 
     // Announce publisher
-    ros::Publisher pub = nh.advertise<octomap_msgs::Octomap>("output", 1);
+    pub = nh.advertise<visualization_msgs::Marker>("output", 1);
 
     // Spin until shut down
     ros::spin();
