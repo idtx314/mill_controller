@@ -1,16 +1,19 @@
 <launch>
   <param name="use_sim_time" type="bool" value="true"/>
 
+  <!-- This file can be overidden with a command line argument like "rosbag_file:=/path/to/file.bag" -->
   <arg name="rosbag_file" default="/home/id314/bagfiles/k1_sd_cal.bag"/>
-
 
   <node pkg="rosbag" type="play" name="bag_player" args="-l $(arg rosbag_file) --clock" />
 
+  <!-- Note that these tf frames are specific to the kinect1. Different frames will be needed for the kinect2. -->
   <node pkg="tf" type="static_transform_publisher" name="base_cam_tf" args="0 0 0 0 0 0 base camera_depth_optical_frame 100"/>
   <node pkg="tf" type="static_transform_publisher" name="map_cam_tf" args="0 0 0 0 0 0 map camera_depth_optical_frame 100"/>
   <node pkg="tf" type="static_transform_publisher" name="base_map_tf" args="0 0 0 0 0 0 base map 100"/>
 
+  <!-- Octomap mapping node. The frame ID and input topic are set here. -->
+  <include file="$(find octomap_server)/launch/octomap_mapping.launch"/>
 
-
-  <!-- rviz -->
+  <!-- Rviz for visualizing -->
+  <node name="rviz" pkg="rviz" type="rviz" args="$(find mill_controller)/rviz/octomap_vis.rviz" required="true" />
 </launch>
