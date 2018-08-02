@@ -2,7 +2,8 @@
 
 import sys
 
-
+# TODO
+# Agree on input units
 
 
 
@@ -16,36 +17,59 @@ def main(arg):
     # Open output file
     f = open('output.gcode', 'w')
 
+    # Header
     s = ''
-    # Write machine warm up segment to output
-    # Return to machine zero (home position)
-    s = 'G28' + '\n'
-    f.write(s)
-    # Set Plane (17 for xy, 18 for zx, 19 for yz)
-    s = 'G17'
-    # Set units (G20 for inches, G21 for millimeters)
-    s = s + ' G21'
-    # Set absolute position mode (G90 for absolute, G91 for relative)
-    s = s + ' G90'
-    # Set feed rate per what (G94 for per minute, G95 for per revolution)
-    s = s + ' 94'
-    # Set work coordinate system, not sure what this actually means. (G54)
-    s = s + ' 54' + '\n'
+
+    # Home
+    s = s + '$22=1' + '\n'                  # Enable homing cycle
+    s = s + '$H' + '\n'                     # Begin homing cycle
+
+    # Basic Settings
+    s = s + 'G90' + '\n'                    # Set absolute coordinates
+    s = s + 'G21' + '\n'                    # Set mm
+    s = s + 'G17' + '\n'                    # Set plane to x/y
+    s = s + 'G94' + '\n'                    # Set feed rate mode
+    s = s + 'G53' + '\n'                    # Use machine coordinates until work coordinates established
+
+    # Set G28 reference
+    s = s + 'G0 X1.0 Y1.0' + '\n'           # Move to safe position in XY plane. Leave Z up from homing.
+    s = s + 'G28.1' + '\n'                  # Set reference point at this position.
+
+    # Create Work Coordinate System G54
+    s = s + 'G0 X1.0 Y1.0 Z1.0' + '\n'      # Move to work 0. This should be taken as a user setting.
+    s = s + 'G10 L20 P1 X0 Y0 Z0' + '\n'    # Reset G54 WCS origin to this position.
+
+    # Switch to Work Coordinate System G54
+    s = s + 'G54' + '\n'                    # Use G54 work coordinates
+
+    f.write(s)                              # Write to file
+
+
+    # Body
     # Set Feed rate and starting point
-    s = 'G0' + ' X' + str(arg[0][0]) + ' Y' + str(arg[0][1]) + ' Z' + str(arg[0][2]) + ' F100'
+    s = 'G0' + ' X' + str(arg[0][0]) + ' Y' + str(arg[0][1]) + ' Z' + str(arg[0][2]) + ' F9.0'
 
     f.write(s)
 
-    # Follow trajectory. Operating on the assumption that the trajectory can be approximated as a series of straight line motions from point to point. Improvement of this model will probably need example trajectories to test.
+    # Follow trajectory. Operating on the assumption that the trajectory can be approximated as a series of straight line motions from point to point. Improvement of this model will probably need example trajectories to test. Starting with fixed feed rate.
     for point in arg:
         # x, y, z, t = list[0], list[1], list[2], list[3]
-        s = 'G1' + ' X' + str(point[0]) + ' Y' + str(point[1]) + ' Z' + str(point[2]) + '\n'
+        s = 'G1' + ' X' + str(point[0]) + ' Y' + str(point[1]) + ' Z' + str(point[2]) + ' F9' + '\n'
         # Write appropriate command to output
         f.write(s)
 
-    # Write machine cool down segment to output
-    # Move tool toward +z
-    # Move to corner
+
+    # Footer
+    s = ''
+    s = s + 'G90' + '\n'                    # Set to absolute coordinates
+    s = s + 'G20' + '\n'                    # Set to inches
+    s = s + 'G17' + '\n'                    # Set plane to x/y
+    s = s + 'G94' + '\n'                    # Set feed rate mode
+    s = s + 'G54' + '\n'                    # Set WCS to G54
+    s = s + 'G1 Z0.15000 F9.0' + '\n'       # Move bit out of harms way
+    s = s + 'G28' + '\n'                    # Return to reference position
+    s = s + 'G4 P0.1' + '\n'                # Dwell for a moment
+    f.write(s)                              # Write to file
 
 
     # Close output
@@ -65,9 +89,14 @@ def preprocess(msg):
     Ex Input:
     '[[0.0,1.0,1.0,1.0],[0.1,1,2,1],[0.2,2,2,1]]'
     '''
+
+    # Remove extraneous characters
     output = msg.replace('\n','')
     output = msg.replace(' ','')
+
+    # Strip brackets from both ends
     output = output.strip('[]')
+    # Split the values into separate strings
     output = output.split('],[')
 
     for index in range(len(output)):
@@ -79,6 +108,8 @@ def preprocess(msg):
 
 
 
+
+# Boilerplate
 if __name__ == '__main__':
     if(len(sys.argv) == 2):
         main(sys.argv[1])
