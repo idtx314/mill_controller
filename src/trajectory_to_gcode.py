@@ -4,15 +4,18 @@ import sys
 
 # TODO
 # Agree on input units
+# add conditional
+# review coordinates, positive may be outside workspace
 
 
 
 def main(arg):
 
+    easel = true
+
     # Parse input from a string to a list of lists
     if(type(arg) != list):
         arg = preprocess(arg)
-
 
     # Open output file
     f = open('output.gcode', 'w')
@@ -20,27 +23,29 @@ def main(arg):
     # Header
     s = ''
 
-    # Home
-    s = s + '$22=1' + '\n'                  # Enable homing cycle
-    s = s + '$H' + '\n'                     # Begin homing cycle
+    if(not easel):
+        # Home
+        s = s + '$22=1' + '\n'                  # Enable homing cycle
+        s = s + '$H' + '\n'                     # Begin homing cycle
 
     # Basic Settings
     s = s + 'G90' + '\n'                    # Set absolute coordinates
     s = s + 'G21' + '\n'                    # Set mm
     s = s + 'G17' + '\n'                    # Set plane to x/y
     s = s + 'G94' + '\n'                    # Set feed rate mode
-    s = s + 'G53' + '\n'                    # Use machine coordinates until work coordinates established
+    s = s + 'G54' + '\n'                    # Use WCS G54
 
-    # Set G28 reference
-    s = s + 'G0 X1.0 Y1.0' + '\n'           # Move to safe position in XY plane. Leave Z up from homing.
-    s = s + 'G28.1' + '\n'                  # Set reference point at this position.
+    if(not easel):
+        # Establish new origin for WCS
+        s = s + 'G10 L20 P1 X0.0Y0.0Z0.0' + '\n'# Reset G54 WCS origin to this position.
 
-    # Create Work Coordinate System G54
-    s = s + 'G0 X1.0 Y1.0 Z1.0' + '\n'      # Move to work 0. This should be taken as a user setting.
-    s = s + 'G10 L20 P1 X0 Y0 Z0' + '\n'    # Reset G54 WCS origin to this position.
+        # Set G28 reference
+        s = s + 'G0 X1.0 Y1.0' + '\n'           # Move to safe position in XY plane. Leave Z up from homing.
+        s = s + 'G28.1' + '\n'                  # Set reference point at this position.
 
-    # Switch to Work Coordinate System G54
-    s = s + 'G54' + '\n'                    # Use G54 work coordinates
+        # # Create Work Coordinate System G54
+        # s = s + 'G0 X1.0 Y1.0' + '\n'           # Move to work 0. This should be taken as a user setting.
+        # s = s + 'G10 L20 P1 X0 Y0 Z0' + '\n'    # Reset G54 WCS origin to this position.
 
     f.write(s)                              # Write to file
 
@@ -67,7 +72,10 @@ def main(arg):
     s = s + 'G94' + '\n'                    # Set feed rate mode
     s = s + 'G54' + '\n'                    # Set WCS to G54
     s = s + 'G1 Z0.15000 F9.0' + '\n'       # Move bit out of harms way
-    s = s + 'G28' + '\n'                    # Return to reference position
+    if(easel):
+        s = s + 'G0 X0.0 Y0.0 Z0.0' + '\n'      # Move to work zero
+    else:
+        s = s + 'G28' + '\n'                    # Return to reference position
     s = s + 'G4 P0.1' + '\n'                # Dwell for a moment
     f.write(s)                              # Write to file
 
