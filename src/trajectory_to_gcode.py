@@ -11,7 +11,7 @@ import sys
 
 def main(arg):
 
-    easel = true
+    easel = True
 
     # Parse input from a string to a list of lists
     if(type(arg) != list):
@@ -52,14 +52,14 @@ def main(arg):
 
     # Body
     # Set Feed rate and starting point
-    s = 'G0' + ' X' + str(arg[0][0]) + ' Y' + str(arg[0][1]) + ' Z' + str(arg[0][2]) + ' F9.0'
+    s = 'G0' + ' X' + str(arg[0][0]) + ' Y' + str(arg[0][1]) + ' Z' + str(arg[0][2]) + ' F500.0' + '\n'
 
     f.write(s)
 
     # Follow trajectory. Operating on the assumption that the trajectory can be approximated as a series of straight line motions from point to point. Improvement of this model will probably need example trajectories to test. Starting with fixed feed rate.
     for point in arg:
         # x, y, z, t = list[0], list[1], list[2], list[3]
-        s = 'G1' + ' X' + str(point[0]) + ' Y' + str(point[1]) + ' Z' + str(point[2]) + ' F9' + '\n'
+        s = 'G1' + ' X' + str(point[0]) + ' Y' + str(point[1]) + ' Z' + str(point[2]) + ' F500.0' + '\n'
         # Write appropriate command to output
         f.write(s)
 

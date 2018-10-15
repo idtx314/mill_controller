@@ -40,12 +40,12 @@ import serial
 import time
 
 # TODO
-# Rename s
+# Rename s serial port
 #
 
 
 # Open grbl serial port
-s = serial.Serial('/dev/tty.usbmodem1811',115200)
+s = serial.Serial('/dev/ttyUSB0',115200)
 
 # Open g-code file
 f = open('output.gcode','r');
