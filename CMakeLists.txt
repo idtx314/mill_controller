@@ -9,7 +9,10 @@ project(mill_controller)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-  sensor_msgs)
+  rospy
+  std_msgs
+  sensor_msgs
+  message_generation)
 find_package(octomap REQUIRED)
 
 ## System dependencies are found with CMake's conventions
@@ -45,12 +48,12 @@ find_package(octomap REQUIRED)
 ##   * uncomment the generate_messages entry below
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
-## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
+# Generate messages in the 'msg' folder
+add_message_files(
+  FILES
+  Float32Array.msg
+  Trajectory.msg
+)
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -66,11 +69,11 @@ find_package(octomap REQUIRED)
 #   Action2.action
 # )
 
-## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   sensor_msgs
-# )
+# Generate added messages and services with any dependencies listed here
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -105,6 +108,7 @@ catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES mill_controller
 #  CATKIN_DEPENDS roscpp sensor_msgs
+  CATKIN_DEPENDS message_runtime
 #  DEPENDS system_lib
 )
 
