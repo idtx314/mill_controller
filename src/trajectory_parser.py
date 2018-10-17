@@ -1,16 +1,25 @@
-# This file should contain a script that accepts trajectory messages and outputs a gcode file that approximates the given trajectory.
-# Origin of workspace is at bottom left of board. Positive coordinates are in the workspace.
-# Workspace units are mm
+#!/usr/bin/env python
 
-import sys
-
+'''
+Accepts Trajectory messages and produces a GCode file based on the included trajectory data. Publishes a bool message as a flag to the next node in the pipeline.
+'''
 # TODO
-# Break out the section of this script that parses string input to a separate, optional node. No place in final pipeline, but may be useful for debugging.
-# add conditional
+# Remove Z axis parsing
+
+
+import rospy
+import sys
+from mill_controller.msg import Trajectory
+from std_msgs.msg import Bool
+
+
+# Use this publisher to send the output flag
+pub = rospy.Publisher('gcode_flag',Bool,queue_size=1)
 
 
 
-def main():
+def callback(message):
+    # Upon receiving a Trajectory message, parse the information and write a GCode file based on it.
 
     # If sending this gcode through easel, set to true
     easel = True
@@ -18,7 +27,7 @@ def main():
     # Open output file
     f = open('output.gcode', 'w')
 
-    # Header
+    # Write the Header
     s = ''
 
     if(not easel):
@@ -48,24 +57,24 @@ def main():
     f.write(s)                              # Write to file
 
 
-    # TODO Modify this section to use Trajectory
-    '''
-    # Body
+
+    # Write the Body
     # Set Feed rate and starting point
-    s = 'G0' + ' X' + str(arg[0][0]) + ' Y' + str(arg[0][1]) + ' Z' + str(arg[0][2]) + ' F500.0' + '\n'
+    s = 'G0' + ' X' + str(message.trajectory[0].point[0]) + ' Y' + str(message.trajectory[0].point[1]) + ' Z' + str(message.trajectory[0].point[2]) + ' F500.0' + '\n'
 
     f.write(s)
 
+    # TODO Modify this section to use Trajectory "message"
     # Follow trajectory. Operating on the assumption that the trajectory can be approximated as a series of straight line motions from point to point. Improvement of this model will probably need example trajectories to test. Starting with fixed feed rate.
-    for point in arg:
-        # x, y, z, t = list[0], list[1], list[2], list[3]
-        s = 'G1' + ' X' + str(point[0]) + ' Y' + str(point[1]) + ' Z' + str(point[2]) + ' F500.0' + '\n'
+    for point_message in message.trajectory:
+        # x, y, z, t = point_message.point[0], point_message.point[1], point_message.point[2], point_message.point[3]
+        s = 'G1' + ' X' + str(point_message.point[0]) + ' Y' + str(point_message.point[1]) + ' Z' + str(point_message.point[2]) + ' F500.0' + '\n'
         # Write appropriate command to output
         f.write(s)
-    '''
 
 
-    # Footer
+
+    # Write the Footer
     s = ''
     s = s + 'G90' + '\n'                    # Set to absolute coordinates
     s = s + 'G20' + '\n'                    # Set to inches
@@ -84,10 +93,25 @@ def main():
     # Close output
     f.close()
 
+    # Publish to a flag topic to trigger the next node.
+    flag = Bool()
+    flag.data = True
+    pub.publish(flag)
 
 
 
 
-# Boilerplate
+def main():
+    # Initialize the ROS node and Subscriber
+    rospy.init_node("trajectory_parser_node")
+    rospy.Subscriber('trajectory_input',Trajectory,callback)
+
+    # Spin until shut down
+    rospy.spin()
+
+
+
+
+
 if __name__ == '__main__':
     main()
