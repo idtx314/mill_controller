@@ -14,7 +14,7 @@ from std_msgs.msg import Bool
 
 
 # Use this publisher to send the output flag
-pub = rospy.Publisher('gcode_flag',Bool,queue_size=1)
+pub = rospy.Publisher('gcode_ready_flag',Bool,queue_size=1)
 
 
 

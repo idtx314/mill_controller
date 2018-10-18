@@ -7,23 +7,13 @@ from mill_controller.msg import Float32Array
 from mill_controller.msg import Trajectory
 
 
-# Use this publisher to send the translated input
+# Use this publisher to send the output
 pub = rospy.Publisher('trajectory_input',Trajectory,queue_size=1)
 
 
 
 def callback(input):
-    # Upon receiving a string message, translate the string to a Trajectory and republish it.
-    s = input.data
-
-    # Parse the string into a list of lists.
-
-
-    # Zero counters.
-    i=0
-    k=0
-
-    # Increment through the list of lists and the Trajectory message, copying data from former to latter.
+    # What does the callback do?
 
 
 
