@@ -5,6 +5,7 @@ Accepts Trajectory messages and produces a GCode file based on the included traj
 '''
 # TODO
 # Remove Z axis parsing
+# I'm currently setting the work coordinate zero right after homing, which is leaving the origin at the edge of x, y, and most importantly z travel. I need to work in a finding of the workpiece in some way.
 
 
 import rospy
@@ -22,7 +23,7 @@ def callback(message):
     # Upon receiving a Trajectory message, parse the information and write a GCode file based on it.
 
     # If sending this gcode through easel, set to true
-    easel = True
+    easel = False
 
     # Open output file
     f = open('output.gcode', 'w')
@@ -40,7 +41,7 @@ def callback(message):
     s = s + 'G21' + '\n'                    # Set mm
     s = s + 'G17' + '\n'                    # Set plane to x/y
     s = s + 'G94' + '\n'                    # Set feed rate mode
-    s = s + 'G54' + '\n'                    # Use WCS G54
+    s = s + 'G54' + '\n'                    # Use WCS G54 Coordinates
 
     if(not easel):
         # Establish new origin for WCS
@@ -64,7 +65,6 @@ def callback(message):
 
     f.write(s)
 
-    # TODO Modify this section to use Trajectory "message"
     # Follow trajectory. Operating on the assumption that the trajectory can be approximated as a series of straight line motions from point to point. Improvement of this model will probably need example trajectories to test. Starting with fixed feed rate.
     for point_message in message.trajectory:
         # x, y, z, t = point_message.point[0], point_message.point[1], point_message.point[2], point_message.point[3]
@@ -80,7 +80,7 @@ def callback(message):
     s = s + 'G20' + '\n'                    # Set to inches
     s = s + 'G17' + '\n'                    # Set plane to x/y
     s = s + 'G94' + '\n'                    # Set feed rate mode
-    s = s + 'G54' + '\n'                    # Set WCS to G54
+    s = s + 'G54' + '\n'                    # Use WCS G54 Coordinates
     s = s + 'G1 Z0.15000 F9.0' + '\n'       # Move bit out of harms way
     if(easel):
         s = s + 'G0 X0.0 Y0.0 Z0.0' + '\n'      # Move to work zero

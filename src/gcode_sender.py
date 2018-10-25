@@ -53,7 +53,7 @@ pub = rospy.Publisher('gcode_sent_flag',Bool,queue_size=1)
 def callback(input):
     # Upon receiving a flag message, reads a GCode file and sends the commands within to a GRBL controller over a serial connection
     # Open grbl serial port
-    s = serial.Serial('/home/id314/vcom0',115200)
+    s = serial.Serial('/dev/ttyUSB0',115200)
 
     # Open g-code file
     f = open('output.gcode','r');
@@ -66,13 +66,13 @@ def callback(input):
     # Stream g-code to grbl
     for line in f:
         l = line.strip() # Strip all EOL characters for consistency
-        print 'Sending: ' + l,
+        # print 'Sending: ' + l,
         s.write(l + '\n') # Send g-code block to grbl
         grbl_out = s.readline() # Wait for grbl response with carriage return
-        print ' : ' + grbl_out.strip()
+        # print ' : ' + grbl_out.strip()
 
     # Wait here until grbl is finished to close serial port and file.
-    raw_input("  Press <Enter> to exit and disable grbl.")
+    # raw_input("  Press <Enter> to exit and disable grbl.")
 
     # Close file and serial port
     f.close()
