@@ -2,10 +2,10 @@
 
 '''
 Accepts Trajectory messages and produces a GCode file based on the included trajectory data. Publishes a bool message as a flag to the next node in the pipeline.
+This script presumes that the machine has been properly homed and had the G54 workspace set up beforehand.
 '''
 # TODO
-# Remove Z axis parsing
-# I'm currently setting the work coordinate zero right after homing, which is leaving the origin at the edge of x, y, and most importantly z travel. I need to work in a finding of the workpiece in some way.
+# Add workspace and machine space safety checks
 
 
 import rospy
@@ -22,53 +22,35 @@ pub = rospy.Publisher('gcode_ready_flag',Bool,queue_size=1)
 def callback(message):
     # Upon receiving a Trajectory message, parse the information and write a GCode file based on it.
 
-    # If sending this gcode through easel, set to true
-    easel = False
-
     # Open output file
     f = open('output.gcode', 'w')
 
     # Write the Header
     s = ''
 
-    if(not easel):
-        # Home
-        s = s + '$22=1' + '\n'                  # Enable homing cycle
-        s = s + '$H' + '\n'                     # Begin homing cycle
-
     # Basic Settings
     s = s + 'G90' + '\n'                    # Set absolute coordinates
     s = s + 'G21' + '\n'                    # Set mm
     s = s + 'G17' + '\n'                    # Set plane to x/y
-    s = s + 'G94' + '\n'                    # Set feed rate mode
+    s = s + 'G94' + '\n'                    # Set feed rate to mm/min
     s = s + 'G54' + '\n'                    # Use WCS G54 Coordinates
-
-    if(not easel):
-        # Establish new origin for WCS
-        s = s + 'G10 L20 P1 X0.0Y0.0Z0.0' + '\n'# Reset G54 WCS origin to 0,0,0 offset from this position.
-
-        # Set G28 reference
-        s = s + 'G0 X1.0 Y1.0' + '\n'           # Move to safe position in XY plane. Leave Z up from homing.
-        s = s + 'G28.1' + '\n'                  # Set reference point at this position.
-
-        # # Create Work Coordinate System G54
-        # s = s + 'G0 X1.0 Y1.0' + '\n'           # Move to work 0. This should be taken as a user setting.
-        # s = s + 'G10 L20 P1 X0 Y0 Z0' + '\n'    # Reset G54 WCS origin to this position.
 
     f.write(s)                              # Write to file
 
 
 
     # Write the Body
-    # Set Feed rate and starting point
-    s = 'G0' + ' X' + str(message.trajectory[0].point[0]) + ' Y' + str(message.trajectory[0].point[1]) + ' Z' + str(message.trajectory[0].point[2]) + ' F500.0' + '\n'
+    # Set Feed rate and move to starting point.
+    s = 'G0' + ' X' + str(message.trajectory[0].point[0]) + ' Y' + str(message.trajectory[0].point[1]) + '\n'
+    s = s + 'G0' + ' Z-15' + '\n'
+    s = s + 'G1' + ' Z-20.0762' + ' F50' + '\n'
 
     f.write(s)
 
     # Follow trajectory. Operating on the assumption that the trajectory can be approximated as a series of straight line motions from point to point. Improvement of this model will probably need example trajectories to test. Starting with fixed feed rate.
     for point_message in message.trajectory:
         # x, y, z, t = point_message.point[0], point_message.point[1], point_message.point[2], point_message.point[3]
-        s = 'G1' + ' X' + str(point_message.point[0]) + ' Y' + str(point_message.point[1]) + ' Z' + str(point_message.point[2]) + ' F500.0' + '\n'
+        s = 'G1' + ' X' + str(point_message.point[0]) + ' Y' + str(point_message.point[1]) + ' F200.0' + '\n'
         # Write appropriate command to output
         f.write(s)
 
@@ -77,15 +59,15 @@ def callback(message):
     # Write the Footer
     s = ''
     s = s + 'G90' + '\n'                    # Set to absolute coordinates
-    s = s + 'G20' + '\n'                    # Set to inches
+    s = s + 'G21' + '\n'                    # Set to mm
     s = s + 'G17' + '\n'                    # Set plane to x/y
-    s = s + 'G94' + '\n'                    # Set feed rate mode
+    s = s + 'G94' + '\n'                    # Set feed rate to mm/min
     s = s + 'G54' + '\n'                    # Use WCS G54 Coordinates
-    s = s + 'G1 Z0.15000 F9.0' + '\n'       # Move bit out of harms way
-    if(easel):
-        s = s + 'G0 X0.0 Y0.0 Z0.0' + '\n'      # Move to work zero
-    else:
-        s = s + 'G28' + '\n'                    # Return to reference position
+
+    s = s + 'G1 Z-15 F50' + '\n'       # Move bit out of harms way
+    s = s + 'G0 Z0' + '\n'
+    s = s + 'G0 X330 Y228' + '\n'
+
     s = s + 'G4 P0.1' + '\n'                # Dwell for a moment
     f.write(s)                              # Write to file
 
