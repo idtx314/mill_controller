@@ -70,7 +70,7 @@ def callback(input):
 
 def main():
     # Initialize the ROS node and Subscriber
-    rospy.init_node("text_input_parser_node")
+    rospy.init_node("string_parser_node")
     rospy.Subscriber('string_input',String,callback)
 
     # Spin until shut down
