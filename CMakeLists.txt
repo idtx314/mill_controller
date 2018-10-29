@@ -53,6 +53,7 @@ add_message_files(
   FILES
   Float32Array.msg
   Trajectory.msg
+  Trajectory2.msg
 )
 
 ## Generate services in the 'srv' folder
