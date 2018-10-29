@@ -10,8 +10,9 @@ This script presumes that the machine has been properly homed and had the G54 wo
 
 import rospy
 import sys
-from mill_controller.msg import Trajectory
 from std_msgs.msg import Bool
+from mill_controller.msg import Trajectory
+from mill_controller.msg import Trajectory2
 
 
 # Use this publisher to send the output flag

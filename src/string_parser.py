@@ -49,16 +49,13 @@ def callback(input):
     # Create message
     msg = Trajectory()
 
-    # Increment through the list of lists of floats and the Trajectory message, copying data from former to latter.
-    for list in output:
-        # Create Float32Array()
-        arr = Float32Array()
-        # Fill Float32Array with floats from list[0] to list[3]
-        for i in range(4):
-            arr.point[i] = list[i]
-        # Append Float32Array to msg.trajectory
-        msg.trajectory.append(arr)
-
+    # Increment through the list of lists of floats and the arrays of the Trajectory message, copying data from former to latter.
+    for index in range(len(output)):
+        msg.x.append(output[index][0])
+        msg.y.append(output[index][1])
+        msg.z.append(output[index][2])
+        msg.t.append(output[index][3])
+    msg.length = len(output)
 
     # Publish msg
     pub.publish(msg)
