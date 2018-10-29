@@ -12,7 +12,6 @@ import rospy
 import sys
 from std_msgs.msg import Bool
 from mill_controller.msg import Trajectory
-from mill_controller.msg import Trajectory2
 
 
 # Use this publisher to send the output flag
@@ -42,16 +41,15 @@ def callback(message):
 
     # Write the Body
     # Set Feed rate and move to starting point.
-    s = 'G0' + ' X' + str(message.trajectory[0].point[0]) + ' Y' + str(message.trajectory[0].point[1]) + '\n'
+    s = 'G0' + ' X' + str(message.x[0]) + ' Y' + str(message.y[0]) + '\n'
     s = s + 'G0' + ' Z-15' + '\n'
     s = s + 'G1' + ' Z-20.0762' + ' F50' + '\n'
 
     f.write(s)
 
     # Follow trajectory. Operating on the assumption that the trajectory can be approximated as a series of straight line motions from point to point. Improvement of this model will probably need example trajectories to test. Starting with fixed feed rate.
-    for point_message in message.trajectory:
-        # x, y, z, t = point_message.point[0], point_message.point[1], point_message.point[2], point_message.point[3]
-        s = 'G1' + ' X' + str(point_message.point[0]) + ' Y' + str(point_message.point[1]) + ' F200.0' + '\n'
+    for index in range(message.length):
+        s = 'G1' + ' X' + str(message.x[index]) + ' Y' + str(message.y[index]) + ' F200.0' + '\n'
         # Write appropriate command to output
         f.write(s)
 
