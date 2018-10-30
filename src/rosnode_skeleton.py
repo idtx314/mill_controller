@@ -3,7 +3,6 @@
 import rospy
 import sys
 from std_msgs.msg import String
-from mill_controller.msg import Float32Array
 from mill_controller.msg import Trajectory
 
 
