@@ -24,6 +24,11 @@ converter = CvBridge()
 def callback(input):
     # Upon receiving a flag from the gcode_sender node, the callback will collect a picture from the camera, translate it to a ROS message, and publish it for the next node.
 
+    # Grab some frames to clear out the buffer
+    # TODO experiment with reducing this number as much as possible
+    for i in range(20):
+        cam.grab()
+
     # Attempt to take the picture
     (ret, frame) = cam.read()
 
