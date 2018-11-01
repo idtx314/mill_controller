@@ -16,15 +16,20 @@ converter = CvBridge()
 def callback(input):
     # The callback accepts an Image message, performs visual processing and masking on it, and publishes the result for the pointcloud converter node.
 
-    # Translate Image message into a cv2 image using existing encoding
-    cv_image = converter.imgmsg_to_cv2(input,"bgr8")
+    # Detect the message encoding
+
+    # Translate Image message into a cv2 image using existing encoding. The image will revert to a more general CV encoding, like 8UC3.
+    cv_image = converter.imgmsg_to_cv2(input,"passthrough")
 
     # Perform visual processing on the image to extract relevant data
+    print cv_image.shape # Extract the dimensions and channel count(?)
+    print cv_image.dtype # Extract the data type of the image data
 
     # Translate cv2 image back to an Image message using existing encoding
     msg = converter.cv2_to_imgmsg(cv_image,"passthrough")
 
     # Publish image message
+    msg.encoding = "bgr8"
     pub.publish(msg)
 
 

@@ -29,15 +29,20 @@ def callback(input):
 
     # If successful
     if(ret):
-        # Translate into a ROS message with existing encoding and publish
+        # Try to
         try:
-            pub.publish(converter.cv2_to_imgmsg(frame,"passthrough"))
+            # Translate into a ROS message with encoding 8UC3
+            img = converter.cv2_to_imgmsg(frame,"passthrough")
+
+            # Assert the encoding to be bgr8.
+            img.encoding = "bgr8"
+
+            # Publish
+            pub.publish(img)
+
+        # If failure, print error
         except CvBridgeError as e:
             print(e)
-
-
-
-
 
 
 
