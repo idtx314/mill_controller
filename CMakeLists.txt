@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
   cv_bridge)
 find_package(octomap REQUIRED)
+find_package(PCL 1.2 REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -124,6 +125,9 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 include_directories(${OCTOMAP_INCLUDE_DIRS})
+include_directories(${PCL_INCLUDE_DIRS})
+link_directories(${PCL_LIBRARY_DIRS})
+add_definitions(${PCL_DEFINITIONS})
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
@@ -165,7 +169,7 @@ set_target_properties(${PROJECT_NAME}_image_translator PROPERTIES OUTPUT_NAME im
 target_link_libraries(${PROJECT_NAME}_octomap_to_array ${catkin_LIBRARIES} ${OCTOMAP_LIBRARIES})
 target_link_libraries(${PROJECT_NAME}_octomap_example ${catkin_LIBRARIES} ${OCTOMAP_LIBRARIES})
 target_link_libraries(${PROJECT_NAME}_rosnode_skeleton ${catkin_LIBRARIES})
-target_link_libraries(${PROJECT_NAME}_image_translator ${catkin_LIBRARIES})
+target_link_libraries(${PROJECT_NAME}_image_translator ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 
 #############
 ## Install ##

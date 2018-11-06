@@ -3,9 +3,9 @@
 #include<sensor_msgs/PointCloud2.h>
 #include<sensor_msgs/Image.h>
 #include<cv_bridge/cv_bridge.h>
-// #include <opencv2/opencv.hpp>
-// Include pcl
-// Include pcl -> pc2 translator
+#include<pcl_conversions/pcl_conversions.h>
+#include<pcl/point_cloud.h>
+#include<pcl/point_types.h>
 
 //TODO
 /*
@@ -37,11 +37,11 @@ void callback(const sensor_msgs::Image &msg)
     ROS_INFO("Received");
     cv::Vec3b intensity = cv_ptr->image.at<cv::Vec3b>(400, 600); // Row, Col
 
-    char s[100];
-    sprintf(s, "Val: %d  Col: %d  Row: %d", intensity.val[0], cv_ptr->image.cols, cv_ptr->image.rows);
+    ROS_INFO("Val: %d  Col: %d  Row: %d", intensity.val[0], cv_ptr->image.cols, cv_ptr->image.rows);
 
-    ROS_INFO(s);
 
+    pcl::PointCloud<pcl::PointXYZ>::Ptr basic_cloud_ptr (new pcl::PointCloud<pcl::PointXYZ>);
+    pcl::PointXYZ basic_point;
 
 
 
