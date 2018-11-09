@@ -82,6 +82,8 @@ void callback(const sensor_msgs::Image &msg)
     pcl::toPCLPointCloud2(*basic_cloud_ptr,cl);
     pcl_conversions::fromPCL(cl, output);
 
+    // Set the frame info
+    output.header.frame_id = "camera_depth_optical_frame";
 
     // Publish the message
     pub.publish(output);
@@ -102,7 +104,7 @@ int main(int argc, char **argv)
     ros::Subscriber sub = nh.subscribe("processed_image", 1, callback);
 
     // Announce publisher with 1 message buffer
-    pub = nh.advertise<sensor_msgs::PointCloud2>("camera_depth_points", 1);
+    pub = nh.advertise<sensor_msgs::PointCloud2>("camera/depth/points", 1);
 
     // Prime the viewer with a point cloud and Initialize it
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_ptr (new pcl::PointCloud<pcl::PointXYZ>);
