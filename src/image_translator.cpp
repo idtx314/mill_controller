@@ -95,14 +95,14 @@ void callback(const sensor_msgs::Image &msg)
 int main(int argc, char **argv)
 {
     // Initialize node and declare NodeHandle
-    ros::init(argc,argv,"node_name");
+    ros::init(argc,argv,"image_translator_node");
     ros::NodeHandle nh;
 
     // Subscribe to topic with 1 message buffer
     ros::Subscriber sub = nh.subscribe("processed_image", 1, callback);
 
     // Announce publisher with 1 message buffer
-    pub = nh.advertise<sensor_msgs::PointCloud2>("output_topic", 1);
+    pub = nh.advertise<sensor_msgs::PointCloud2>("camera_depth_points", 1);
 
     // Prime the viewer with a point cloud and Initialize it
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_ptr (new pcl::PointCloud<pcl::PointXYZ>);
