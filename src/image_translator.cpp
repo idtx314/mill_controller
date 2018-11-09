@@ -87,25 +87,8 @@ void callback(const sensor_msgs::Image &msg)
     pub.publish(output);
 
 
-
-    // Initialize the viewer
-    viewer->setBackgroundColor (0, 0, 0);
+    // Update the viewer
     viewer->updatePointCloud<pcl::PointXYZ> (basic_cloud_ptr, "main cloud");
-    viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "main cloud");
-    viewer->addCoordinateSystem (1.0);
-    viewer->initCameraParameters ();
-
-    // The only way to stop this loop is to close the viewer. But the viewer is independent of the callback loop. Once closed, it is closed. It isn't destroyed until the whole node shuts off, but the loop won't execute after the first time the viewer is stopped.
-    // Need to either start a new viewer every run through or establish an alternate stop condition
-    while(!viewer->wasStopped())
-    {
-        viewer->spinOnce(100);  // update the viewer
-    }
-
-
-    // Debug
-    ROS_INFO("Received");
-    // ROS_INFO("Val: %d  Col: %d  Row: %d", intensity.val[0], cv_ptr->image.cols, cv_ptr->image.rows);
 }
 
 
@@ -121,12 +104,23 @@ int main(int argc, char **argv)
     // Announce publisher with 1 message buffer
     pub = nh.advertise<sensor_msgs::PointCloud2>("output_topic", 1);
 
-    // Prime the viewer with a point cloud
+    // Prime the viewer with a point cloud and Initialize it
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_ptr (new pcl::PointCloud<pcl::PointXYZ>);
     viewer->addPointCloud<pcl::PointXYZ> (cloud_ptr, "main cloud");
+    viewer->setBackgroundColor (0, 0, 0);
+    viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "main cloud");
+    viewer->addCoordinateSystem (1.0);
+    viewer->initCameraParameters ();
+
+    ros::Rate r(100);  // Run at 100Hz
 
     // Spin until shutdown
-    ros::spin();
+    while(ros::ok())
+    {
+        ros::spinOnce();
+        viewer->spinOnce(100);
+        r.sleep();
+    }
 
     return 0;
 }
