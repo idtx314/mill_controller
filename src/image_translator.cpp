@@ -22,6 +22,8 @@ cv_bridge::CvImagePtr cv_ptr;
 // Create a visualizer
 boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer(new pcl::visualization::PCLVisualizer("3D Viewer"));
 
+float scale = .01;
+
 
 void callback(const sensor_msgs::Image &msg)
 {
@@ -63,8 +65,8 @@ void callback(const sensor_msgs::Image &msg)
             if(intensity.val[0] > 0)
             {
                 // Add a point to the cloud representing the current pixel
-                basic_point.x = j;
-                basic_point.y = i;
+                basic_point.x = scale * j;
+                basic_point.y = scale * i;
                 basic_cloud_ptr->points.push_back(basic_point);
 
             }
