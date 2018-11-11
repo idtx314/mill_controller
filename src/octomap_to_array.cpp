@@ -46,7 +46,7 @@ void callback(const octomap_msgs::Octomap &msg)
     z = z/res;
 
     ROS_INFO("X: %f Y: %f Z: %f",x,y,z);
-    ROS_INFO("X: %d Y: %d Z: %d",(int)x,(int)y,(int)z);
+    ROS_INFO("X: %d Y: %d Z: %d",(int)(x+.000001),(int)(y+.000001),(int)(z+.000001));
 
     // Allocate memory for a 3 dimension char array with dimensions based on octomap sizes. Orientation is x to right, y down, z into page.
         // size of array dimension is maximum index + 1 || MetricSize/res
@@ -69,18 +69,23 @@ void callback(const octomap_msgs::Octomap &msg)
         it != end;
         ++it)
     {
+        ROS_INFO("1");
         // convert the node center coords to integer indexes for the array.
             // index = (value-MetricMin)/res-0.5
         xind = (it.getX()-xmin)/res - 0.5;
         yind = (it.getY()-ymin)/res - 0.5;
         zind = (it.getZ()-zmin)/res - 0.5;
 
-        // counter++;
-        // ROS_INFO("Iteration number: %d",counter);
-        // ROS_INFO("\nXind: %d NodeX: %f\nYind: %d NodeY: %f\nZind: %d NodeZ: %f", xind,it.getX(),yind,it.getY(),zind,it.getZ());
-        // ROS_INFO("\n%d",(xind+1)*(yind+1)*(zind+1));
+        ROS_INFO("2");
+        counter++;
+        ROS_INFO("Iteration number: %d",counter);
+        ROS_INFO("\nXind: %d NodeX: %f\nYind: %d NodeY: %f\nZind: %d NodeZ: %f", xind,it.getX(),yind,it.getY(),zind,it.getZ());
+        ROS_INFO("\nCombined Indices: %d",(xind+1)*(yind+1)*(zind+1));
 
+        ROS_INFO("3");
         // if node is occupied
+        ROS_INFO("Cell: %d",arr[xind][yind][zind]);
+
         if(octree->isNodeOccupied(*it))
         {
             // set the char at those index values to 1
@@ -92,6 +97,7 @@ void callback(const octomap_msgs::Octomap &msg)
             // TODO This is not necessary if all values are initialized to 0.
             arr[xind][yind][zind] = 0;
         }
+        ROS_INFO("4");
     }
     ROS_INFO("Done Looping");
 
