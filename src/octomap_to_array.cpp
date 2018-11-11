@@ -88,16 +88,18 @@ void callback(const octomap_msgs::Octomap &msg)
 
         if(octree->isNodeOccupied(*it))
         {
+            ROS_INFO("4 true");
             // set the char at those index values to 1
             arr[xind][yind][zind] = 1;
         }
         else
         {
+            ROS_INFO("4 false");
             // set the char at those index values to 0
             // TODO This is not necessary if all values are initialized to 0.
             arr[xind][yind][zind] = 0;
         }
-        ROS_INFO("4");
+        ROS_INFO("5");
     }
     ROS_INFO("Done Looping");
 
