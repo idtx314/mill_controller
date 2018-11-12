@@ -92,7 +92,7 @@ void callback(const octomap_msgs::Octomap &msg)
         {
             for(int col=0; col<int(x); col++) //Cycle through columns
             {
-                // printf("%d ",arr[col][row][dep]);
+                printf("%d",arr[col][row][dep]);
                 if(arr[col][row][dep])
                 {
                     p.x = col*res;
@@ -101,9 +101,9 @@ void callback(const octomap_msgs::Octomap &msg)
                     rviz_msg.points.push_back(p);
                 }
             }
-            // printf("\n");
+            printf("\n");
         }
-        // printf("\n");
+        printf("\n");
     }
 
 
