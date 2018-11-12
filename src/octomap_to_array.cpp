@@ -63,9 +63,9 @@ void callback(const octomap_msgs::Octomap &msg)
     {
         // convert the node center coords to integer indexes for the array.
             // index = (value-MetricMin)/res-0.5
-        xind = (it.getX()-xmin)/res - 0.5;
-        yind = (it.getY()-ymin)/res - 0.5;
-        zind = (it.getZ()-zmin)/res - 0.5;
+        xind = (it.getX()-xmin)/res - 0.499999;
+        yind = (it.getY()-ymin)/res - 0.499999;
+        zind = (it.getZ()-zmin)/res - 0.499999;
 
         ROS_INFO("%d\n",xind);
 
