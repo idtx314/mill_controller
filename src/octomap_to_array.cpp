@@ -38,21 +38,16 @@ void callback(const octomap_msgs::Octomap &msg)
     double xmin, ymin, zmin;
     char s[100];
     octree->getMetricSize(x, y, z);
-    ROS_INFO("X: %f Y: %f Z: %f res: %f",x,y,z,res);
     octree->getMetricMin(xmin, ymin, zmin);
-    ROS_INFO("Xm: %f Ym: %f Zm: %f",xmin,ymin,zmin);
     x = x/res;
     y = y/res;
     z = z/res;
 
-    ROS_INFO("X: %f Y: %f Z: %f",x,y,z);
-    ROS_INFO("X: %d Y: %d Z: %d",(int)(x+.000001),(int)(y+.000001),(int)(z+.000001));
 
     // Allocate memory for a 3 dimension char array with dimensions based on octomap sizes. Orientation is x to right, y down, z into page.
         // size of array dimension is maximum index + 1 || MetricSize/res
-
+        // Add very small amount to address float precision issue. Floats were being truncated to a number below their proper value.
     char arr[(int)(x+.000001)][(int)(y+.000001)][(int)(z+.000001)];
-    // char arr[128][96][1];
 
     // Loop through array and set all values to 0. Both unknown and empty space will be 0 this way.
     memset(arr, '\0', (int)x*(int)y*(int)z);
@@ -61,8 +56,6 @@ void callback(const octomap_msgs::Octomap &msg)
     int xind=0, yind=0, zind=0;
 
     // for each leaf of octree (based on leaf iterators)
-    // Segmentation fault ocurring in this loop, but not immediately
-    ROS_INFO("Begin looping");
     for(octomap::OcTree::leaf_iterator it = octree->begin_leafs(),
         end = octree->end_leafs();
         it != end;
@@ -88,7 +81,6 @@ void callback(const octomap_msgs::Octomap &msg)
             arr[xind][yind][zind] = 0;
         }
     }
-    ROS_INFO("Done Looping");
 
     // Output the array in some fashion
     geometry_msgs::Point p;
