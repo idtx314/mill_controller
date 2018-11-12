@@ -50,7 +50,7 @@ void callback(const octomap_msgs::Octomap &msg)
     char arr[(int)(x+.000001)][(int)(y+.000001)][(int)(z+.000001)];
 
     // Loop through array and set all values to 0. Both unknown and empty space will be 0 this way.
-    memset(arr, '\0', (int)x*(int)y*(int)z);
+    memset(arr, '\0', (int)(x+.000001)*(int)(y+.000001)*(int)(z+.000001));
 
     // Create index values
     int xind=0, yind=0, zind=0;
