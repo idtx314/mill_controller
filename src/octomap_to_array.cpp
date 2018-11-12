@@ -86,11 +86,11 @@ void callback(const octomap_msgs::Octomap &msg)
     geometry_msgs::Point p;
 
     // Print array
-    for(int dep=0; dep<(int)z; dep++) //Cycle through depths
+    for(int dep=0; dep<(int)(z+.000001); dep++) //Cycle through depths
     {
-        for(int row=0; row<(int)y; row++) //Cycle through rows
+        for(int row=0; row<(int)(y+.000001); row++) //Cycle through rows
         {
-            for(int col=0; col<int(x); col++) //Cycle through columns
+            for(int col=0; col<(int)(x+.000001); col++) //Cycle through columns
             {
                 printf("%d",arr[col][row][dep]);
                 if(arr[col][row][dep])
