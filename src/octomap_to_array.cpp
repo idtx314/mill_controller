@@ -62,44 +62,31 @@ void callback(const octomap_msgs::Octomap &msg)
 
     // for each leaf of octree (based on leaf iterators)
     // Segmentation fault ocurring in this loop, but not immediately
-    int counter=0;
     ROS_INFO("Begin looping");
     for(octomap::OcTree::leaf_iterator it = octree->begin_leafs(),
         end = octree->end_leafs();
         it != end;
         ++it)
     {
-        ROS_INFO("1");
         // convert the node center coords to integer indexes for the array.
             // index = (value-MetricMin)/res-0.5
         xind = (it.getX()-xmin)/res - 0.5;
         yind = (it.getY()-ymin)/res - 0.5;
         zind = (it.getZ()-zmin)/res - 0.5;
 
-        ROS_INFO("2");
-        counter++;
-        ROS_INFO("Iteration number: %d",counter);
-        ROS_INFO("\nXind: %d NodeX: %f\nYind: %d NodeY: %f\nZind: %d NodeZ: %f", xind,it.getX(),yind,it.getY(),zind,it.getZ());
-        ROS_INFO("\nCombined Indices: %d",(xind+1)*(yind+1)*(zind+1));
 
-        ROS_INFO("3");
         // if node is occupied
-        ROS_INFO("Cell: %d",arr[xind][yind][zind]);
-
         if(octree->isNodeOccupied(*it))
         {
-            ROS_INFO("4 true");
             // set the char at those index values to 1
             arr[xind][yind][zind] = 1;
         }
         else
         {
-            ROS_INFO("4 false");
             // set the char at those index values to 0
             // TODO This is not necessary if all values are initialized to 0.
             arr[xind][yind][zind] = 0;
         }
-        ROS_INFO("5");
     }
     ROS_INFO("Done Looping");
 
