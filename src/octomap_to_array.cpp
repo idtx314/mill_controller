@@ -67,6 +67,7 @@ void callback(const octomap_msgs::Octomap &msg)
         yind = (it.getY()-ymin)/res - 0.5;
         zind = (it.getZ()-zmin)/res - 0.5;
 
+        ROS_INFO("%d\n",xind);
 
         // if node is occupied
         if(octree->isNodeOccupied(*it))
