@@ -51,8 +51,8 @@ void callback(const octomap_msgs::Octomap &msg)
     // Allocate memory for a 3 dimension char array with dimensions based on octomap sizes. Orientation is x to right, y down, z into page.
         // size of array dimension is maximum index + 1 || MetricSize/res
 
-    // char arr[(int)x][(int)y][(int)z];
-    char arr[128][96][1];
+    char arr[(int)(x+.000001)][(int)(y+.000001)][(int)(z+.000001)];
+    // char arr[128][96][1];
 
     // Loop through array and set all values to 0. Both unknown and empty space will be 0 this way.
     memset(arr, '\0', (int)x*(int)y*(int)z);
