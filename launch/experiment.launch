@@ -3,7 +3,6 @@
   <node name="image_collector_node" pkg="mill_controller" type="image_collector.py" />
   <node name="image_processor_node" pkg="mill_controller" type="image_processor.py" />
   <node name="image_translator_node" pkg="mill_controller" type="image_translator" />
-  <node name="image_view" pkg="image_view" type="image_view" args="image:=/processed_image" />
 
 
   <!-- Note that these tf frames are specific to the kinect1. Different frames will be needed for the kinect2.-->
@@ -15,6 +14,8 @@
 
   <!-- Rviz for visualizing -->
   <node name="rviz" pkg="rviz" type="rviz" args="$(find mill_controller)/rviz/octomap_vis.rviz" required="true" />
+  <node name= "raw_image" pkg="image_view" type="image_view" args="image:=/raw_image" />
+  <node name="processed_image" pkg="image_view" type="image_view" args="image:=/processed_image" />
 
   <!--<node name="octomap_to_array_node" pkg="mill_controller" type="octomap_to_array" />-->
 </launch>
