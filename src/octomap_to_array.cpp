@@ -1,5 +1,6 @@
 // Includes
 #include<ros/ros.h>
+#include<mill_controller/Occupancy.h>
 #include<sensor_msgs/PointCloud2.h>
 #include<visualization_msgs/Marker.h>
 #include<geometry_msgs/Point.h>
@@ -16,6 +17,7 @@ set up package.xml
 
 visualization_msgs::Marker rviz_msg;
 ros::Publisher pub;
+ros::Publisher pub2;
 
 
 
@@ -54,6 +56,8 @@ void callback(const octomap_msgs::Octomap &msg)
 
     // Create index values
     int xind=0, yind=0, zind=0;
+    // Create Occupancy message
+    mill_controller::Occupancy oc_msg;
 
     // for each leaf of octree (based on leaf iterators)
     for(octomap::OcTree::leaf_iterator it = octree->begin_leafs(),
@@ -78,11 +82,16 @@ void callback(const octomap_msgs::Octomap &msg)
             // set the char at those index values to 0
             // TODO This is not necessary if all values are initialized to 0.
             arr[xind][yind][zind] = 0;
+            // Add the point to occupancy message
+            oc_msg.column.push_back(xind);
+            oc_msg.row.push_back(yind);
+            oc_msg.layer.push_back(zind);
         }
     }
 
     // Output the array in some fashion
     geometry_msgs::Point p;
+
 
     // Print array
     for(int dep=0; dep<(int)(z+.000001); dep++) //Cycle through depths
@@ -105,11 +114,15 @@ void callback(const octomap_msgs::Octomap &msg)
         printf("\n");
     }
 
-
+    // Add the array dimensions to the message
+    oc_msg.width = (int)(x+.000001);
+    oc_msg.height = (int)(y+.000001);
+    oc_msg.depth = (int)(z+.000001);
 
     rviz_msg.header.stamp = ros::Time(); //Sets to time zero, if not displaying try ros::Time::now()
 
     pub.publish(rviz_msg);
+    pub2.publish(oc_msg);
 
     // Finish callback
 
@@ -152,6 +165,7 @@ int main(int argc, char** argv)
 
     // Announce publisher
     pub = nh.advertise<visualization_msgs::Marker>("output", 1);
+    pub2 = nh.advertise<mill_controller::Occupancy>("output2", 1);
 
     // Spin until shut down
     ros::spin();
