@@ -7,6 +7,7 @@
 #include<pcl/point_cloud.h>
 #include<pcl/point_types.h>
 #include<pcl/visualization/pcl_visualizer.h>
+#include<std_srvs/Empty.h>
 
 //TODO
 /*
@@ -15,6 +16,7 @@ Probably don't need to copy image
 
 // Declare publisher
 ros::Publisher pub;
+ros::ServiceClient client;
 
 // Declare image pointer
 cv_bridge::CvImagePtr cv_ptr;
@@ -88,6 +90,10 @@ void callback(const sensor_msgs::Image &msg)
     // Set the frame info
     output.header.frame_id = "camera_depth_optical_frame";
 
+    // Service call to clear the octomap
+    std_srvs::Empty srv;
+    client.call(srv);
+
     // Publish the message
     pub.publish(output);
 
@@ -102,6 +108,8 @@ int main(int argc, char **argv)
     // Initialize node and declare NodeHandle
     ros::init(argc,argv,"image_translator_node");
     ros::NodeHandle nh;
+    // Create service client
+    client = nh.serviceClient<std_srvs::Empty>("/octomap_server/reset");
 
     // Subscribe to topic with 1 message buffer
     ros::Subscriber sub = nh.subscribe("processed_image", 1, callback);
