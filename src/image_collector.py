@@ -29,12 +29,16 @@ converter = CvBridge()
 
 def callback(input):
     # Upon receiving an image, save it into a global message to be available for publishing.
+    global msg
     msg = input
 
 def callback2(input):
     # Upon receiving a bool message over the topic 'gcode_sent_flag', publish the most recently recorded image.
+    global msg
+
     # Assert the encoding
     msg.encoding = "bgr8"
+    print msg.height
 
     # Publish the message
     pub.publish(msg)
