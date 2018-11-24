@@ -144,8 +144,6 @@ add_definitions(${PCL_DEFINITIONS})
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/mill_controller_node.cpp)
 add_executable(${PROJECT_NAME}_octomap_to_array src/octomap_to_array.cpp)
-add_executable(${PROJECT_NAME}_octomap_example src/octomap_example.cpp)
-add_executable(${PROJECT_NAME}_rosnode_skeleton src/rosnode_skeleton.cpp)
 add_executable(${PROJECT_NAME}_image_translator src/image_translator.cpp)
 
 ## Rename C++ executable without prefix
@@ -154,8 +152,6 @@ add_executable(${PROJECT_NAME}_image_translator src/image_translator.cpp)
 ## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
 # set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME node PREFIX "")
 set_target_properties(${PROJECT_NAME}_octomap_to_array PROPERTIES OUTPUT_NAME octomap_to_array PREFIX "")
-set_target_properties(${PROJECT_NAME}_octomap_example PROPERTIES OUTPUT_NAME octomap_example PREFIX "")
-set_target_properties(${PROJECT_NAME}_rosnode_skeleton PROPERTIES OUTPUT_NAME rosnode_skeleton PREFIX "")
 set_target_properties(${PROJECT_NAME}_image_translator PROPERTIES OUTPUT_NAME image_translator PREFIX "")
 
 ## Add cmake target dependencies of the executable
@@ -167,8 +163,6 @@ set_target_properties(${PROJECT_NAME}_image_translator PROPERTIES OUTPUT_NAME im
 #   ${catkin_LIBRARIES}
 # )
 target_link_libraries(${PROJECT_NAME}_octomap_to_array ${catkin_LIBRARIES} ${OCTOMAP_LIBRARIES})
-target_link_libraries(${PROJECT_NAME}_octomap_example ${catkin_LIBRARIES} ${OCTOMAP_LIBRARIES})
-target_link_libraries(${PROJECT_NAME}_rosnode_skeleton ${catkin_LIBRARIES})
 target_link_libraries(${PROJECT_NAME}_image_translator ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 
 #############
