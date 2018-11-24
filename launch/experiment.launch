@@ -10,7 +10,7 @@
   <node pkg="tf" type="static_transform_publisher" name="base_map_tf" args="0 0 0 0 0 0 base map 100"/>
 
   <!-- Octomap mapping node. The frame ID and input topic are set here. -->
-  <include file="$(find octomap_server)/launch/octomap_mapping.launch"/>
+  <include file="$(find mill_controller)/launch/octomap_mapping.launch"/>
 
   <!-- Rviz for visualizing -->
   <node name="rviz" pkg="rviz" type="rviz" args="$(find mill_controller)/rviz/octomap_vis.rviz" required="true" />
