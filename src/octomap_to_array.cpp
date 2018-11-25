@@ -1,3 +1,15 @@
+/*
+This script contains a ROS node that receives Octomap messages over the topic 'octomap_full' and builds several representations of the octomap data in alternate formats.
+    Marker message: A points message is built based on the occupied nodes in the octomap message.
+    Multidimensional array: A binary 3D array is built based on the occupied and unoccpied cells in the octomap message. This is printed to a console, provided a console is available. Note: This does not work with a launch file right now.
+    Occupancy message: This message is used to record the indexes of all points in the array representation that are 0 (not occupied). This message is then published on the topic 'output2'. This permits the array to be rebuilt in other nodes by implicitly encoding the status of all indices in the array. See Occupany.msg in the msgs directory for more information on using this message type.
+*/
+
+/* TODO
+figure out width, height, depth. May be backwards right now
+set up package.xml
+*/
+
 // Includes
 #include<ros/ros.h>
 #include<mill_controller/Occupancy.h>
@@ -6,15 +18,8 @@
 #include<geometry_msgs/Point.h>
 #include<octomap_msgs/Octomap.h>
 #include<octomap_msgs/conversions.h>
-    /*
-    Octomap messages
-    */
 
-/* TODO
-figure out width, height, depth. May be backwards right now
-set up package.xml
-*/
-
+// Declare Marker message and both publishers
 visualization_msgs::Marker rviz_msg;
 ros::Publisher pub;
 ros::Publisher pub2;
@@ -46,9 +51,9 @@ void callback(const octomap_msgs::Octomap &msg)
     z = z/res;
 
 
-    // Allocate memory for a 3 dimension char array with dimensions based on octomap sizes. Orientation is x to right, y down, z into page.
+    // Allocate memory for a 3 dimension char array with dimensions based on octomap size. Coordinate axes follow standard depth image protocol. From reference viewpoint: x to right, y down, z into image.
         // size of array dimension is maximum index + 1 || MetricSize/res
-        // Add very small amount to address float precision issue. Floats were being truncated to a number below their proper value.
+        // Add very small amount to eliminate float precision issue. Floats were being truncated to a number below their proper value.
     char arr[(int)(x+.000001)][(int)(y+.000001)][(int)(z+.000001)];
 
     // Loop through array and set all values to 0. Both unknown and empty space will be 0 this way.
@@ -89,29 +94,33 @@ void callback(const octomap_msgs::Octomap &msg)
         }
     }
 
-    // Output the array in some fashion
+    // Declare a point object for recording Marker message information
     geometry_msgs::Point p;
 
-
-    // Print array
+    // Print array and populate marker message
     for(int dep=0; dep<(int)(z+.000001); dep++) //Cycle through depths
     {
         for(int row=0; row<(int)(y+.000001); row++) //Cycle through rows
         {
             for(int col=0; col<(int)(x+.000001); col++) //Cycle through columns
             {
+                // Print value at this index to console
                 printf("%d",arr[col][row][dep]);
+                // If the index represents occupied space
                 if(arr[col][row][dep])
                 {
+                    // Add to Marker message
                     p.x = col*res;
                     p.y = row*res;
                     p.z = dep*res;
                     rviz_msg.points.push_back(p);
                 }
             }
+            // Start new row in console
             printf("\n");
         }
-        printf("\n");
+        // Start new layer in console
+        printf("\n\n");
     }
 
     // Add the array dimensions to the message
@@ -119,24 +128,19 @@ void callback(const octomap_msgs::Octomap &msg)
     oc_msg.height = (int)(y+.000001);
     oc_msg.depth = (int)(z+.000001);
 
+    // Time stamp marker message
     rviz_msg.header.stamp = ros::Time(); //Sets to time zero, if not displaying try ros::Time::now()
 
+    // Publish messages
     pub.publish(rviz_msg);
     pub2.publish(oc_msg);
-
-    // Finish callback
-
-
-
 }
-
-
 
 
 
 int main(int argc, char** argv)
 {
-    // Initilize variables
+    // Initilize marker message
     rviz_msg.header.frame_id = "base";
     rviz_msg.id = 10;
     rviz_msg.type = visualization_msgs::Marker::POINTS;
@@ -163,7 +167,7 @@ int main(int argc, char** argv)
     // Subscribe to octomap topic
     ros::Subscriber sub = nh.subscribe("octomap_full", 1, callback);
 
-    // Announce publisher
+    // Initialize publishers
     pub = nh.advertise<visualization_msgs::Marker>("output", 1);
     pub2 = nh.advertise<mill_controller::Occupancy>("output2", 1);
 

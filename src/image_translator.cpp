@@ -1,3 +1,14 @@
+/*
+This script contains a ROS node that receives Image messages over the topic 'processed_image', translates them into OpenCV images, builds a PCL point cloud based on the locations of black and white pixels in the image, translates the PCL point cloud into a PointCloud2 message, and publishes the message.
+The node also runs a PCL visualizer window for debug purposes.
+*/
+
+//TODO
+/*
+Probably don't need to copy image
+Set the cloud to be non-flat
+*/
+
 // Includes
 #include<ros/ros.h>
 #include<sensor_msgs/PointCloud2.h>
@@ -9,11 +20,6 @@
 #include<pcl/visualization/pcl_visualizer.h>
 #include<std_srvs/Empty.h>
 
-//TODO
-/*
-Probably don't need to copy image
-*/
-
 // Declare publisher
 ros::Publisher pub;
 ros::ServiceClient client;
@@ -24,8 +30,8 @@ cv_bridge::CvImagePtr cv_ptr;
 // Create a visualizer
 boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer(new pcl::visualization::PCLVisualizer("3D Viewer"));
 
+// The scale of the point cloud compared to the image's pixel width and height.
 float scale = .01;
-// float scale = 1;
 
 
 void callback(const sensor_msgs::Image &msg)
@@ -48,11 +54,12 @@ void callback(const sensor_msgs::Image &msg)
     // Declare a point cloud pointer and a point
     pcl::PointCloud<pcl::PointXYZ>::Ptr basic_cloud_ptr (new pcl::PointCloud<pcl::PointXYZ>);
     pcl::PointXYZ basic_point;
+
     // Set z to constant 0
     basic_point.z = 0;
 
 
-    // Cycle through cv_ptr->image.cols, cv_ptr->image.rows pixels and read intensity
+    // Cycle through cv_ptr->image.cols, cv_ptr->image.rows pixels and read each pixel's intensity.
     int colnum = cv_ptr->image.cols;
     int rownum = cv_ptr->image.rows;
     cv::Vec3b intensity;
@@ -64,7 +71,8 @@ void callback(const sensor_msgs::Image &msg)
             // Row, Col
             intensity = cv_ptr->image.at<cv::Vec3b>(i, j);
 
-            // Access in intensity.val[i], with i being 0,1,2 for b,g,r. uchar format. If a pixel is not black
+            // Access in intensity.val[i], with i being 0,1,2 for b,g,r. Data is in uchar format.
+            // If a pixel is not black
             if(intensity.val[0] > 0)
             {
                 // Add a point to the cloud representing the current pixel
@@ -77,26 +85,28 @@ void callback(const sensor_msgs::Image &msg)
     }
 
     // Set some properties of the cloud to make a valid message?
+    // Make the cloud flat.
     basic_cloud_ptr->width = (int) basic_cloud_ptr->points.size ();
     basic_cloud_ptr->height = 1;
 
 
-    // Translate the cloud into a PointCloud2 message
+    // Translate the cloud into a PCLPointCloud2
     pcl::PCLPointCloud2 cl;
-    sensor_msgs::PointCloud2 output;
     pcl::toPCLPointCloud2(*basic_cloud_ptr,cl);
+
+    // Translate the PCLPointCloud2 into a PointCloud2 message
+    sensor_msgs::PointCloud2 output;
     pcl_conversions::fromPCL(cl, output);
 
     // Set the frame info
     output.header.frame_id = "camera_depth_optical_frame";
 
-    // Service call to clear the octomap
+    // Service call the octomap server and have the map cleared
     std_srvs::Empty srv;
     client.call(srv);
 
     // Publish the message
     pub.publish(output);
-
 
     // Update the viewer
     viewer->updatePointCloud<pcl::PointXYZ> (basic_cloud_ptr, "main cloud");
@@ -111,13 +121,13 @@ int main(int argc, char **argv)
     // Create service client
     client = nh.serviceClient<std_srvs::Empty>("/octomap_server/reset");
 
-    // Subscribe to topic with 1 message buffer
+    // Subscribe to processed_image
     ros::Subscriber sub = nh.subscribe("processed_image", 1, callback);
 
-    // Announce publisher with 1 message buffer
+    // Announce publisher
     pub = nh.advertise<sensor_msgs::PointCloud2>("camera/depth/points", 1);
 
-    // Prime the viewer with a point cloud and Initialize it
+    // Initialize the viewer with an empty point cloud
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_ptr (new pcl::PointCloud<pcl::PointXYZ>);
     viewer->addPointCloud<pcl::PointXYZ> (cloud_ptr, "main cloud");
     viewer->setBackgroundColor (0, 0, 0);
@@ -125,15 +135,20 @@ int main(int argc, char **argv)
     viewer->addCoordinateSystem (1.0);
     viewer->initCameraParameters ();
 
-    ros::Rate r(100);  // Run at 100Hz
+    // Create rate object
+    ros::Rate r(100);
 
-    // Spin until shutdown
+    // Spin until shutdown at set rate
     while(ros::ok())
     {
+        // Run ROS tasks
         ros::spinOnce();
+        // Update the viewer and allow interation
         viewer->spinOnce(100);
+        // Wait until time for next cycle
         r.sleep();
     }
 
+    // Exit normally
     return 0;
 }

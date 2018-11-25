@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 
 '''
-Accepts Trajectory messages and produces a GCode file based on the included trajectory data. Publishes a bool message as a flag to the next node in the pipeline.
-This script presumes that the machine has been properly homed and had the G54 workspace set up beforehand.
+This script contains a ROS node that accepts Trajectory messages and produces a GCode file based on the included trajectory data. Publishes a bool message as a notification to the next node in the pipeline.
+This script presumes that the CNC machine has been properly homed and had the G54 workspace set up beforehand. It will not make any safety checks on input coordinates.
+For more information on the appropriate format of Trajectory messages, see Trajectory.msg in the msgs directory.
 '''
 # TODO
-# Add workspace and machine space safety checks
+# Add workspace and machine space safety checks?
 
 
 import rospy

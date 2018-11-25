@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 
 '''
-Process an input String message into a list of lists and publish it as a Trajectory message
+This script contains a ROS node that will parse an input String message into a list of lists and publish it as a Trajectory message. This is to allow debugging, or manual input of simple trajectories.
+The input string should be formatted as a list of lists, using python notation. Each sub-list should contain an x,y,z coordinate and a time as decimal numbers: [x,y,z,t]
+
 Ex Input:
-'[[0.0,1.0,1.0,1.0],[0.1,1,2,1],[0.2,2,2,1]]'
+'[[0.0,1.0,1.0,1.0],[0.1,1.0,2.0,1.0],[0.2,2.0,2.0,1.0]]'
 '''
 
 
