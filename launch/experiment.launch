@@ -28,5 +28,5 @@
   <node name= "raw_image" pkg="image_view" type="image_view" args="image:=/raw_image" />
   <node name="processed_image" pkg="image_view" type="image_view" args="image:=/processed_image" />
 
-  <!--<node name="octomap_to_array_node" pkg="mill_controller" type="octomap_to_array" />-->
+  <node name="octomap_to_array_node" pkg="mill_controller" type="octomap_to_array" />
 </launch>
