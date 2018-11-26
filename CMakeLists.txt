@@ -110,7 +110,7 @@ catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES mill_controller
 #  CATKIN_DEPENDS roscpp sensor_msgs
-  CATKIN_DEPENDS message_runtime std_msgs
+  CATKIN_DEPENDS message_runtime std_msgs sensor_msgs
 #  DEPENDS system_lib
 )
 
@@ -126,8 +126,6 @@ include_directories(
 )
 include_directories(${OCTOMAP_INCLUDE_DIRS})
 include_directories(${PCL_INCLUDE_DIRS})
-# link_directories(${PCL_LIBRARY_DIRS})
-# add_definitions(${PCL_DEFINITIONS})
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
