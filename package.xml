@@ -2,12 +2,12 @@
 <package format="2">
   <name>mill_controller</name>
   <version>0.0.0</version>
-  <description>The mill_controller package</description>
+  <description>The mill_controller package contains a set of ROS nodes that will accept arbitrary trajectory input, command a CNC device to follow the trajectory, gather data about the outcome, and publish that data for usage in a feedback control loop.</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
   <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
-  <maintainer email="id314@todo.todo">id314</maintainer>
+  <maintainer email="IanDavis2018@u.northwestern.edu">Ian Davis</maintainer>
 
 
   <!-- One license tag required, multiple allowed, one license per tag -->
@@ -26,29 +26,44 @@
   <!-- Authors do not have to be maintainers, but could be -->
   <!-- Example: -->
   <!-- <author email="jane.doe@example.com">Jane Doe</author> -->
+  <author email="IanDavis2018@u.northwestern.edu">Ian Davis</author>
 
 
   <!-- The *depend tags are used to specify dependencies -->
   <!-- Dependencies can be catkin packages or system dependencies -->
   <!-- Examples: -->
   <!-- Use depend as a shortcut for packages that are both build and exec dependencies -->
-  <!--   <depend>roscpp</depend> -->
+    <!-- <depend>roscpp</depend> -->
   <!--   Note that this is equivalent to the following: -->
   <!--   <build_depend>roscpp</build_depend> -->
   <!--   <exec_depend>roscpp</exec_depend> -->
+  <depend>roscpp</depend>
+  <depend>std_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>cv_bridge</depend>
+  <depend>octomap</depend>
+  <exec_depend>octomap_server</exec_depend>
+
   <!-- Use build_depend for packages you need at compile time: -->
   <build_depend>message_generation</build_depend>
+  <build_depend>pcl</build_depend>
+
   <!-- Use build_export_depend for packages you need in order to build against this package: -->
   <!--   <build_export_depend>message_generation</build_export_depend> -->
+
   <!-- Use buildtool_depend for build tool packages: -->
   <!--   <buildtool_depend>catkin</buildtool_depend> -->
+  <buildtool_depend>catkin</buildtool_depend>
+
   <!-- Use exec_depend for packages you need at runtime: -->
+  <exec_depend>rospy</exec_depend>
   <exec_depend>message_runtime</exec_depend>
+
   <!-- Use test_depend for packages you need only for testing: -->
   <!--   <test_depend>gtest</test_depend> -->
   <!-- Use doc_depend for packages you need only for building documentation: -->
   <!--   <doc_depend>doxygen</doc_depend> -->
-  <buildtool_depend>catkin</buildtool_depend>
+
 
 
   <!-- The export tag contains other, unspecified, tags -->

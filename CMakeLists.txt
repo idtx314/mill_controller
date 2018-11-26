@@ -110,7 +110,7 @@ catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES mill_controller
 #  CATKIN_DEPENDS roscpp sensor_msgs
-  CATKIN_DEPENDS message_runtime
+  CATKIN_DEPENDS message_runtime std_msgs
 #  DEPENDS system_lib
 )
 
@@ -212,3 +212,13 @@ target_link_libraries(${PROJECT_NAME}_image_translator ${catkin_LIBRARIES} ${PCL
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+
+
+
+
+
+
+
+
+
