@@ -8,12 +8,12 @@ project(mill_controller)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
+  cv_bridge
+  message_generation
   roscpp
   rospy
-  std_msgs
   sensor_msgs
-  message_generation
-  cv_bridge)
+  std_msgs)
 find_package(octomap REQUIRED)
 find_package(PCL 1.2 REQUIRED)
 
@@ -53,8 +53,8 @@ find_package(PCL 1.2 REQUIRED)
 # Generate messages in the 'msg' folder
 add_message_files(
   FILES
-  Trajectory.msg
   Occupancy.msg
+  Trajectory.msg
 )
 
 ## Generate services in the 'srv' folder
@@ -110,7 +110,10 @@ catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES mill_controller
 #  CATKIN_DEPENDS roscpp sensor_msgs
-  CATKIN_DEPENDS message_runtime std_msgs sensor_msgs
+  CATKIN_DEPENDS
+  message_runtime
+  sensor_msgs
+  std_msgs
 #  DEPENDS system_lib
 )
 
@@ -177,10 +180,11 @@ target_link_libraries(${PROJECT_NAME}_image_translator ${catkin_LIBRARIES} ${PCL
 #   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
 install(PROGRAMS
+  nodes/gcode_sender
+  nodes/image_collector
+  nodes/image_processor
   nodes/string_parser
   nodes/trajectory_parser
-  nodes/image_collector nodes/gcode_sender
-  nodes/image_processor
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 ## Mark executables and/or libraries for installation

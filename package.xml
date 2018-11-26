@@ -2,7 +2,7 @@
 <package format="2">
   <name>mill_controller</name>
   <version>0.0.0</version>
-  <description>The mill_controller package contains a set of ROS nodes that will accept arbitrary trajectory input, command a CNC device to follow the trajectory, gather data about the outcome, and publish that data for usage in a feedback control loop.</description>
+  <description>A pipeline of ROS nodes that will process arbitrary trajectory input into gcode, transmit the GCode to a CNC device over USB, gather data about the outcome, and publish that data for usage in a feedback control loop.</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <maintainer email="IanDavis2018@u.northwestern.edu">Ian Davis</maintainer>
