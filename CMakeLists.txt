@@ -176,13 +176,14 @@ target_link_libraries(${PROJECT_NAME}_image_translator ${catkin_LIBRARIES} ${PCL
 #   scripts/my_python_script
 #   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
+install(PROGRAMS
+  nodes/string_parser
+  nodes/trajectory_parser
+  nodes/image_collector nodes/gcode_sender
+  nodes/image_processor
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_node
-#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
 install(TARGETS ${PROJECT_NAME}_octomap_to_array
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
