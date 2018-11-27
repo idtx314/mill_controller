@@ -1,0 +1,17 @@
+<launch>
+
+  <!-- USB Camera Driver -->
+  <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" />
+    <param name="usb_cam/video_device" value="/dev/video1" />
+    <param name="usb_cam/pixel_format" value="yuyv" />
+    <param name="usb_cam/camera_name" value="tracker_camera" />
+
+  <!-- New Output Pipeline Nodes -->
+  <node name="image_collector_node" pkg="mill_controller" type="image_collector" />
+  <node name="image_processor_node" pkg="mill_controller" type="image_processor" />
+
+  <!-- Rviz for visualizing -->
+  <node name= "raw_image" pkg="image_view" type="image_view" args="image:=/raw_image" />
+  <node name="processed_image" pkg="image_view" type="image_view" args="image:=/processed_image" />
+
+</launch>
