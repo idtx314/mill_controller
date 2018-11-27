@@ -66,7 +66,7 @@ def callback(message):
 
     s = s + 'G1 Z-15 F50' + '\n'       # Move bit out of harms way
     s = s + 'G0 Z0' + '\n'
-    s = s + 'G0 X330 Y228' + '\n'
+    s = s + 'G0 X450 Y350' + '\n'
 
     s = s + 'G4 P0.1' + '\n'                # Dwell for a moment
     f.write(s)                              # Write to file
