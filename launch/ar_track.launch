@@ -17,4 +17,18 @@
         <remap from="camera_info"   to="$(arg cam_info_topic)" />
     </node>
 
+  <!-- USB Camera Driver -->
+  <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" />
+    <param name="usb_cam/video_device" value="/dev/video0" />
+    <param name="usb_cam/pixel_format" value="yuyv" />
+    <param name="usb_cam/camera_name" value="tracker_camera" />
+
+    <node name="rviz" pkg="rviz" type="rviz" />
+
+
+    <node name="base_to_head_camera" pkg="tf" type="static_transform_publisher" args="0 0 0 0 0 0 base head_camera 100" />
+
+
+
+
 </launch>
