@@ -18,6 +18,7 @@ converter = CvBridge()
 
 # Set threshold for color processing
 threshold = 500
+# Declare global variables for homography, width, and height
 
 
 def callback(input):
@@ -28,6 +29,8 @@ def callback(input):
 
     # Make a copy, as the original image will not be editable after conversion
     cv_image = cv_image.copy()
+
+    # Apply a homography to warp the new image to match the reference
 
     # Perform visual processing on the image to extract relevant data.
     # Extract a tuple containing the number of (rows, columns, channels).
@@ -68,6 +71,11 @@ def callback(input):
 
 
 def main():
+    # Collect an image from the camera
+
+    # Calculate the homography between the new image and the reference
+    # Save homography, reference width and height into global variable
+
     # Initialize the ROS node and Subscriber
     rospy.init_node("image_processor_node")
     rospy.Subscriber('raw_image',Image,callback)
