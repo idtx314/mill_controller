@@ -3,7 +3,9 @@
 """
 This script contains a ROS node that will receive Image messages over the topic 'raw_image', convert them into OpenCV images, perform computer vision tasks, currently placeholder, convert them back into Image messages and publish them on the topic 'processed_image'.
 """
-
+import os
+import sys
+import rospkg
 import rospy
 import cv2
 import numpy as np
@@ -87,7 +89,9 @@ def setup_callback(input):
     # Convert new image using bgr8 encoding(?).
     cam_img = converter.imgmsg_to_cv2(input,"bgr8")
     # Read in reference image
-    ref_img = cv2.imread("tags_r.jpg", cv2.IMREAD_COLOR)
+    rospack = rospkg.RosPack()
+    path = rospack.get_path('mill_controller') + '/images/tags_r.jpg'
+    ref_img = cv2.imread(path, cv2.IMREAD_COLOR)
 
 
     # Convert images to grayscale
@@ -141,6 +145,10 @@ def setup_callback(input):
 def main():
     # Initialize ROS node
     rospy.init_node("image_processor_node")
+
+    rospy.loginfo(os.path.dirname(os.path.realpath(__file__)))
+
+    sys.exit(0)
 
     # This may be the most complex addition. I'm going to create a subscriber that pulls directly from the driver. That will keep the path separate from the existing pipeline. The script will loop spinonce until h is not None. Within the callback I will determine the homography, width, and height. The loop will then be broken, and the next step will be to unsubscribe. After that initialization the node will proceed as before.
 
