@@ -49,15 +49,15 @@ def alignImages(im1, im2):
   height, width, channels = im2.shape
   im1Reg = cv2.warpPerspective(im1, h, (width, height))
 
-  # Use homography on another image from the same scene
-  for count in range(6,15,2):
-    s = "mill_cam_" + str(count) + ".jpg"
-    im3 = cv2.imread(s, cv2.IMREAD_COLOR)
-    im3Reg = cv2.warpPerspective(im3, h, (width, height))
+  # # Use homography on another image from the same scene
+  # for count in range(6,15,2):
+  #   s = "mill_cam_" + str(count) + ".jpg"
+  #   im3 = cv2.imread(s, cv2.IMREAD_COLOR)
+  #   im3Reg = cv2.warpPerspective(im3, h, (width, height))
 
-    # Save bonus image
-    s = "mill_cam_" + str(count) + "_a.jpg"
-    cv2.imwrite(s, im3Reg)
+  #   # Save bonus image
+  #   s = "mill_cam_" + str(count) + "_a.jpg"
+  #   cv2.imwrite(s, im3Reg)
 
 
   return im1Reg, h

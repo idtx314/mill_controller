@@ -24,10 +24,6 @@ def callback(input):
     s = "mill_cam_" + str(counter) + ".jpg"
     cv2.imwrite(s,cv_image)
 
-# TODO
-# Correct rgb->bgr
-# Rotate image, camera, or paper
-
 
 
 
