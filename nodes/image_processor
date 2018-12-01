@@ -78,13 +78,14 @@ def setup_callback(input):
     # Read in reference image
     ref_img = cv2.imread("tags_r.jpg", cv2.IMREAD_COLOR)
 
-    # Debug output current images
-    cv2.imwrite("cam_img.jpg",cam_img)
-    cv2.imwrite("ref_img.jpg",ref_img)
 
     # Convert images to grayscale
     cam_img_gray = cv2.cvtColor(cam_img, cv2.COLOR_BGR2GRAY)
     ref_img_gray = cv2.cvtColor(ref_img, cv2.COLOR_BGR2GRAY)
+
+    # Debug output current images
+    cv2.imwrite("cam_img.jpg",cam_img_gray)
+    cv2.imwrite("ref_img.jpg",ref_img_gray)
 
     # Detect features
     # Match features
