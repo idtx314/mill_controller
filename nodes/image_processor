@@ -32,16 +32,19 @@ def callback(input):
     # The callback accepts an Image message, performs visual processing and masking on it, and publishes the result. Exact processing is placeholder. I'm going to start by assuming the presence of material at every location in the frame except where darker colors are present. Darker pixels will then be changed to black, non-dark pixels will be made white.
 
     # Translate Image message into a cv2 image using existing encoding. The image will revert to a more general CV encoding, like 8UC3.
-    cv_image = converter.imgmsg_to_cv2(input,"passthrough")
+    cv_image = converter.imgmsg_to_cv2(input,"bgr8")
 
     # Make a copy, as the original image will not be editable after conversion
     cv_image = cv_image.copy()
 
     # Apply a homography to warp the new image to match the reference
+    # Debug apply homography and save output
+    aligned_cv_image = cv2.warpPerspective(cv_image, _h, (_width, _height))
+    cv2.imwrite("aligned_image.jpg",aligned_cv_image)
 
     # Perform visual processing on the image to extract relevant data.
     # Extract a tuple containing the number of (rows, columns, channels).
-    (rows,cols,chans)  = cv_image.shape
+    (rows,cols,chans)  = aligned_cv_image.shape
 
     # Cycle through each row
     for row in range(rows):
@@ -51,21 +54,21 @@ def callback(input):
             # Cycle through each channel
             for chan in range(chans):
                 # Sum the intensity of the channels
-                total += cv_image.item(row,col,chan)
+                total += aligned_cv_image.item(row,col,chan)
 
             # Cycle through each channel
             for chan in range(chans):
                 # If the total intensity is less than the threshold
                 if (total < threshold):
                     # Set color to black
-                    cv_image.itemset((row,col,chan),0)
+                    aligned_cv_image.itemset((row,col,chan),0)
                 else:
                     # Set the color to white
-                    cv_image.itemset((row,col,chan),255)
+                    aligned_cv_image.itemset((row,col,chan),255)
 
 
     # Translate cv2 image back to an Image message using existing encoding. This will be a generic encoding like 8UC3.
-    msg = converter.cv2_to_imgmsg(cv_image,"passthrough")
+    msg = converter.cv2_to_imgmsg(aligned_cv_image,"passthrough")
 
     # Assert encoding. CV generally uses bgr8.
     msg.encoding = "bgr8"
