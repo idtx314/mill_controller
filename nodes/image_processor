@@ -79,6 +79,9 @@ def setup_callback(input):
 
 
 def main():
+    # Initialize ROS node
+    rospy.init_node("image_processor_node")
+
     # This may be the most complex addition. I'm going to create a subscriber that pulls directly from the driver. That will keep the path separate from the existing pipeline. The script will loop spinonce until h is not None. Within the callback I will determine the homography, width, and height. The loop will then be broken, and the next step will be to unsubscribe. After that initialization the node will proceed as before.
 
     # Initialize a subscriber directly to the camera driver
@@ -89,8 +92,7 @@ def main():
 
 
 
-    # Initialize the ROS node and Subscriber
-    rospy.init_node("image_processor_node")
+    # Initialize Main Subscriber
     rospy.Subscriber('raw_image',Image,callback)
 
     # Spin until shut down
