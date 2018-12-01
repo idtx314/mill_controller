@@ -131,12 +131,6 @@ def setup_callback(input):
     # cv2.imwrite("matches.jpg", imMatches)
 
 
-    # Save homography
-    _h = 1
-
-    # Use homography
-    # Save aligned image to disk
-
 
 
 
@@ -151,13 +145,13 @@ def main():
     sub = rospy.Subscriber('usb_cam/image_raw',Image,setup_callback)
 
     # Wait for setup_callback to activate and set _h
-    while (_h == None) and (not rospy.is_shutdown()):
+    while (np.any(_h == None)) and (not rospy.is_shutdown()):
         rospy.sleep(1)
         print("waiting")
 
     # Debug output
-    s = "_h is: \n" #+ str(_h)
-    print(s, _h)
+    print "_h is:"
+    print _h
 
     # Unsubscribe and deconstruct subscriber
     sub.unregister()
