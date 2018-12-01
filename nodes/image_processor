@@ -3,8 +3,7 @@
 """
 This script contains a ROS node that will receive Image messages over the topic 'raw_image', convert them into OpenCV images, perform computer vision tasks, currently placeholder, convert them back into Image messages and publish them on the topic 'processed_image'.
 """
-import os
-import sys
+
 import rospkg
 import rospy
 import cv2
@@ -41,7 +40,7 @@ def callback(input):
 
     # Apply a homography to warp the new image to match the reference
     # Debug apply homography and save output
-    aligned_cv_image = cv2.warpPerspective(cv_image, _h, (_width, _height))
+    aligned_cv_image = cv2.warpPerspective(cv_image, _h, (640, 480))
     cv2.imwrite("aligned_image.jpg",aligned_cv_image)
 
     # Perform visual processing on the image to extract relevant data.
@@ -145,10 +144,6 @@ def setup_callback(input):
 def main():
     # Initialize ROS node
     rospy.init_node("image_processor_node")
-
-    rospy.loginfo(os.path.dirname(os.path.realpath(__file__)))
-
-    sys.exit(0)
 
     # This may be the most complex addition. I'm going to create a subscriber that pulls directly from the driver. That will keep the path separate from the existing pipeline. The script will loop spinonce until h is not None. Within the callback I will determine the homography, width, and height. The loop will then be broken, and the next step will be to unsubscribe. After that initialization the node will proceed as before.
 
