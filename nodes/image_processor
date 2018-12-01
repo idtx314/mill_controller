@@ -73,8 +73,25 @@ def setup_callback(input):
     # Calculate the homography between the new image and the reference
     # Save homography, reference width and height into global variable
 
+    # Convert new image
+    # Read in reference image
+
+    # Align the images
+    # Convert images to grayscale
+    # Detect features
+    # Match features
+    # Rank and Cull matches
+    # Produce lists of match coordinates
+    # Find homography
+
+
+
+    # Save homography
     global _h
     _h = 1
+
+    # Use homography
+    # Save aligned image to disk
 
 
 
@@ -95,8 +112,8 @@ def main():
         print("waiting")
 
     # Debug output
-    s = "_h is " + str(_h)
-    print(s)
+    s = "_h is: \n" #+ str(_h)
+    print(s, h)
 
     # Unsubscribe and deconstruct subscriber
     sub.unregister()
