@@ -6,6 +6,7 @@ This script contains a ROS node that will receive Image messages over the topic 
 
 import rospy
 import cv2
+import numpy as np
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
 
@@ -77,6 +78,9 @@ def setup_callback(input):
     # Calculate the homography between the new image and the reference
     # Save homography, reference width and height into global variable
 
+    # Declare the use of global _h
+    global _h, _width, _height
+
     # Convert new image using bgr8 encoding(?).
     cam_img = converter.imgmsg_to_cv2(input,"bgr8")
     # Read in reference image
@@ -101,20 +105,33 @@ def setup_callback(input):
     numGoodMatches = int(len(matches) * GOOD_MATCH_PERCENT)
     matches = matches[:numGoodMatches]
 
-    # Draw top matches
-    imMatches = cv2.drawMatches(cam_img, keypoints1, ref_img, keypoints2, matches, None)
-    cv2.imwrite("matches.jpg", imMatches)
-
     # Produce lists of match coordinates
-    # Find homography
+    points1 = np.zeros((len(matches), 2), dtype=np.float32)
+    points2 = np.zeros((len(matches), 2), dtype=np.float32)
 
+    for i, match in enumerate(matches):
+        points1[i, :] = keypoints1[match.queryIdx].pt
+        points2[i, :] = keypoints2[match.trainIdx].pt
 
-    # Debug output current images
-    cv2.imwrite("cam_img.jpg",cam_img_gray)
-    cv2.imwrite("ref_img.jpg",ref_img_gray)
+    # Find homography using RANSAC algorithm
+    _h, mask = cv2.findHomography(points1, points2, cv2.RANSAC)
+    # Set globals width, height. Channels will be discarded.
+    _height, _width, channels = ref_img.shape
+
+    # Debug apply homography and save output
+    cam_img_aligned = cv2.warpPerspective(cam_img, _h, (_width, _height))
+    cv2.imwrite("aligned_image.jpg",cam_img_aligned)
+
+    # # Debug output current images
+    # cv2.imwrite("cam_img.jpg",cam_img_gray)
+    # cv2.imwrite("ref_img.jpg",ref_img_gray)
+
+    # # Debug draw top matches
+    # imMatches = cv2.drawMatches(cam_img, keypoints1, ref_img, keypoints2, matches, None)
+    # cv2.imwrite("matches.jpg", imMatches)
+
 
     # Save homography
-    global _h
     _h = 1
 
     # Use homography
