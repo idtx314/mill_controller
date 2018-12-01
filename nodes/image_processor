@@ -18,8 +18,9 @@ converter = CvBridge()
 
 # Set threshold for color processing
 threshold = 500
-# Declare global variables for homography, width, and height
-# Can initialize all to None
+
+# Initialize global variables for homography, width, and height to None
+_h = _width = _height = None
 
 
 def callback(input):
@@ -72,7 +73,8 @@ def setup_callback(input):
     # Calculate the homography between the new image and the reference
     # Save homography, reference width and height into global variable
 
-    pass
+    global _h
+    _h = 1
 
 
 
@@ -84,13 +86,23 @@ def main():
 
     # This may be the most complex addition. I'm going to create a subscriber that pulls directly from the driver. That will keep the path separate from the existing pipeline. The script will loop spinonce until h is not None. Within the callback I will determine the homography, width, and height. The loop will then be broken, and the next step will be to unsubscribe. After that initialization the node will proceed as before.
 
-    # Initialize a subscriber directly to the camera driver
+    # Initialize a subscriber to the camera driver. Hang on to the object for this one.
+    sub = rospy.Subscriber('usb_cam/image_raw',Image,setup_callback)
 
-    # while H == None, spin
+    # Wait for setup_callback to activate and set _h
+    while (_h == None) and not rospy.is_shutdown():
+        try:
+            rospy.sleep(1)
+            print("waiting")
+        except ROSInterruptException:
+            print("Exiting")
+            sys.exit(0)
+
+    print _h
 
     # Unsubscribe and deconstruct subscriber
-
-
+    sub.unregister()
+    del sub
 
     # Initialize Main Subscriber
     rospy.Subscriber('raw_image',Image,callback)
