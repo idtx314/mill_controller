@@ -90,15 +90,13 @@ def main():
     sub = rospy.Subscriber('usb_cam/image_raw',Image,setup_callback)
 
     # Wait for setup_callback to activate and set _h
-    while (_h == None) and not rospy.is_shutdown():
-        try:
-            rospy.sleep(1)
-            print("waiting")
-        except ROSInterruptException:
-            print("Exiting")
-            sys.exit(0)
+    while (_h == None) and (not rospy.is_shutdown()):
+        rospy.sleep(1)
+        print("waiting")
 
-    print _h
+    # Debug output
+    s = "_h is " + str(_h)
+    print(s)
 
     # Unsubscribe and deconstruct subscriber
     sub.unregister()
