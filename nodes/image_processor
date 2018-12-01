@@ -22,6 +22,10 @@ threshold = 500
 # Initialize global variables for homography, width, and height to None
 _h = _width = _height = None
 
+# Constants
+MAX_FEATURES = 500
+GOOD_MATCH_PERCENT = 0.67
+
 
 def callback(input):
     # The callback accepts an Image message, performs visual processing and masking on it, and publishes the result. Exact processing is placeholder. I'm going to start by assuming the presence of material at every location in the frame except where darker colors are present. Darker pixels will then be changed to black, non-dark pixels will be made white.
@@ -83,17 +87,31 @@ def setup_callback(input):
     cam_img_gray = cv2.cvtColor(cam_img, cv2.COLOR_BGR2GRAY)
     ref_img_gray = cv2.cvtColor(ref_img, cv2.COLOR_BGR2GRAY)
 
-    # Debug output current images
-    cv2.imwrite("cam_img.jpg",cam_img_gray)
-    cv2.imwrite("ref_img.jpg",ref_img_gray)
+    # Detect ORB features and compute descriptors.
+    orb = cv2.ORB_create(MAX_FEATURES)
+    keypoints1, descriptors1 = orb.detectAndCompute(cam_img_gray, None)
+    keypoints2, descriptors2 = orb.detectAndCompute(ref_img_gray, None)
 
-    # Detect features
     # Match features
+    matcher = cv2.DescriptorMatcher_create(cv2.DESCRIPTOR_MATCHER_BRUTEFORCE_HAMMING)
+    matches = matcher.match(descriptors1, descriptors2, None)
+
     # Rank and Cull matches
+    matches.sort(key=lambda x: x.distance, reverse=False)
+    numGoodMatches = int(len(matches) * GOOD_MATCH_PERCENT)
+    matches = matches[:numGoodMatches]
+
+    # Draw top matches
+    imMatches = cv2.drawMatches(cam_img, keypoints1, ref_img, keypoints2, matches, None)
+    cv2.imwrite("matches.jpg", imMatches)
+
     # Produce lists of match coordinates
     # Find homography
 
 
+    # Debug output current images
+    cv2.imwrite("cam_img.jpg",cam_img_gray)
+    cv2.imwrite("ref_img.jpg",ref_img_gray)
 
     # Save homography
     global _h
