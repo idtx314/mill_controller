@@ -40,8 +40,10 @@ def callback(input):
 
     # Apply a homography to warp the new image to match the reference
     # Debug apply homography and save output
-    aligned_cv_image = cv2.warpPerspective(cv_image, _h, (640, 480))
+    aligned_cv_image = cv2.warpPerspective(cv_image, _h, (_width, _height))
     cv2.imwrite("aligned_image.jpg",aligned_cv_image)
+
+    print(_width)
 
     # Perform visual processing on the image to extract relevant data.
     # Extract a tuple containing the number of (rows, columns, channels).
@@ -153,11 +155,6 @@ def main():
     # Wait for setup_callback to activate and set _h
     while (np.any(_h == None)) and (not rospy.is_shutdown()):
         rospy.sleep(1)
-        print("waiting")
-
-    # Debug output
-    print "_h is:"
-    print _h
 
     # Unsubscribe and destroy subscriber
     sub.unregister()
