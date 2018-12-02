@@ -68,7 +68,7 @@ void callback(const octomap_msgs::Octomap &msg)
     memset(arr, '\0', xmax*ymax*zmax);
 
     // Create index values
-    int xind=0, yind=0, zind=0;
+    long xind=0, yind=0, zind=0;
     // Create Occupancy message
     mill_controller::Occupancy oc_msg;
 
@@ -80,9 +80,9 @@ void callback(const octomap_msgs::Octomap &msg)
     {
         // convert the node center coords to integer indexes for the array.
             // index = (value-MetricMin)/res-0.5
-        xind = (it.getX()-xmin)/res - 0.499999;
-        yind = (it.getY()-ymin)/res - 0.499999;
-        zind = (it.getZ()-zmin)/res - 0.499999;
+        xind = std::lround((it.getX()-xmin)/res - 0.5);
+        yind = std::lround((it.getY()-ymin)/res - 0.5);
+        zind = std::lround((it.getZ()-zmin)/res - 0.5);
 
         // if node is occupied
         if(octree->isNodeOccupied(*it))
