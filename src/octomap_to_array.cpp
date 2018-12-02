@@ -44,15 +44,19 @@ void callback(const octomap_msgs::Octomap &msg)
     // Determine x,y,z dimensions and translate into needed array size
     double x, y, z;
     double xmin, ymin, zmin;
+    long xmax, ymax, zmax;
     char s[100];
     octree->getMetricSize(x, y, z);
     octree->getMetricMin(xmin, ymin, zmin);
     x = x/res;
     y = y/res;
     z = z/res;
-    // I need to convert x,y,z into integers to provide the size of the array. In hypothesis they will always be integers, but due to precision limits they will sometimes be very slightly lower than than the appropriate integer value. This causes them to be truncated to a lower value when converted.
-    // Can I assume that octomap sizes/res will always be an integer value?
-    // Octomap measurements are measurements of all space in meters. Since resolution will dictate the smallest unit increments of the space (I think) I should be able to rely on the result always being an integer value.
+
+    xmax = std::lround(x);
+    ymax = std::lround(y);
+    zmax = std::lround(z);
+
+    ROS_INFO("xm: %ld ym: %ld zm: %ld\nx:%f y:%f z:%f\n",xmax, ymax, zmax, x, y, z);
 
 
     // Allocate memory for a 3 dimension char array with dimensions based on octomap size. Coordinate axes follow standard depth image protocol. From reference viewpoint: x to right, y down, z into image.
@@ -144,7 +148,6 @@ void callback(const octomap_msgs::Octomap &msg)
 
 int main(int argc, char** argv)
 {
-    std::lround(3.5);
 
     // Initilize marker message
     rviz_msg.header.frame_id = "base";
