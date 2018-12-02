@@ -51,9 +51,8 @@ void callback(const octomap_msgs::Octomap &msg)
     y = y/res;
     z = z/res;
     // I need to convert x,y,z into integers to provide the size of the array. In hypothesis they will always be integers, but due to precision limits they will sometimes be very slightly lower than than the appropriate integer value. This causes them to be truncated to a lower value when converted.
-    // So far I have been adding a small amount before casting, but this feels imprecise.
-    // I want to come away with a number that is equal to or larger than the dimensions of the octomap
-    // Can I assume that octomap sizes/res will always be an int?
+    // Can I assume that octomap sizes/res will always be an integer value?
+    // Octomap measurements are measurements of all space in meters. Since resolution will dictate the smallest unit increments of the space (I think) I should be able to rely on the result always being an integer value.
 
 
     // Allocate memory for a 3 dimension char array with dimensions based on octomap size. Coordinate axes follow standard depth image protocol. From reference viewpoint: x to right, y down, z into image.
