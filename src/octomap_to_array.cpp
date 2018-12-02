@@ -12,6 +12,7 @@ set up package.xml
 
 // Includes
 #include<cmath>
+#include<vector>
 #include<ros/ros.h>
 #include<mill_controller/Occupancy.h>
 #include<sensor_msgs/PointCloud2.h>
