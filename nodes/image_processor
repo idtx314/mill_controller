@@ -39,11 +39,7 @@ def callback(input):
     cv_image = cv_image.copy()
 
     # Apply a homography to warp the new image to match the reference
-    # Debug apply homography and save output
     aligned_cv_image = cv2.warpPerspective(cv_image, _h, (_width, _height))
-    cv2.imwrite("aligned_image.jpg",aligned_cv_image)
-
-    print(_width)
 
     # Perform visual processing on the image to extract relevant data.
     # Extract a tuple containing the number of (rows, columns, channels).
@@ -126,19 +122,6 @@ def setup_callback(input):
     # Set globals width, height. Channels will be discarded.
     _height, _width, channels = ref_img.shape
 
-    # # Debug apply homography and save output
-    # cam_img_aligned = cv2.warpPerspective(cam_img, _h, (_width, _height))
-    # cv2.imwrite("aligned_image.jpg",cam_img_aligned)
-
-    # # Debug output current images
-    # cv2.imwrite("cam_img.jpg",cam_img_gray)
-    # cv2.imwrite("ref_img.jpg",ref_img_gray)
-
-    # # Debug draw top matches
-    # imMatches = cv2.drawMatches(cam_img, keypoints1, ref_img, keypoints2, matches, None)
-    # cv2.imwrite("matches.jpg", imMatches)
-
-
 
 
 
@@ -146,8 +129,6 @@ def setup_callback(input):
 def main():
     # Initialize ROS node
     rospy.init_node("image_processor_node")
-
-    # This may be the most complex addition. I'm going to create a subscriber that pulls directly from the driver. That will keep the path separate from the existing pipeline. The script will loop spinonce until h is not None. Within the callback I will determine the homography, width, and height. The loop will then be broken, and the next step will be to unsubscribe. After that initialization the node will proceed as before.
 
     # Initialize a subscriber to the camera driver. Hang on to the object for this one.
     sub = rospy.Subscriber('usb_cam/image_raw',Image,setup_callback)
