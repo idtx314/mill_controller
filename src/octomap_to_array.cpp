@@ -62,10 +62,10 @@ void callback(const octomap_msgs::Octomap &msg)
     // Allocate memory for a 3 dimension char array with dimensions based on octomap size. Coordinate axes follow standard depth image protocol. From reference viewpoint: x to right, y down, z into image.
         // size of array dimension is maximum index + 1 || MetricSize/res
         // Add very small amount to eliminate float precision issue. Floats were being truncated to a number below their proper value.
-    char arr[(int)(x+.000001)][(int)(y+.000001)][(int)(z+.000001)];
+    char arr[xmax][ymax][zmax];
 
     // Loop through array and set all values to 0. Both unknown and empty space will be 0 this way.
-    memset(arr, '\0', (int)(x+.000001)*(int)(y+.000001)*(int)(z+.000001));
+    memset(arr, '\0', xmax*ymax*zmax);
 
     // Create index values
     int xind=0, yind=0, zind=0;
@@ -106,11 +106,11 @@ void callback(const octomap_msgs::Octomap &msg)
     geometry_msgs::Point p;
 
     // Print array and populate marker message
-    for(int dep=0; dep<(int)(z+.000001); dep++) //Cycle through depths
+    for(int dep=0; dep<zmax; dep++) //Cycle through depths
     {
-        for(int row=0; row<(int)(y+.000001); row++) //Cycle through rows
+        for(int row=0; row<ymax; row++) //Cycle through rows
         {
-            for(int col=0; col<(int)(x+.000001); col++) //Cycle through columns
+            for(int col=0; col<xmax; col++) //Cycle through columns
             {
                 // Print value at this index to console
                 printf("%d",arr[col][row][dep]);
@@ -132,9 +132,9 @@ void callback(const octomap_msgs::Octomap &msg)
     }
 
     // Add the array dimensions to the message
-    oc_msg.width = (int)(x+.000001);
-    oc_msg.height = (int)(y+.000001);
-    oc_msg.depth = (int)(z+.000001);
+    oc_msg.width = xmax;
+    oc_msg.height = ymax;
+    oc_msg.depth = zmax;
 
     // Time stamp marker message
     rviz_msg.header.stamp = ros::Time(); //Sets to time zero, if not displaying try ros::Time::now()
