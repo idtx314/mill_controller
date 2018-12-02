@@ -56,8 +56,6 @@ void callback(const octomap_msgs::Octomap &msg)
     ymax = std::lround(y);
     zmax = std::lround(z);
 
-    ROS_INFO("xm: %ld ym: %ld zm: %ld\nx:%f y:%f z:%f\n",xmax, ymax, zmax, x, y, z);
-
 
     // Allocate memory for a 3 dimension char array with dimensions based on octomap size. Coordinate axes follow standard depth image protocol. From reference viewpoint: x to right, y down, z into image.
         // size of array dimension is maximum index + 1 || MetricSize/res
