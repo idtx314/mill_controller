@@ -145,7 +145,7 @@ int main(int argc, char** argv)
     rviz_msg.id = 10;
     rviz_msg.type = visualization_msgs::Marker::POINTS;
     rviz_msg.pose.position.x = 0;
-    rviz_msg.pose.position.y = 2;
+    rviz_msg.pose.position.y = 0;
     rviz_msg.pose.position.z = 0;
     rviz_msg.pose.orientation.x = 0.0;
     rviz_msg.pose.orientation.y = 0.0;
