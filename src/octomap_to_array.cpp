@@ -132,10 +132,11 @@ void callback(const octomap_msgs::Octomap &msg)
             {
 
                 printf("%d, %d, %d\n", i, j, k);
-                // Calculate corresponding point in space
+                // Calculate corresponding node centerpoint in x,y,z coords
                 xcoord = (i + 0.5)*res + xmin;
                 ycoord = (j + 0.5)*res + ymin;
                 zcoord = (k + 0.5)*res + zmin;
+                printf("%f, %f, %f\n", xcoord, ycoord, zcoord);
 
                 // Search the octomap for a node at this centerpoint
                 octomap::OcTreeNode* result;
