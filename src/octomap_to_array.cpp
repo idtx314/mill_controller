@@ -63,6 +63,36 @@ void callback(const octomap_msgs::Octomap &msg)
         // Add very small amount to eliminate float precision issue. Floats were being truncated to a number below their proper value.
     char arr[xmax][ymax][zmax];
 
+    // Create vector of vectors to hold occupancy data.
+    std::vector<std::vector<std::vector<char>>> arr2;
+
+    // Set dimensions of array.
+    arr2.resize(xmax);
+    for(int i=0; i < xmax; i++)
+    {
+        arr2[i].resize(ymax);
+        for(int j=0; j < ymax; j++)
+        {
+            arr2[i][j].resize(zmax);
+            // Set contents of each vector to 1
+            arr2[i][j].assign(zmax,1);
+        }
+    }
+
+    for(int k=0; k < zmax; k++)
+    {
+        for(int j=0; j < ymax; j++)
+        {
+            for(int i=0; i < xmax; i++)
+            {
+                printf("%d",arr2[i][j][k];)
+            }
+            printf("\n");
+        }
+        printf("\n\n");
+    }
+
+
     // Loop through array and set all values to 0. Both unknown and empty space will be 0 this way.
     memset(arr, '\0', xmax*ymax*zmax);
 
@@ -112,7 +142,7 @@ void callback(const octomap_msgs::Octomap &msg)
             for(int col=0; col<xmax; col++) //Cycle through columns
             {
                 // Print value at this index to console
-                printf("%d",arr[col][row][dep]);
+                // printf("%d",arr[col][row][dep]);
                 // If the index represents occupied space
                 if(arr[col][row][dep])
                 {
@@ -124,10 +154,10 @@ void callback(const octomap_msgs::Octomap &msg)
                 }
             }
             // Start new row in console
-            printf("\n");
+            // printf("\n");
         }
         // Start new layer in console
-        printf("\n\n");
+        // printf("\n\n");
     }
 
     // Add the array dimensions to the message
