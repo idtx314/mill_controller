@@ -85,12 +85,13 @@ void callback(const octomap_msgs::Octomap &msg)
         {
             for(int i=0; i < xmax; i++)
             {
-                printf("%d",arr2[i][j][k];)
+                printf("%d",arr2[i][j][k]);
             }
             printf("\n");
         }
         printf("\n\n");
     }
+    printf("%ld %ld %ld\n",xmax,ymax,zmax);
 
 
     // Loop through array and set all values to 0. Both unknown and empty space will be 0 this way.

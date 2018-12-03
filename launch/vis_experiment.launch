@@ -2,7 +2,7 @@
 
   <!-- USB Camera Driver -->
   <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" />
-    <param name="usb_cam/video_device" value="/dev/video1" />
+    <param name="usb_cam/video_device" value="/dev/video0" />
     <param name="usb_cam/pixel_format" value="yuyv" />
     <param name="usb_cam/camera_name" value="mill_camera" />
 
