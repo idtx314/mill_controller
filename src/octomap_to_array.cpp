@@ -130,6 +130,8 @@ void callback(const octomap_msgs::Octomap &msg)
             // For each column
             for(int i=0; i < xmax; i++)
             {
+
+                printf("%d, %d, %d\n", i, j, k);
                 // Calculate corresponding point in space
                 xcoord = (i + 0.5)*res + xmin;
                 ycoord = (j + 0.5)*res + ymin;
