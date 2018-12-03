@@ -79,20 +79,6 @@ void callback(const octomap_msgs::Octomap &msg)
         }
     }
 
-    for(int k=0; k < zmax; k++)
-    {
-        for(int j=0; j < ymax; j++)
-        {
-            for(int i=0; i < xmax; i++)
-            {
-                printf("%d",arr2[i][j][k]);
-            }
-            printf("\n");
-        }
-        printf("\n\n");
-    }
-    printf("%ld %ld %ld\n",xmax,ymax,zmax);
-
 
     // Loop through array and set all values to 0. Both unknown and empty space will be 0 this way.
     memset(arr, '\0', xmax*ymax*zmax);
@@ -131,6 +117,56 @@ void callback(const octomap_msgs::Octomap &msg)
             oc_msg.layer.push_back(zind);
         }
     }
+
+    double xcoord, ycoord, zcoord;
+
+    // For each index coordinate in the vector array, set the coordinate based on octomap data.
+    // For each depth
+    for(int k=0; k < zmax; k++)
+    {
+        // For each row
+        for(int j=0; j < ymax; j++)
+        {
+            // For each column
+            for(int i=0; i < xmax; i++)
+            {
+                // Calculate corresponding point in space
+                xcoord = (i + 0.5)*res + xmin;
+                ycoord = (j + 0.5)*res + ymin;
+                zcoord = (k + 0.5)*res + zmin;
+
+                // Search the octomap for a node at this centerpoint
+                octomap::OcTreeNode* result;
+                result = octree->search(xcoord, ycoord, zcoord);
+
+                // If node exists
+                if(result)
+                {
+                    // If node is unoccupied
+                    if(!octree->isNodeOccupied(result))
+                    {
+                        // Change element to 0
+                        arr2[i][j][k] = 0;
+                    }
+                }
+            }
+        }
+    }
+
+    // Debug vector array print
+    for(int k=0; k < zmax; k++)
+    {
+        for(int j=0; j < ymax; j++)
+        {
+            for(int i=0; i < xmax; i++)
+            {
+                printf("%d",arr2[i][j][k]);
+            }
+            printf("\n");
+        }
+        printf("\n\n");
+    }
+    printf("%ld %ld %ld\n",xmax,ymax,zmax);
 
     // Declare a point object for recording Marker message information
     geometry_msgs::Point p;
