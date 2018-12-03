@@ -136,14 +136,15 @@ void callback(const octomap_msgs::Octomap &msg)
                 xcoord = (i + 0.5)*res + xmin;
                 ycoord = (j + 0.5)*res + ymin;
                 zcoord = (k + 0.5)*res + zmin;
-                printf("%f, %f, %f\n", xcoord, ycoord, zcoord);
 
                 // Search the octomap for a node at this centerpoint
                 octomap::OcTreeNode* result;
                 result = octree->search(xcoord, ycoord, zcoord);
 
+                printf("%d",result != NULL);
+
                 // If node exists
-                if(result)
+                if(result != NULL)
                 {
                     // If node is unoccupied
                     if(!octree->isNodeOccupied(result))
