@@ -6,8 +6,12 @@ This script contains a ROS node that receives Octomap messages over the topic 'o
 */
 
 /* TODO
-figure out width, height, depth. May be backwards right now
-set up package.xml
+Test equivalency of the output arrays.
+Test equivalency of the marker messages.
+Test equivalency of the occupancy messages.
+Remove the array based multidimensional array and all related code.
+
+Implement a solution for octomap size changing based on "empty" pixels in the input image.
 */
 
 // Includes
@@ -23,9 +27,10 @@ set up package.xml
 
 // Declare Marker message and both publishers
 visualization_msgs::Marker rviz_msg;
+visualization_msgs::Marker rviz_msg2;
 ros::Publisher pub;
 ros::Publisher pub2;
-
+ros::Publisher pub3;
 
 
 void callback(const octomap_msgs::Octomap &msg)
@@ -87,6 +92,7 @@ void callback(const octomap_msgs::Octomap &msg)
     long xind=0, yind=0, zind=0;
     // Create Occupancy message
     mill_controller::Occupancy oc_msg;
+    mill_controller::Occupancy oc_msg2;
 
     // for each leaf of octree (based on leaf iterators)
     for(octomap::OcTree::leaf_iterator it = octree->begin_leafs(),
@@ -118,6 +124,10 @@ void callback(const octomap_msgs::Octomap &msg)
         }
     }
 
+    // Declare a point object for recording Marker message information
+    geometry_msgs::Point p;
+
+
     double xcoord, ycoord, zcoord;
 
     // For each index coordinate in the vector array, set the coordinate based on octomap data.
@@ -130,8 +140,6 @@ void callback(const octomap_msgs::Octomap &msg)
             // For each column
             for(int i=0; i < xmax; i++)
             {
-
-                printf("%d, %d, %d\n", i, j, k);
                 // Calculate corresponding node centerpoint in x,y,z coords
                 xcoord = (i + 0.5)*res + xmin;
                 ycoord = (j + 0.5)*res + ymin;
@@ -141,8 +149,6 @@ void callback(const octomap_msgs::Octomap &msg)
                 octomap::OcTreeNode* result;
                 result = octree->search(xcoord, ycoord, zcoord);
 
-                printf("%d\n",result == NULL);
-
                 // If node exists
                 if(result != NULL)
                 {
@@ -151,7 +157,29 @@ void callback(const octomap_msgs::Octomap &msg)
                     {
                         // Change element to 0
                         arr2[i][j][k] = 0;
+
+                        // Add the point to occupancy message
+                        oc_msg2.column.push_back(xind);
+                        oc_msg2.row.push_back(yind);
+                        oc_msg2.layer.push_back(zind);
                     }
+                    else // Node is occupied
+                    {
+                        // Add to Marker message
+                        p.x = i*res;
+                        p.y = j*res;
+                        p.z = k*res;
+                        rviz_msg2.points.push_back(p);
+                    }
+                }
+                else // Assume node is unoccupied
+                {
+                    arr2[i][j][k] = 0;
+
+                    // Add the point to occupancy message
+                    oc_msg2.column.push_back(xind);
+                    oc_msg2.row.push_back(yind);
+                    oc_msg2.layer.push_back(zind);
                 }
             }
         }
@@ -165,15 +193,17 @@ void callback(const octomap_msgs::Octomap &msg)
             for(int i=0; i < xmax; i++)
             {
                 printf("%d",arr2[i][j][k]);
+                if(arr[i][j][k] != arr2[i][j][k])
+                {
+                    printf("equivalency failure!");
+                }
             }
             printf("\n");
         }
         printf("\n\n");
     }
-    printf("%ld %ld %ld\n",xmax,ymax,zmax);
 
-    // Declare a point object for recording Marker message information
-    geometry_msgs::Point p;
+    printf("%ld %ld %ld\n",xmax,ymax,zmax);
 
     // Print array and populate marker message
     for(int dep=0; dep<zmax; dep++) //Cycle through depths
@@ -183,7 +213,7 @@ void callback(const octomap_msgs::Octomap &msg)
             for(int col=0; col<xmax; col++) //Cycle through columns
             {
                 // Print value at this index to console
-                // printf("%d",arr[col][row][dep]);
+                printf("%d",arr[col][row][dep]);
                 // If the index represents occupied space
                 if(arr[col][row][dep])
                 {
@@ -195,10 +225,10 @@ void callback(const octomap_msgs::Octomap &msg)
                 }
             }
             // Start new row in console
-            // printf("\n");
+            printf("\n");
         }
         // Start new layer in console
-        // printf("\n\n");
+        printf("\n\n");
     }
 
     // Add the array dimensions to the message
@@ -208,6 +238,7 @@ void callback(const octomap_msgs::Octomap &msg)
 
     // Time stamp marker message
     rviz_msg.header.stamp = ros::Time(); //Sets to time zero, if not displaying try ros::Time::now()
+    rviz_msg2.header.stamp = ros::Time(); //Sets to time zero, if not displaying try ros::Time::now()
 
     // Publish messages
     pub.publish(rviz_msg);
@@ -238,6 +269,25 @@ int main(int argc, char** argv)
     rviz_msg.color.g = 1.0;
     rviz_msg.color.b = 0.0;
 
+    // Initilize marker message
+    rviz_msg2.header.frame_id = "base";
+    rviz_msg2.id = 10;
+    rviz_msg2.type = visualization_msgs::Marker::POINTS;
+    rviz_msg2.pose.position.x = 0;
+    rviz_msg2.pose.position.y = 0;
+    rviz_msg2.pose.position.z = 0;
+    rviz_msg2.pose.orientation.x = 0.0;
+    rviz_msg2.pose.orientation.y = 0.0;
+    rviz_msg2.pose.orientation.z = 0.0;
+    rviz_msg2.pose.orientation.w = 1.0;
+    rviz_msg2.scale.x = .01;
+    rviz_msg2.scale.y = .01;
+    rviz_msg2.scale.z = .01;
+    rviz_msg2.color.a = 1.0; // Don't forget to set the alpha!
+    rviz_msg2.color.r = 0.0;
+    rviz_msg2.color.g = 1.0;
+    rviz_msg2.color.b = 0.0;
+
 
     // Initialize ROS node
     ros::init(argc, argv, "octomap_to_array_node");
@@ -248,6 +298,7 @@ int main(int argc, char** argv)
 
     // Initialize publishers
     pub = nh.advertise<visualization_msgs::Marker>("output", 1);
+    pub3 = nh.advertise<visualization_msgs::Marker>("output3", 1);
     pub2 = nh.advertise<mill_controller::Occupancy>("output2", 1);
 
     // Spin until shut down
