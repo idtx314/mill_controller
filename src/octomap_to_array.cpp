@@ -234,13 +234,15 @@ void callback(const octomap_msgs::Octomap &msg)
     pub.publish(rviz_msg);
     pub2.publish(oc_msg);
 
-    if(rviz_msg.points.size != rviz_msg2.points.size)
+    if(rviz_msg.points.size() != rviz_msg2.points.size())
     {
         printf("Length Mismatch!");
     }
-    for(int i=0; i<rviz_msg.points.size; i++)
+    for(int i=0; i<rviz_msg.points.size(); i++)
     {
-        if(rviz_msg.points[i] != rviz_msg2.points[i])
+        if((rviz_msg.points[i].x != rviz_msg2.points[i].x)||
+            (rviz_msg.points[i].y != rviz_msg2.points[i].y)||
+            (rviz_msg.points[i].z != rviz_msg2.points[i].z))
         {
             printf("Element Mismatch!");
         }
