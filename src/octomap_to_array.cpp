@@ -216,6 +216,37 @@ void callback(const octomap_msgs::Octomap &msg)
     pub.publish(rviz_msg);
     pub2.publish(oc_msg);
 
+    if((oc_msg.column.size() != oc_msg2.column.size())||
+        (oc_msg.row.size() != oc_msg2.row.size())||
+        (oc_msg.layer.size() != oc_msg2.layer.size()))
+    {
+        printf("Size Mismatch!");
+    }
+    else
+    {
+        for(int i=0; i<oc_msg.column.size(); i++)
+        {
+            if(oc_msg.column[i] != oc_msg2.column[i])
+            {
+                printf("Column Mismatch!");
+            }
+        }
+        for(int i=0; i<oc_msg.row.size(); i++)
+        {
+            if(oc_msg.row[i] != oc_msg2.row[i])
+            {
+                printf("Row Mismatch!");
+            }
+        }
+        for(int i=0; i<oc_msg.layer.size(); i++)
+        {
+            if(oc_msg.layer[i] != oc_msg2.layer[i])
+            {
+                printf("Layer Mismatch!");
+            }
+        }
+    }
+
 }
 
 
