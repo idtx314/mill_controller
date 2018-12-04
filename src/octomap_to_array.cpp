@@ -91,7 +91,6 @@ void callback(const octomap_msgs::Octomap &msg)
     long xind=0, yind=0, zind=0;
     // Create Occupancy message
     mill_controller::Occupancy oc_msg;
-    mill_controller::Occupancy oc_msg2;
 
     // for each leaf of octree (based on leaf iterators)
     for(octomap::OcTree::leaf_iterator it = octree->begin_leafs(),
@@ -116,10 +115,6 @@ void callback(const octomap_msgs::Octomap &msg)
             // set the char at those index values to 0
             // TODO This is not necessary if all values are initialized to 0.
             arr[xind][yind][zind] = 0;
-            // Add the point to occupancy message
-            oc_msg.column.push_back(xind);
-            oc_msg.row.push_back(yind);
-            oc_msg.layer.push_back(zind);
         }
     }
 
@@ -160,9 +155,9 @@ void callback(const octomap_msgs::Octomap &msg)
                         arr2[i][j][k] = 0;
 
                         // Add the point to occupancy message
-                        oc_msg2.column.push_back(xind);
-                        oc_msg2.row.push_back(yind);
-                        oc_msg2.layer.push_back(zind);
+                        oc_msg.column.push_back(xind);
+                        oc_msg.row.push_back(yind);
+                        oc_msg.layer.push_back(zind);
                     }
                     else // Node is occupied
                     {
@@ -178,9 +173,9 @@ void callback(const octomap_msgs::Octomap &msg)
                     arr2[i][j][k] = 0;
 
                     // Add the point to occupancy message
-                    oc_msg2.column.push_back(xind);
-                    oc_msg2.row.push_back(yind);
-                    oc_msg2.layer.push_back(zind);
+                    oc_msg.column.push_back(xind);
+                    oc_msg.row.push_back(yind);
+                    oc_msg.layer.push_back(zind);
                 }
             }
         }
@@ -215,37 +210,6 @@ void callback(const octomap_msgs::Octomap &msg)
     // Publish messages
     pub.publish(rviz_msg);
     pub2.publish(oc_msg);
-
-    if((oc_msg.column.size() != oc_msg2.column.size())||
-        (oc_msg.row.size() != oc_msg2.row.size())||
-        (oc_msg.layer.size() != oc_msg2.layer.size()))
-    {
-        printf("Size Mismatch!");
-    }
-    else
-    {
-        for(int i=0; i<oc_msg.column.size(); i++)
-        {
-            if(oc_msg.column[i] != oc_msg2.column[i])
-            {
-                printf("Column Mismatch!");
-            }
-        }
-        for(int i=0; i<oc_msg.row.size(); i++)
-        {
-            if(oc_msg.row[i] != oc_msg2.row[i])
-            {
-                printf("Row Mismatch!");
-            }
-        }
-        for(int i=0; i<oc_msg.layer.size(); i++)
-        {
-            if(oc_msg.layer[i] != oc_msg2.layer[i])
-            {
-                printf("Layer Mismatch!");
-            }
-        }
-    }
 
 }
 
