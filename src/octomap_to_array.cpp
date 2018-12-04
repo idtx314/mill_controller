@@ -29,7 +29,6 @@ Implement a solution for octomap size changing based on "empty" pixels in the in
 visualization_msgs::Marker rviz_msg;
 ros::Publisher pub;
 ros::Publisher pub2;
-ros::Publisher pub3;
 
 
 void callback(const octomap_msgs::Octomap &msg)
@@ -247,7 +246,6 @@ int main(int argc, char** argv)
 
     // Initialize publishers
     pub = nh.advertise<visualization_msgs::Marker>("output", 1);
-    pub3 = nh.advertise<visualization_msgs::Marker>("output3", 1);
     pub2 = nh.advertise<mill_controller::Occupancy>("output2", 1);
 
     // Spin until shut down
