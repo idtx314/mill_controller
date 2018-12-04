@@ -193,10 +193,6 @@ void callback(const octomap_msgs::Octomap &msg)
             for(int i=0; i < xmax; i++)
             {
                 printf("%d",arr2[i][j][k]);
-                if(arr[i][j][k] != arr2[i][j][k])
-                {
-                    printf("equivalency failure!");
-                }
             }
             printf("\n");
         }
@@ -205,15 +201,13 @@ void callback(const octomap_msgs::Octomap &msg)
 
     printf("%ld %ld %ld\n",xmax,ymax,zmax);
 
-    // Print array and populate marker message
+    // Populate marker message
     for(int dep=0; dep<zmax; dep++) //Cycle through depths
     {
         for(int row=0; row<ymax; row++) //Cycle through rows
         {
             for(int col=0; col<xmax; col++) //Cycle through columns
             {
-                // Print value at this index to console
-                printf("%d",arr[col][row][dep]);
                 // If the index represents occupied space
                 if(arr[col][row][dep])
                 {
@@ -224,11 +218,7 @@ void callback(const octomap_msgs::Octomap &msg)
                     rviz_msg.points.push_back(p);
                 }
             }
-            // Start new row in console
-            printf("\n");
         }
-        // Start new layer in console
-        printf("\n\n");
     }
 
     // Add the array dimensions to the message
@@ -243,6 +233,18 @@ void callback(const octomap_msgs::Octomap &msg)
     // Publish messages
     pub.publish(rviz_msg);
     pub2.publish(oc_msg);
+
+    if(rviz_msg.points.size != rviz_msg2.points.size)
+    {
+        printf("Length Mismatch!");
+    }
+    for(int i=0; i<rviz_msg.points.size; i++)
+    {
+        if(rviz_msg.points[i] != rviz_msg2.points[i])
+        {
+            printf("Element Mismatch!");
+        }
+    }
 }
 
 
