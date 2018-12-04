@@ -141,7 +141,7 @@ void callback(const octomap_msgs::Octomap &msg)
                 octomap::OcTreeNode* result;
                 result = octree->search(xcoord, ycoord, zcoord);
 
-                printf("%d",result != NULL);
+                printf("%d\n",result == NULL);
 
                 // If node exists
                 if(result != NULL)
