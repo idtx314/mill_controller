@@ -6,11 +6,7 @@ This script contains a ROS node that receives Octomap messages over the topic 'o
 */
 
 /* TODO
-Test equivalency of the output arrays.
-Test equivalency of the marker messages.
-Test equivalency of the occupancy messages.
-Remove the array based multidimensional array and all related code.
-
+Change the names of the topics to something more self explanatory.
 Implement a solution for octomap size changing based on "empty" pixels in the input image.
 */
 
