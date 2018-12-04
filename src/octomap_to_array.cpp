@@ -27,7 +27,6 @@ Implement a solution for octomap size changing based on "empty" pixels in the in
 
 // Declare Marker message and both publishers
 visualization_msgs::Marker rviz_msg;
-visualization_msgs::Marker rviz_msg2;
 ros::Publisher pub;
 ros::Publisher pub2;
 ros::Publisher pub3;
@@ -126,6 +125,8 @@ void callback(const octomap_msgs::Octomap &msg)
 
     // Declare a point object for recording Marker message information
     geometry_msgs::Point p;
+    // Clear the Rviz message for new data.
+    rviz_msg.points.clear();
 
 
     double xcoord, ycoord, zcoord;
@@ -166,10 +167,10 @@ void callback(const octomap_msgs::Octomap &msg)
                     else // Node is occupied
                     {
                         // Add to Marker message
-                        p.x = i*res;
-                        p.y = j*res;
-                        p.z = k*res;
-                        rviz_msg2.points.push_back(p);
+                        p.x = xcoord;
+                        p.y = ycoord;
+                        p.z = zcoord;
+                        rviz_msg.points.push_back(p);
                     }
                 }
                 else // Assume node is unoccupied
@@ -201,52 +202,20 @@ void callback(const octomap_msgs::Octomap &msg)
 
     printf("%ld %ld %ld\n",xmax,ymax,zmax);
 
-    // Populate marker message
-    for(int dep=0; dep<zmax; dep++) //Cycle through depths
-    {
-        for(int row=0; row<ymax; row++) //Cycle through rows
-        {
-            for(int col=0; col<xmax; col++) //Cycle through columns
-            {
-                // If the index represents occupied space
-                if(arr[col][row][dep])
-                {
-                    // Add to Marker message
-                    p.x = col*res;
-                    p.y = row*res;
-                    p.z = dep*res;
-                    rviz_msg.points.push_back(p);
-                }
-            }
-        }
-    }
-
     // Add the array dimensions to the message
     oc_msg.width = xmax;
     oc_msg.height = ymax;
     oc_msg.depth = zmax;
 
     // Time stamp marker message
-    rviz_msg.header.stamp = ros::Time(); //Sets to time zero, if not displaying try ros::Time::now()
-    rviz_msg2.header.stamp = ros::Time(); //Sets to time zero, if not displaying try ros::Time::now()
+    // ros::Time() Sets to time zero
+    // If not displaying, try ros::Time::now()
+    rviz_msg.header.stamp = ros::Time();
 
     // Publish messages
     pub.publish(rviz_msg);
     pub2.publish(oc_msg);
 
-    if(rviz_msg.points.size() != rviz_msg2.points.size())
-    {
-        printf("Length Mismatch!");
-    }
-    for(int i=0; i<rviz_msg.points.size(); i++)
-    {
-        if((rviz_msg.points[i].x != rviz_msg2.points[i].x)||
-            (rviz_msg.points[i].y != rviz_msg2.points[i].y)||
-            (rviz_msg.points[i].z != rviz_msg2.points[i].z))
-        {
-            printf("Element Mismatch!");
-        }
-    }
 }
 
 
@@ -272,25 +241,6 @@ int main(int argc, char** argv)
     rviz_msg.color.r = 0.0;
     rviz_msg.color.g = 1.0;
     rviz_msg.color.b = 0.0;
-
-    // Initilize marker message
-    rviz_msg2.header.frame_id = "base";
-    rviz_msg2.id = 10;
-    rviz_msg2.type = visualization_msgs::Marker::POINTS;
-    rviz_msg2.pose.position.x = 0;
-    rviz_msg2.pose.position.y = 0;
-    rviz_msg2.pose.position.z = 0;
-    rviz_msg2.pose.orientation.x = 0.0;
-    rviz_msg2.pose.orientation.y = 0.0;
-    rviz_msg2.pose.orientation.z = 0.0;
-    rviz_msg2.pose.orientation.w = 1.0;
-    rviz_msg2.scale.x = .01;
-    rviz_msg2.scale.y = .01;
-    rviz_msg2.scale.z = .01;
-    rviz_msg2.color.a = 1.0; // Don't forget to set the alpha!
-    rviz_msg2.color.r = 0.0;
-    rviz_msg2.color.g = 1.0;
-    rviz_msg2.color.b = 0.0;
 
 
     // Initialize ROS node
