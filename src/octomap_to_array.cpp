@@ -8,6 +8,7 @@ This script contains a ROS node that receives Octomap messages over the topic 'o
 /* TODO
 Change the names of the topics to something more self explanatory.
 Implement a solution for octomap size changing based on "empty" pixels in the input image.
+Consider switching from index math to incrementing by resolution when determining xcoord, ycoord, and zcoord.
 */
 
 // Includes
