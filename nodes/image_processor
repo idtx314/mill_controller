@@ -32,7 +32,7 @@ GOOD_MATCH_PERCENT = 0.67
 def callback(input):
     # The callback accepts an Image message, performs visual processing and masking on it, and publishes the result. Exact processing is placeholder. I'm going to start by assuming the presence of material at every location in the frame except where darker colors are present. Darker pixels will then be changed to black, non-dark pixels will be made white.
 
-    # Translate Image message into a cv2 image using existing encoding. The image will revert to a more general CV encoding, like 8UC3.
+    # Translate Image message into a cv2 image assuming bgr8 encoding. The image will revert to a more general CV encoding, like 8UC3.
     cv_image = converter.imgmsg_to_cv2(input,"bgr8")
 
     # Make a copy, as the original image will not be editable after conversion
