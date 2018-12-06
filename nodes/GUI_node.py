@@ -13,8 +13,14 @@ _img = None     # Image to work with in callback
 # param = A third argument that can be passed when setting the callback. Exact usage uncertain but presumably to send more data.
 # Note this this will trigger when moving around the window as well
 def mouse_call(event, x, y, flags, param):
+    global l_down
     if event == cv2.EVENT_LBUTTONDOWN:
-        cv2.circle(_img,(400,400),10,(0,0,0))
+        cv2.circle(_img,(x,y),10,(0,0,0))
+        l_down = True
+    elif event == cv2.EVENT_MOUSEMOVE and l_down:
+        cv2.circle(_img,(x,y),10,(0,0,0))
+    elif event == cv2.EVENT_LBUTTONUP:
+        l_down = False
 
 
 
