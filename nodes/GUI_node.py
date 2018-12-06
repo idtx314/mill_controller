@@ -4,6 +4,9 @@ import cv2
 import rospkg
 
 
+def mouse_call():
+    print "Block by waitKey"
+
 
 def main():
 
@@ -32,6 +35,11 @@ def main():
     fontFace = cv2.FONT_HERSHEY_PLAIN
     fontScale = 1
     cv2.putText(img_copy, str, text_origin,fontFace,fontScale,color)
+
+
+    # Now mouse stuff
+    window_name = 'window'
+    cv2.setMouseCallback(window_name, mouse_call)
 
 
 
