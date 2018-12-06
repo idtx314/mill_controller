@@ -3,17 +3,21 @@
 import cv2
 import rospkg
 
+# Global for
+l_down = False  # flag to do things in callback while button held down probably
+_img = None     # Image to work with in callback
+
 # event = event type "cv2.EVENT_..."
 # x, y = u,v, coordinates where click occurred
 # flags = ?
 # param = A third argument that can be passed when setting the callback. Exact usage uncertain but presumably to send more data.
 # Note this this will trigger when moving around the window as well
 def mouse_call(event, x, y, flags, param):
-    print event
+    if event == cv2.EVENT_LBUTTONDOWN:
+        cv2.circle(_img,(400,400),10,(0,0,0))
 
 
 def main():
-
     # Open image, using file images for now
     rospack = rospkg.RosPack()
     path = rospack.get_path('mill_controller') + '/images/resize.jpg'
@@ -42,6 +46,8 @@ def main():
 
 
     # Now mouse stuff
+    global _img
+    _img = img
     window_name = 'window'
     cv2.setMouseCallback(window_name, mouse_call)
 
