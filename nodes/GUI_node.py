@@ -6,6 +6,7 @@ import rospkg
 # Global for
 l_down = False  # flag to do things in callback while button held down probably
 _img = None     # Image to work with in callback
+_old_img = None #
 
 # event = event type "cv2.EVENT_..."
 # x, y = u,v, coordinates where click occurred
@@ -14,11 +15,18 @@ _img = None     # Image to work with in callback
 # Note this this will trigger when moving around the window as well
 def mouse_call(event, x, y, flags, param):
     global l_down
+    global _img
+    global _old_img
+
+    # Handle mouse event type
     if event == cv2.EVENT_LBUTTONDOWN:
         cv2.circle(_img,(x,y),10,(0,0,0))
         l_down = True
     elif event == cv2.EVENT_MOUSEMOVE and l_down:
+        _img = _old_img
         cv2.circle(_img,(x,y),10,(0,0,0))
+    elif event == cv2.EVENT_MBUTTONDOWN:
+        _
     elif event == cv2.EVENT_LBUTTONUP:
         l_down = False
 
@@ -54,6 +62,7 @@ def main():
 
     # Now mouse stuff
     global _img
+    global _old_img
     _img = img
     window_name = 'window'
     cv2.setMouseCallback(window_name, mouse_call)
@@ -66,12 +75,21 @@ def main():
     cv2.imshow('window',img_copy)
     cv2.waitKey(0)
 
+    _old_img = _img
+
     # Reloads image until broken
     while(1):
         # If esc is pressed (maximum wait 20ms)
         if(cv2.waitKey(20) & 0xFF == 27):
             break
         cv2.imshow('window',_img)
+
+    cv2.imshow('window',_img)
+    print("_img")
+    cv2.waitKey(0)
+    cv2.imshow('window',_old_img)
+    print("_old_img")
+    cv2.waitKey(0)
 
 
 
