@@ -17,6 +17,7 @@ def mouse_call(event, x, y, flags, param):
         cv2.circle(_img,(400,400),10,(0,0,0))
 
 
+
 def main():
     # Open image, using file images for now
     rospack = rospkg.RosPack()
@@ -59,13 +60,12 @@ def main():
     cv2.imshow('window',img_copy)
     cv2.waitKey(0)
 
-
-
-
-
-
-
-
+    # Reloads image until broken
+    while(1):
+        # If esc is pressed (maximum wait 20ms)
+        if(cv2.waitKey(20) & 0xFF == 27):
+            break
+        cv2.imshow('window',_img)
 
 
 
