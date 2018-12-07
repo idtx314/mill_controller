@@ -117,8 +117,8 @@ def main():
     plist = np.array(plist)
     # Produce blank reference image
     ref_img = np.zeros((500,500),np.uint8)
-    # Make numpy array from reference image corners
-    rlist = np.array([[0,500],[500,500],[500,0],[0,0]])
+    # Make numpy array from reference image corners. Remember, u,v style coords.
+    rlist = np.array([[0,0],[500,0],[500,500],[0,500]])
     # Find homography
     h,status = cv2.findHomography(plist,rlist)
     # Apply homogrphy to image, warping to reference dimensions
