@@ -89,7 +89,8 @@ def main(input):
             #TODO Add more modes, like choosing which corner to draw
 
         print("Corners collected")
-        # Calculate homography    # Convert plist into numpy array
+        # Calculate homography
+        # Convert plist into numpy array
         plist = np.array(plist)
         # Produce blank reference image
         ref_img = np.zeros((500,500,3),np.uint8)
@@ -102,26 +103,77 @@ def main(input):
         # Apply homography to image copy
         aligned_img = cv2.warpPerspective(img.copy(),w_h,(500,500))
 
+        # Reset counter
+        _counter = 0
+
         # Display result to user
         cv2.imshow("window",aligned_img)
         key = cv2.waitKey()
 
+        # If accepted
         if(key & 0xFF == ord('s')):
             w_h_accepted = True
             # save warped image
             img = aligned_img.copy()
 
-    # while(!m_h_accepted):
-    #     # Display image copy to user
-    #     # Request material corners
-    #     # Calculate homography
-    #     # Save homography as _m_h
-    #     # Apply homography to new image copy
-    #     # display result to user
-    #     # if(accepted):
-    #     #     # set _m_h_accepted
 
-    # Set _calibrated
+    # Save image data to globals
+    _img = img.copy()
+    _old_img = img.copy()
+
+    while(not m_h_accepted):
+        # Until 4 corners collected
+        while(_counter < 4):
+            # Display image to user
+            cv2.imshow('window',_img)
+
+            # Wait for key (maximum wait 20ms)
+            key = cv2.waitKey(20)
+
+            # If esc was pressed
+            if(key & 0xFF == 27):
+                print("Exiting")
+                break
+            # If space was pressed
+            elif(key & 0xFF == 32):
+                # Save point
+                print("Saving")
+                plist[_counter] = _point
+                # Update saved image
+                _old_img = _img.copy()
+                # Move to next point
+                _counter += 1
+
+            #TODO Add more modes, like choosing which corner to draw
+
+        print("Corners collected again")
+        # Calculate homography
+        # Convert plist into numpy array
+        plist = np.array(plist)
+        # Produce blank reference image TODO in correct ratio
+        ref_img = np.zeros((640,480,3),np.uint8)
+        # Make numpy array from reference image corners. Remember, u,v style coords.
+        rlist = np.array([[0,0],[640,0],[640,480],[0,480]])
+        # Find homography
+        # Save homography as m_h
+        m_h,status = cv2.findHomography(plist,rlist)
+
+        # Apply homography to new image copy
+        aligned_img = cv2.warpPerspective(img.copy(),m_h,(640,480))
+
+        # Reset counter
+        _counter = 0
+
+        # Display result to user
+        cv2.imshow("window",aligned_img)
+        key = cv2.waitKey()
+
+        # If accepted
+        if(key & 0xFF == ord('s')):
+            m_h_accepted = True
+            # save warped image
+            img = aligned_img.copy()
+
 
     # End callback
 
