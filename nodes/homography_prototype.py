@@ -1,6 +1,8 @@
 import cv2
 import rospkg
 import numpy as np
+from sensor_msgs.msg import Image
+from cv_bridge import CvBridge, CvBridgeError
 
 
 
@@ -31,7 +33,7 @@ def mouse_callback(event, x, y, flags, param):
         _img = _old_img.copy()
         cv2.circle(_img,(x,y),10,(0,0,0))
     elif event == cv2.EVENT_LBUTTONUP:
-        l_down = False
+        _l_down = False
 
 
 
@@ -39,42 +41,93 @@ def mouse_callback(event, x, y, flags, param):
 
 
 
-def main():
-    _w_h_accepted = False
-    _m_h_accepted = False
+def main(input):
+    global _img, _old_img, _counter, _point
 
-    # Guard for repeated message calls
-    if(_calibrated):
-        return 0
+    w_h_accepted = False
+    m_h_accepted = False
+    # A list to hold clicked points
+    plist = [(0,0),(0,0),(0,0),(0,0)]
+
+    # Translate from message
+    img = input
+
+    # Save image data to globals
+    _img = img.copy()
+    _old_img = img.copy()
+
+    # Start display window
+    cv2.namedWindow('window')
+
+    # Begin mouse callbacks
+    cv2.setMouseCallback('window', mouse_callback)
 
 
-    while(!_w_h_accepted):
-        # Display image to user
-        # Request workspace corners
-        # Calculate homography
-        # Save homography as _w_h
+    while(not w_h_accepted):
+        # Until 4 corners collected
+        while(_counter < 4):
+            # Display image to user
+            cv2.imshow('window',_img)
+
+            # Wait for key
+            key = cv2.waitKey(20)
+
+            # If esc was pressed (maximum wait 20ms)
+            if(key & 0xFF == 27):
+                print("Exiting")
+                break
+            # If space was pressed
+            elif(key & 0xFF == 32):
+                # Save point
+                print("Saving")
+                plist[_counter] = _point
+                # Update saved image
+                _old_img = _img.copy()
+                # Move to next point
+                _counter += 1
+
+            #TODO Add more modes, like choosing which corner to draw
+
+        print("Corners collected")
+        # Calculate homography    # Convert plist into numpy array
+        plist = np.array(plist)
+        # Produce blank reference image
+        ref_img = np.zeros((500,500,3),np.uint8)
+        # Make numpy array from reference image corners. Remember, u,v style coords.
+        rlist = np.array([[0,0],[500,0],[500,500],[0,500]])
+        # Find homography
+        # Save homography as w_h
+        w_h,status = cv2.findHomography(plist,rlist)
+
         # Apply homography to image copy
-        # Display result to user
-        # if(accepted):
-        #     # set _w_h_accepted
-        #     # save image copy
+        aligned_img = cv2.warpPerspective(img.copy(),w_h,(500,500))
 
-    while(!_m_h_accepted):
-        # Display image copy to user
-        # Request material corners
-        # Calculate homography
-        # Save homography as _m_h
-        # Apply homography to new image copy
-        # display result to user
-        # if(accepted):
-        #     # set _m_h_accepted
+        # Display result to user
+        cv2.imshow("window",aligned_img)
+        key = cv2.waitKey()
+
+        if(key & 0xFF == ord('s')):
+            w_h_accepted = True
+            # save warped image
+            img = aligned_img.copy()
+
+    # while(!m_h_accepted):
+    #     # Display image copy to user
+    #     # Request material corners
+    #     # Calculate homography
+    #     # Save homography as _m_h
+    #     # Apply homography to new image copy
+    #     # display result to user
+    #     # if(accepted):
+    #     #     # set _m_h_accepted
 
     # Set _calibrated
 
     # End callback
 
-
-
+    print("Calibration complete")
+    cv2.imshow('window',img)
+    cv2.waitKey(0)
 
 
 
@@ -98,4 +151,9 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    # Open image, using file images for now
+    rospack = rospkg.RosPack()
+    path = rospack.get_path('mill_controller') + '/images/resize.jpg'
+    img = cv2.imread(path,cv2.IMREAD_COLOR)
+
+    main(img)
