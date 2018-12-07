@@ -8,8 +8,7 @@ l_down = False  # flag to do things in callback while button held down probably
 _img = None     # Image to work with in callback
 _old_img = None # The original image to reset in callback
 # Globals to hold the coordinates of the most recent circle
-_x=0
-_y=0
+_point = (0,0)
 _counter = 0
 
 # event = event type "cv2.EVENT_..."
@@ -21,14 +20,13 @@ def mouse_call(event, x, y, flags, param):
     global l_down
     global _img
     global _old_img
-    global _x, _y
+    global _point
 
     # Handle mouse event type
     if event == cv2.EVENT_LBUTTONDOWN:
         _img = _old_img.copy()
         cv2.circle(_img,(x,y),10,(0,0,0))
-        _x = x
-        _y = y
+        _point = (x,y)
         l_down = True
     elif event == cv2.EVENT_MOUSEMOVE and l_down:
         _img = _old_img.copy()
@@ -96,11 +94,15 @@ def main():
         elif(key & 0xFF == 32):
             # Save point
             print("Saving")
-            plist[_counter] = (_x,_y)
+            plist[_counter] = _point
+            # TODO Update saved image
+            _old_img = _img.copy()
             # Move to next place in record
             _counter += 1
 
-        # Print current instruction
+        # # Print current instruction
+        # s = ["Top Left Corner", "Top Right Corner", "Bottom Left Corner", "Bottom Right Corner"]
+        # cv2.putText(_img,"Click and drag to select "+s[_counter], (_img.shape[1]/2,_img.shape[0]/10),fontFace,fontScale,color)
 
         # Show image
         cv2.imshow('window',_img)
