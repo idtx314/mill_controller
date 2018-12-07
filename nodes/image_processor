@@ -142,9 +142,7 @@ def main():
     while(not calibrated):
         blocking = True
         Call a SINGLE callback # May be able to do this by limiting subscriber queue to 1 message. Other methods seem more advanced and/or unavailable.
-        while(blocking):
-            wait
-            #Blocking is cleared in callback
+
         #Calibrated is set in callback
 
     # Unsubscribe and destroy subscriber
