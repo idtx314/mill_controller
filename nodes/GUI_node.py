@@ -74,8 +74,8 @@ def main():
     window_name = 'window'
     cv2.setMouseCallback(window_name, mouse_call)
 
-
-
+    # A list to hold clicked points
+    plist = []
 
 
     # Show image
@@ -86,13 +86,16 @@ def main():
 
     # Reloads image until broken
     while(1):
-        # If esc is pressed (maximum wait 20ms)
-        if(cv2.waitKey(20) & 0xFF == 27):
+        # If esc is pressed (maximum wait 10ms)
+        if(cv2.waitKey(10) & 0xFF == 27):
             break
             print("Exiting")
+        elif(cv2.waitKey(10) & 0xFF == 32):
+            print("space")
+
         cv2.imshow('window',_img)
 
-    print(_x,_y)
+    print plist
 
 
 
