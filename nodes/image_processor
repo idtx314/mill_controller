@@ -135,7 +135,17 @@ def main():
 
     # Wait for setup_callback to activate and set _h
     while (np.any(_h == None)) and (not rospy.is_shutdown()):
+
         rospy.sleep(1)
+
+    #Target logic: Ensure that only one callback can occur at a time, and no extras will be processed
+    while(not calibrated):
+        blocking = True
+        Call a SINGLE callback # May be able to do this by limiting subscriber queue to 1 message. Other methods seem more advanced and/or unavailable.
+        while(blocking):
+            wait
+            #Blocking is cleared in callback
+        #Calibrated is set in callback
 
     # Unsubscribe and destroy subscriber
     sub.unregister()
