@@ -62,7 +62,7 @@ def main(input):
     # Begin mouse callbacks
     cv2.setMouseCallback('window', mouse_callback)
 
-
+    print("Click and drag to place a corner. Press space to save each corner")
     while(not w_h_accepted):
         # Until 4 corners collected
         while(_counter < 4):
@@ -107,6 +107,7 @@ def main(input):
         _counter = 0
 
         # Display result to user
+        print('press "s" to accept transform')
         cv2.imshow("window",aligned_img)
         key = cv2.waitKey()
 
@@ -121,6 +122,7 @@ def main(input):
     _img = img.copy()
     _old_img = img.copy()
 
+    print("Click and drag to place a corner. Press space to save each corner")
     while(not m_h_accepted):
         # Until 4 corners collected
         while(_counter < 4):
@@ -165,6 +167,7 @@ def main(input):
         _counter = 0
 
         # Display result to user
+        print('press "s" to accept transform')
         cv2.imshow("window",aligned_img)
         key = cv2.waitKey()
 
@@ -178,6 +181,7 @@ def main(input):
     # End callback
 
     print("Calibration complete")
+    print("any key to close")
     cv2.imshow('window',img)
     cv2.waitKey(0)
 
