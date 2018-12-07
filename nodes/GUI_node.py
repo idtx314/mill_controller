@@ -23,7 +23,7 @@ def mouse_call(event, x, y, flags, param):
         cv2.circle(_img,(x,y),10,(0,0,0))
         l_down = True
     elif event == cv2.EVENT_MOUSEMOVE and l_down:
-        _img = _old_img
+        _img = _old_img.copy()
         cv2.circle(_img,(x,y),10,(0,0,0))
     elif event == cv2.EVENT_MBUTTONDOWN:
         _
@@ -63,7 +63,7 @@ def main():
     # Now mouse stuff
     global _img
     global _old_img
-    _img = img
+    _img = img.copy()
     window_name = 'window'
     cv2.setMouseCallback(window_name, mouse_call)
 
@@ -75,7 +75,7 @@ def main():
     cv2.imshow('window',img_copy)
     cv2.waitKey(0)
 
-    _old_img = _img
+    _old_img = img.copy()
 
     # Reloads image until broken
     while(1):
