@@ -2,6 +2,7 @@
 
 import cv2
 import rospkg
+import numpy as np
 
 # Global for
 l_down = False  # flag to do things in callback while button held down probably
@@ -44,32 +45,33 @@ def main():
     path = rospack.get_path('mill_controller') + '/images/resize.jpg'
     img = cv2.imread(path,cv2.IMREAD_COLOR)
 
-    # Show image
-    cv2.imshow('window',img)
-    cv2.waitKey(0)
+    # # Show image
+    cv2.namedWindow('window')
+    # cv2.waitKey(0)
 
-    # Draw
+    # # Draw
     img_copy = img.copy()
-    center = (200,150)
-    radius = 10
-    color = (0,0,255)
-    cv2.circle(img_copy,center, radius,color)
+    # center = (200,150)
+    # radius = 10
+    # color = (0,0,255)
+    # cv2.circle(img_copy,center, radius,color)
 
-    start = (5, 5)
-    end = (100, 200)
-    cv2.line(img_copy,start,end,color)
+    # start = (5, 5)
+    # end = (100, 200)
+    # cv2.line(img_copy,start,end,color)
 
-    str = 'Input text'
-    text_origin = (400,400)
-    fontFace = cv2.FONT_HERSHEY_PLAIN
-    fontScale = 1
-    cv2.putText(img_copy, str, text_origin,fontFace,fontScale,color)
+    # str = 'Input text'
+    # text_origin = (400,400)
+    # fontFace = cv2.FONT_HERSHEY_PLAIN
+    # fontScale = 1
+    # cv2.putText(img_copy, str, text_origin,fontFace,fontScale,color)
 
 
     # Now mouse stuff
     global _img
     global _old_img
     _img = img.copy()
+    _old_img = img.copy()
     window_name = 'window'
     cv2.setMouseCallback(window_name, mouse_call)
 
@@ -77,11 +79,10 @@ def main():
     plist = [(0,0),(0,0),(0,0),(0,0)]
 
 
-    # Show image
-    cv2.imshow('window',img_copy)
-    cv2.waitKey(0)
+    # # Show image
+    # cv2.imshow('window',img_copy)
+    # cv2.waitKey(0)
 
-    _old_img = img.copy()
 
     # Reloads image until broken
     global _counter
@@ -110,6 +111,17 @@ def main():
 
     print("Corners collected")
     print plist
+
+    # Homography test
+        # Convert plist into numpy array
+        # Produce blank reference image
+        # Make numpy array from reference image corners
+        # Find homography
+        # Apply homogrphy to image, warping to reference dimensions
+        # Display warped image
+        # Waitkey()
+
+
 
 
 
