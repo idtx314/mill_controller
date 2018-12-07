@@ -1,0 +1,36 @@
+#!/usr/bin/env python
+
+import rospy
+from std_msgs.msg import Bool
+
+
+# Use this publisher to send the output
+pub = rospy.Publisher('test_output',Bool,queue_size=1)
+
+msg = Bool()
+
+
+def callback(input):
+    # What does the callback do?
+
+    pub.publish(msg)
+
+
+
+
+
+def main():
+    # Initialize the ROS node and Subscriber
+    rospy.init_node("test_node")
+    rospy.Subscriber('test_input',Bool,callback)
+
+    # Spin until shut down
+    while(not rospy.is_shutdown()):
+        rospy.sleep(1)
+
+
+
+
+
+if __name__ == '__main__':
+    main()
