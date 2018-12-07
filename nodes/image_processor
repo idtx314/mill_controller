@@ -76,7 +76,7 @@ def callback(input):
     pub.publish(msg)
 
 
-def setup_callback(input):
+def setup_homography(input):
     # Calculate the homography between the new image and the reference
     # Save homography, reference width and height into global variable
 
@@ -130,24 +130,11 @@ def main():
     # Initialize ROS node
     rospy.init_node("image_processor_node")
 
-    # Initialize a subscriber to the camera driver. Hang on to the object for this one.
-    sub = rospy.Subscriber('usb_cam/image_raw',Image,setup_callback)
 
-    # Wait for setup_callback to activate and set _h
-    while (np.any(_h == None)) and (not rospy.is_shutdown()):
+    # Receive a single message from camera
+    msg = rospy.wait_for_message('usb_cam/image_raw',Image,None)
+    setup_homography(msg)
 
-        rospy.sleep(1)
-
-    #Target logic: Ensure that only one callback can occur at a time, and no extras will be processed
-    while(not calibrated):
-
-        Call a SINGLE callback # May be able to do this by limiting subscriber queue to 1 message. Other methods seem more advanced and/or unavailable.
-
-        #Calibrated is set in callback
-
-    # Unsubscribe and destroy subscriber
-    sub.unregister()
-    del sub
 
     # Initialize Main Subscriber
     rospy.Subscriber('raw_image',Image,callback)
