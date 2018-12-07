@@ -87,11 +87,13 @@ def main():
     # Reloads image until broken
     while(1):
         # If esc is pressed (maximum wait 10ms)
-        if(cv2.waitKey(10) & 0xFF == 27):
+        key = cv2.waitKey(20)
+        if(key & 0xFF == 27):
             break
             print("Exiting")
-        elif(cv2.waitKey(10) & 0xFF == 32):
-            print("space")
+        elif(key & 0xFF == 32):
+            print("Saving")
+            plist.append((_x,_y))
 
         cv2.imshow('window',_img)
 
