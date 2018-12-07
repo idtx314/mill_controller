@@ -10,6 +10,7 @@ _old_img = None # The original image to reset in callback
 # Globals to hold the coordinates of the most recent circle
 _x=0
 _y=0
+_counter = 0
 
 # event = event type "cv2.EVENT_..."
 # x, y = u,v, coordinates where click occurred
@@ -75,7 +76,7 @@ def main():
     cv2.setMouseCallback(window_name, mouse_call)
 
     # A list to hold clicked points
-    plist = []
+    plist = [(0,0),(0,0),(0,0),(0,0)]
 
 
     # Show image
@@ -85,18 +86,27 @@ def main():
     _old_img = img.copy()
 
     # Reloads image until broken
-    while(1):
+    global _counter
+    while(_counter < 4):
         # If esc is pressed (maximum wait 10ms)
         key = cv2.waitKey(20)
         if(key & 0xFF == 27):
             break
             print("Exiting")
         elif(key & 0xFF == 32):
+            # Save point
             print("Saving")
-            plist.append((_x,_y))
+            plist[_counter] = (_x,_y)
+            # Move to next place in record
+            _counter += 1
 
+        # Print current instruction
+
+        # Show image
         cv2.imshow('window',_img)
 
+
+    print("Corners collected")
     print plist
 
 
