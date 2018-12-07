@@ -140,7 +140,7 @@ def main():
 
     #Target logic: Ensure that only one callback can occur at a time, and no extras will be processed
     while(not calibrated):
-        blocking = True
+
         Call a SINGLE callback # May be able to do this by limiting subscriber queue to 1 message. Other methods seem more advanced and/or unavailable.
 
         #Calibrated is set in callback
