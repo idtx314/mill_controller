@@ -7,6 +7,9 @@ import rospkg
 l_down = False  # flag to do things in callback while button held down probably
 _img = None     # Image to work with in callback
 _old_img = None # The original image to reset in callback
+# Globals to hold the coordinates of the most recent circle
+_x=0
+_y=0
 
 # event = event type "cv2.EVENT_..."
 # x, y = u,v, coordinates where click occurred
@@ -17,11 +20,14 @@ def mouse_call(event, x, y, flags, param):
     global l_down
     global _img
     global _old_img
+    global _x, _y
 
     # Handle mouse event type
     if event == cv2.EVENT_LBUTTONDOWN:
         _img = _old_img.copy()
         cv2.circle(_img,(x,y),10,(0,0,0))
+        _x = x
+        _y = y
         l_down = True
     elif event == cv2.EVENT_MOUSEMOVE and l_down:
         _img = _old_img.copy()
@@ -83,7 +89,10 @@ def main():
         # If esc is pressed (maximum wait 20ms)
         if(cv2.waitKey(20) & 0xFF == 27):
             break
+            print("Exiting")
         cv2.imshow('window',_img)
+
+    print(_x,_y)
 
 
 
