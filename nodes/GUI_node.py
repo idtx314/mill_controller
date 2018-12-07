@@ -113,13 +113,20 @@ def main():
     print plist
 
     # Homography test
-        # Convert plist into numpy array
-        # Produce blank reference image
-        # Make numpy array from reference image corners
-        # Find homography
-        # Apply homogrphy to image, warping to reference dimensions
-        # Display warped image
-        # Waitkey()
+    # Convert plist into numpy array
+    plist = np.array(plist)
+    # Produce blank reference image
+    ref_img = np.zeros((500,500),np.uint8)
+    # Make numpy array from reference image corners
+    rlist = np.array([[0,500],[500,500],[500,0],[0,0]])
+    # Find homography
+    h,status = cv2.findHomography(plist,rlist)
+    # Apply homogrphy to image, warping to reference dimensions
+    aligned_img = cv2.warpPerspective(img.copy(),h,(500,500))
+    # Display warped image
+    cv2.imshow("window",aligned_img)
+    # Waitkey()
+    cv2.waitKey()
 
 
 
