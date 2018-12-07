@@ -9,7 +9,7 @@ l_down = False  # flag to do things in callback while button held down probably
 _img = None     # Image to work with in callback
 _old_img = None # The original image to reset in callback
 # Globals to hold the coordinates of the most recent circle
-_point = (0,0)
+_point = (-1,-1)
 _counter = 0
 
 # event = event type "cv2.EVENT_..."
@@ -92,14 +92,17 @@ def main():
         if(key & 0xFF == 27):
             break
             print("Exiting")
+        # If space is pressed
         elif(key & 0xFF == 32):
             # Save point
             print("Saving")
             plist[_counter] = _point
-            # TODO Update saved image
+            # Update saved image
             _old_img = _img.copy()
             # Move to next place in record
             _counter += 1
+
+        #TODO Add more modes, like choosing which corner to draw
 
         # # Print current instruction
         # s = ["Top Left Corner", "Top Right Corner", "Bottom Left Corner", "Bottom Right Corner"]
