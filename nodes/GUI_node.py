@@ -14,8 +14,8 @@ _counter = 0
 
 # event = event type "cv2.EVENT_..."
 # x, y = u,v, coordinates where click occurred
-# flags = ?
-# param = A third argument that can be passed when setting the callback. Exact usage uncertain but presumably to send more data.
+# flags = modifiers like holding down another mouse button or ctrl key
+# param = A third argument that can be passed when setting the callback. Use this to send a variable and you can provide more data to a callback
 # Note this this will trigger when moving around the window as well
 def mouse_call(event, x, y, flags, param):
     global l_down

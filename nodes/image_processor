@@ -24,6 +24,15 @@ threshold = 500
 # Initialize global variables for homography, width, and height to None
 _h = _width = _height = None
 
+# Calibration Globals
+_l_down = False
+_img = None
+_old_img = None
+_point = (0,0)
+_counter = 0
+_w_h = False
+_m_h = False
+
 # Constants
 MAX_FEATURES = 500
 GOOD_MATCH_PERCENT = 0.67
@@ -123,11 +132,35 @@ def setup_callback(input):
     # Set globals width, height. Channels will be discarded.
     _height, _width, channels = ref_img.shape
 
-def calibrate_image(input):
+# The behavior of mouse input during image alignment
+def mouse_callback(event, x, y, flags, param):
+    global _l_down, _img, _old_img, _point
+
+    # Handle mouse event type
+    if event == cv2.EVENT_LBUTTONDOWN:
+        _img = _old_img.copy()
+        cv2.circle(_img,(x,y),10,(0,0,0))
+        _point = (x,y)
+        _l_down = True
+    elif event == cv2.EVENT_MOUSEMOVE and _l_down:
+        _img = _old_img.copy()
+        cv2.circle(_img,(x,y),10,(0,0,0))
+    elif event == cv2.EVENT_LBUTTONUP:
+        _l_down = False
+
+def align_image(input):
     # Accepts a ROS Image message and takes user input to prepare homographies for image alignment.
+    global _img, _old_img, _counter, _point, _w_h, _m_h
+
+    w_h_accepted = False
+    m_h_accepted = False
+    # A list to hold clicked points
+    plist = [(0,0),(0,0),(0,0),(0,0)]
 
     # Convert new image using bgr8 encoding(?).
     img = converter.imgmsg_to_cv2(input,"bgr8")
+
+
 
 
 
@@ -138,7 +171,7 @@ def main():
 
     # Receive a single message from camera
     msg = rospy.wait_for_message('usb_cam/image_raw',Image,None)
-    setup_homography(msg)
+    align_image(msg)
 
 
     # Initialize Main Subscriber

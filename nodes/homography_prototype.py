@@ -42,7 +42,7 @@ def mouse_callback(event, x, y, flags, param):
 
 
 def main(input):
-    global _img, _old_img, _counter, _point
+    global _img, _old_img, _counter, _point, _w_h, _m_h
 
     w_h_accepted = False
     m_h_accepted = False
@@ -52,9 +52,7 @@ def main(input):
     # Translate from message
     img = input
 
-    # Save image data to globals
-    _img = img.copy()
-    _old_img = img.copy()
+
 
     # Start display window
     cv2.namedWindow('window')
@@ -62,8 +60,13 @@ def main(input):
     # Begin mouse callbacks
     cv2.setMouseCallback('window', mouse_callback)
 
-    print("Click and drag to place a corner. Press space to save each corner")
+
     while(not w_h_accepted):
+        # Save image data to globals
+        _img = img.copy()
+        _old_img = img.copy()
+
+        print("Click and drag to place a corner. Press space to save each corner")
         # Until 4 corners collected
         while(_counter < 4):
             # Display image to user
@@ -89,6 +92,7 @@ def main(input):
             #TODO Add more modes, like choosing which corner to draw
 
         print("Corners collected")
+        print plist
         # Calculate homography
         # Convert plist into numpy array
         plist = np.array(plist)
@@ -98,10 +102,10 @@ def main(input):
         rlist = np.array([[0,0],[500,0],[500,500],[0,500]])
         # Find homography
         # Save homography as w_h
-        w_h,status = cv2.findHomography(plist,rlist)
+        _w_h,status = cv2.findHomography(plist,rlist)
 
         # Apply homography to image copy
-        aligned_img = cv2.warpPerspective(img.copy(),w_h,(500,500))
+        aligned_img = cv2.warpPerspective(img.copy(),_w_h,(500,500))
 
         # Reset counter
         _counter = 0
@@ -122,8 +126,12 @@ def main(input):
     _img = img.copy()
     _old_img = img.copy()
 
-    print("Click and drag to place a corner. Press space to save each corner")
     while(not m_h_accepted):
+        # Save image data to globals
+        _img = img.copy()
+        _old_img = img.copy()
+
+        print("Click and drag to place a corner. Press space to save each corner")
         # Until 4 corners collected
         while(_counter < 4):
             # Display image to user
@@ -149,6 +157,7 @@ def main(input):
             #TODO Add more modes, like choosing which corner to draw
 
         print("Corners collected again")
+        print plist
         # Calculate homography
         # Convert plist into numpy array
         plist = np.array(plist)
@@ -158,10 +167,10 @@ def main(input):
         rlist = np.array([[0,0],[640,0],[640,480],[0,480]])
         # Find homography
         # Save homography as m_h
-        m_h,status = cv2.findHomography(plist,rlist)
+        _m_h,status = cv2.findHomography(plist,rlist)
 
         # Apply homography to new image copy
-        aligned_img = cv2.warpPerspective(img.copy(),m_h,(640,480))
+        aligned_img = cv2.warpPerspective(img.copy(),_m_h,(640,480))
 
         # Reset counter
         _counter = 0
@@ -178,6 +187,7 @@ def main(input):
             img = aligned_img.copy()
 
 
+
     # End callback
 
     print("Calibration complete")
@@ -186,9 +196,9 @@ def main(input):
     cv2.waitKey(0)
 
 
+    cv2.destroyWindow("window")
 
-
-
+    print _w_h
 
 
 
@@ -209,7 +219,7 @@ def main(input):
 if __name__ == '__main__':
     # Open image, using file images for now
     rospack = rospkg.RosPack()
-    path = rospack.get_path('mill_controller') + '/images/resize.jpg'
+    path = rospack.get_path('mill_controller') + '/images/mill_cam_2.jpg'
     img = cv2.imread(path,cv2.IMREAD_COLOR)
 
     main(img)
