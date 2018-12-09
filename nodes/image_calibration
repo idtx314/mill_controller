@@ -19,12 +19,18 @@ _dragging = -1
 _confirming = True
 _mouse = 0
 _mats = []
+# Corner order: top left, top right, bottom right, bottom left
 _corners = [(100,100),(200,100),(200,200),(100,200)]
 
 
 '''
 TODO
-Implement proper instructions
+Recolor corners (base on position?), add a cross, add lines between corners
+Add a third window and use it to show homography preview in real time
+    Calculate each while loop, or base on mouse event and bootstrap?
+Add bail out option
+Add running homography preview
+See Meeting - 2018-12-07 Notes for cool ideas
 '''
 
 
