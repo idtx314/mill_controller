@@ -15,6 +15,7 @@ from sensor_msgs.msg import Image
 
 
 _l_down = False
+_dragging = -1
 _confirming = True
 _mouse = 0
 _mats = []
@@ -23,10 +24,7 @@ _corners = [(100,100),(200,100),(200,200),(100,200)]
 
 '''
 TODO
-_full cal to be passed in as though an argument from command line
 Implement proper instructions
-handle IOErrors for file read
-The circles don't keep up well. Switch to differencing method?
 '''
 
 
@@ -68,7 +66,12 @@ def main(args):
 
     # Load ws_cal
     path = rospack.get_path('mill_controller') + '/homographies/ws_hom.npy'
-    ws_hom = np.load(path)
+    try:
+        ws_hom = np.load(path)
+    except IOError:
+        rospy.logerr("Error loading ws_hom.npy. File not found. Perform full calibration.")
+        return 1
+
     ws_img = cv2.warpPerspective(img.copy(),ws_hom,(500,500))
 
     calibrate_materialspace(ws_img)
@@ -272,7 +275,7 @@ def m_call_0(event, x, y, flags, param):
 
 def m_call_1(event, x, y, flags, param):
     # Main window mouse handler
-    global _l_down, _corners
+    global _l_down, _corners, _dragging
     closest_point = (-1, 8000)
     position = (x,y)
 
@@ -286,12 +289,13 @@ def m_call_1(event, x, y, flags, param):
         # If the corner is close enough, move it
         if closest_point[1] < 10:
             _corners[closest_point[0]] = (x,y)
+            _dragging = closest_point[0]
         _l_down = True
-    elif event == cv2.EVENT_MOUSEMOVE and _l_down:
+    elif event == cv2.EVENT_MOUSEMOVE and _l_down and (_dragging != -1):
         # If the corner is close enough, move it
-        if closest_point[1] < 10:
-            _corners[closest_point[0]] = (x,y)
+        _corners[_dragging] = (x,y)
     elif event == cv2.EVENT_LBUTTONUP:
+        _dragging = -1
         _l_down = False
 
 def find_distance(point1, point2):
