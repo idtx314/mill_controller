@@ -1,5 +1,7 @@
 import cv2
+import math
 import numpy as np
+import rospkg
 import rospy
 from cv_bridge import CvBridge
 from sensor_msgs.msg import Image
@@ -10,17 +12,20 @@ _confirming = True
 _mouse = 0
 _full_cal = True
 _mats = []
-_corners = [(100,100),(200,100),(100,200),(200,200)]
+_corners = [(100,100),(200,100),(200,200),(100,200)]
 
 
 '''
 TODO
 Derive _full_cal from launch arguments
+Implement proper instructions
+handle IOErrors for file read
 '''
 
 
 
 def main():
+    rospack = rospkg.RosPack()
 
     # Initialize ROS node
     rospy.init_node("image_calibration_node")
@@ -40,12 +45,14 @@ def main():
     if(_full_cal):
         calibrate_workspace(img)
 
+    # Load ws_cal
+    path = rospack.get_path('mill_controller') + '/homographies/ws_hom.npy'
+    ws_hom = np.load(path)
+    ws_img = cv2.warpPerspective(img.copy(),ws_hom,(500,500))
 
-    # load_ws_cal()
-    # ws_img = warpPerspective(img)
+    calibrate_materialspace(ws_img)
 
-    # calibrate_materialspace(ws_img)
-
+    print "completed calibration"
 
 
 
@@ -54,6 +61,7 @@ def main():
 
 def calibrate_workspace(img):
     global _confirming, _mats, _corners, _mouse
+    rospack = rospkg.RosPack()
     calibrated = False
     homlist = []
     imlist = []
@@ -105,7 +113,9 @@ def calibrate_workspace(img):
             # Wait for enter
             key = cv2.waitKey(20)
             if(key & 0xFF == 13 and _mouse):
-                # Todo save homography[mouse global]
+                # Save chosen homography
+                path = rospack.get_path('mill_controller') + '/homographies/ws_hom.npy'
+                np.save(path,homlist[_mouse-2])
                 calibrated = True
                 break
             if(key & 0xFF == 27):
@@ -116,51 +126,82 @@ def calibrate_workspace(img):
         homlist = []
         imlist = []
         _mouse = 0
+        _corners = [(100,100),(200,100),(200,200),(100,200)]
 
     clear_windows()
 
 
 
 def calibrate_materialspace(img):
-    pass
+    global _confirming, _mats, _corners, _mouse
+    rospack = rospkg.RosPack()
+    calibrated = False
+    homlist = []
+    imlist = []
 
-    # While uncalibrated
-        # Clear windows
-        # Load instructions on blank copy
-        # while 1
-            # draw circles on cam image copy at global coords
-            # Load cam image copy
-            # key = waitKey(20)
-            # if key == enter
-                # break
+    while not calibrated:
+        clear_windows()
 
-        # reference mat = np.zeros((width,height,3), np.uint8)
-        # for i in range(2,6)
-            # homography[i] = calculate homography(global coords)
-            # imlist[i] = apply homography[i] to cam image copy
-        # Set confirming flag for mouse cbs so that clicks do something
+        # Acquire corner selection from user
         # Load instructions on blank copy
-        # while 1
-            # for i in range(2,6)
-                # display imlist[i] to window i
-            # if mouse global
-                # draw rectangle on imlist[mouse global] copy
-                # display imlist[mouse global] copy to window i
-                # display imlist[mouse global] to main window
+        inst = cv2.putText(_mats[0].copy(), "Do this again", (50,100),cv2.FONT_HERSHEY_PLAIN,3,(255,255,255))
+        cv2.imshow("0",inst)
+        # Wait for feedback
+        while(1):
+            img_c = img.copy()
+            for i in range(4):
+                img_c = cv2.circle(img_c,_corners[i],10,(255,255,255))
+            cv2.imshow("1",img_c)
+
+            # Wait for enter
+            key = cv2.waitKey(20)
+            if(key & 0xFF == 13):
+                break
+
+        # Calculate and apply homographies
+        ref = np.zeros((640,int(640*.75),3), np.uint8)
+        plist = np.array(_corners)
+        rlist = np.array([[0,0],[640,0],[640,480],[0,480]])
+        for i in range(4):
+            homlist.append(cv2.findHomography(plist,rlist)[0])
+            imlist.append(cv2.warpPerspective(img.copy(),homlist[i],(640,480)))
+
+        # Request choice of homography from user
+        _confirming = True
+        # Load instructions on blank copy
+        inst = cv2.putText(_mats[0].copy(), "Do that again", (50,100),cv2.FONT_HERSHEY_PLAIN,3,(255,255,255))
+        cv2.imshow("0",inst)
+        # Wait for feedback
+        while(1):
+            for i in range(4):
+                cv2.imshow(str(i+2),imlist[i])
+            if _mouse:
+                img_r = cv2.rectangle(imlist[_mouse-2].copy(),(50,50),(450,450),(0,255,0),2)
+                cv2.imshow(str(_mouse),img_r)
+                cv2.imshow("1",imlist[_mouse-2])
                 # load new instructions to blank copy
-            # key = waitkey(20)
-            # if key is enter and mouse global
-                # save homography[mouse global]
-                # set not uncalibrated
-                # break
-            # if key is esc
-                # break
-        # clear confirming flag
-        # clear homography list
-        # clear imlist
-        # clear mouse global to 0
-    # clear calibrated
-    # clear windows
+                inst = cv2.putText(_mats[0].copy(), "Do the other again", (50,100),cv2.FONT_HERSHEY_PLAIN,3,(255,255,255))
+                cv2.imshow("0",inst)
+
+            # Wait for enter
+            key = cv2.waitKey(20)
+            if(key & 0xFF == 13 and _mouse):
+                # Save chosen homography
+                path = rospack.get_path('mill_controller') + '/homographies/ms_hom.npy'
+                np.save(path,homlist[_mouse-2])
+                calibrated = True
+                break
+            if(key & 0xFF == 27):
+                break
+
+        # clear variables
+        _confirming = False
+        homlist = []
+        imlist = []
+        _mouse = 0
+        _corners = [(100,100),(200,100),(200,200),(100,200)]
+
+    clear_windows()
 
 
 def prep_windows():
@@ -211,34 +252,49 @@ def m_call_0(event, x, y, flags, param):
 def m_call_1(event, x, y, flags, param):
     # Main window mouse handler
     global _l_down, _corners
+    closest_point = (-1, 8000)
+    position = (x,y)
 
-    # Handle mouse event type
+    # Find nearest corner
+    for i in range(4):
+        d = find_distance(position, _corners[i])
+        if d < closest_point[1]:
+            closest_point = (i, d)
+
     if event == cv2.EVENT_LBUTTONDOWN:
-        _img = _old_img.copy()
-        cv2.circle(_img,(x,y),10,(0,0,0))
-        _point = (x,y)
+        # If the corner is close enough, move it
+        if closest_point[1] < 10:
+            _corners[closest_point[0]] = (x,y)
         _l_down = True
     elif event == cv2.EVENT_MOUSEMOVE and _l_down:
-        _img = _old_img.copy()
-        cv2.circle(_img,(x,y),10,(0,0,0))
+        # If the corner is close enough, move it
+        if closest_point[1] < 10:
+            _corners[closest_point[0]] = (x,y)
     elif event == cv2.EVENT_LBUTTONUP:
         _l_down = False
+
+def find_distance(point1, point2):
+    d = math.sqrt(pow(point1[0]-point2[0],2) + pow(point1[1]-point2[1],2))
+    return d
 
 def m_call_2(event, x, y, flags, param):
     global _confirming, _mouse
     # Selection window mouse handler
     if event == cv2.EVENT_LBUTTONDOWN and _confirming:
         _mouse = 2
+
 def m_call_3(event, x, y, flags, param):
     global _confirming, _mouse
     # Selection window mouse handler
     if event == cv2.EVENT_LBUTTONDOWN and _confirming:
         _mouse = 3
+
 def m_call_4(event, x, y, flags, param):
     global _confirming, _mouse
     # Selection window mouse handler
     if event == cv2.EVENT_LBUTTONDOWN and _confirming:
         _mouse = 4
+
 def m_call_5(event, x, y, flags, param):
     global _confirming, _mouse
     # Selection window mouse handler
