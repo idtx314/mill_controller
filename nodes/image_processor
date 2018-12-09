@@ -33,6 +33,7 @@ _ms_hom = False
 
 
 def callback(input):
+    global _ws_hom, _ms_hom
     # The callback accepts an Image message, performs visual processing, and publishes the result. Darker pixels will be changed to black, non-dark pixels will be made white.
 
     # Translate Image message into a cv2 image assuming bgr8 encoding. The image will revert to a more general CV encoding, like 8UC3.
@@ -85,6 +86,7 @@ def callback(input):
 
 
 def main():
+    global _ws_hom, _ms_hom
     # Initialize ROS node
     rospy.init_node("image_processor_node")
 
