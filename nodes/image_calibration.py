@@ -1,8 +1,15 @@
+#!/usr/bin/env python
+
+'''
+This script launches a ROS node that guides the user through calibration of the image processing functions.
+'''
+
 import cv2
 import math
 import numpy as np
 import rospkg
 import rospy
+import sys
 from cv_bridge import CvBridge
 from sensor_msgs.msg import Image
 
@@ -10,25 +17,39 @@ from sensor_msgs.msg import Image
 _l_down = False
 _confirming = True
 _mouse = 0
-_full_cal = True
 _mats = []
 _corners = [(100,100),(200,100),(200,200),(100,200)]
 
 
 '''
 TODO
-Derive _full_cal from launch arguments
+_full cal to be passed in as though an argument from command line
 Implement proper instructions
 handle IOErrors for file read
+The circles don't keep up well. Switch to differencing method?
 '''
 
 
 
-def main():
-    rospack = rospkg.RosPack()
+def main(args):
 
     # Initialize ROS node
     rospy.init_node("image_calibration_node")
+
+    args[1] = args[1].upper()
+    if (args[1] == 'NONE'):
+        print("Skipped Calibration")
+        return 0
+    elif (args[1] == 'NORMAL'):
+        full_cal = False
+    elif (args[1] == 'FULL'):
+        full_cal = True
+    else:
+        rospy.logerr("Malformed argument to image_calibration")
+        return 1
+
+
+    rospack = rospkg.RosPack()
 
     # Create a translator object to convert images
     converter = CvBridge()
@@ -42,7 +63,7 @@ def main():
     # Convert new image using bgr8 encoding(?).
     img = converter.imgmsg_to_cv2(msg,"bgr8")
 
-    if(_full_cal):
+    if(full_cal):
         calibrate_workspace(img)
 
     # Load ws_cal
@@ -302,4 +323,8 @@ def m_call_5(event, x, y, flags, param):
         _mouse = 5
 
 if __name__ == '__main__':
-    main()
+    if len(sys.argv) < 2:
+        sys.argv.append('NORMAL')
+
+    main(sys.argv)
+
