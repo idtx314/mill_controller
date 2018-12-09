@@ -80,7 +80,6 @@ def main(args):
 
 
 
-# cv2.putText(img_copy, str, text_origin,fontFace,fontScale,color)
 
 
 def calibrate_workspace(img):
@@ -95,7 +94,9 @@ def calibrate_workspace(img):
 
         # Acquire corner selection from user
         # Load instructions on blank copy
-        inst = cv2.putText(_mats[0].copy(), "Do this", (50,100),cv2.FONT_HERSHEY_PLAIN,3,(255,255,255))
+        inst = cv2.putText(_mats[0].copy(), "Click and drag the circles", (20,25),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
+        inst = cv2.putText(inst.copy(), "to the corners of the workspace.", (20,50),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
+        inst = cv2.putText(inst.copy(), "Then press Enter.", (20,75),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
         cv2.imshow("0",inst)
         # Wait for feedback
         while(1):
@@ -113,33 +114,38 @@ def calibrate_workspace(img):
         ref = np.zeros((500,500,3), np.uint8)
         plist = np.array(_corners)
         rlist = np.array([[0,0],[500,0],[500,500],[0,500]])
-        for i in range(4):
+        for i in range(1):
             homlist.append(cv2.findHomography(plist,rlist)[0])
             imlist.append(cv2.warpPerspective(img.copy(),homlist[i],(500,500)))
 
         # Request choice of homography from user
         _confirming = True
         # Load instructions on blank copy
-        inst = cv2.putText(_mats[0].copy(), "Do that", (50,100),cv2.FONT_HERSHEY_PLAIN,3,(255,255,255))
+        inst = cv2.putText(_mats[0].copy(), "Press Enter to save this", (20,25),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
+        inst = cv2.putText(inst.copy(), "homography and exit.", (20,50),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
+        inst = cv2.putText(inst.copy(), "Press Esc to try again.", (20,75),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
         cv2.imshow("0",inst)
+        cv2.imshow("1",imlist[0])
         # Wait for feedback
         while(1):
-            for i in range(4):
-                cv2.imshow(str(i+2),imlist[i])
-            if _mouse:
-                img_r = cv2.rectangle(imlist[_mouse-2].copy(),(50,50),(450,450),(0,255,0),2)
-                cv2.imshow(str(_mouse),img_r)
-                cv2.imshow("1",imlist[_mouse-2])
-                # load new instructions to blank copy
-                inst = cv2.putText(_mats[0].copy(), "Do the other", (50,100),cv2.FONT_HERSHEY_PLAIN,3,(255,255,255))
-                cv2.imshow("0",inst)
+            # for i in range(4):
+            #     cv2.imshow(str(i+2),imlist[i])
+            # if _mouse:
+            #     img_r = cv2.rectangle(imlist[_mouse-2].copy(),(50,50),(450,450),(0,255,0),2)
+            #     cv2.imshow(str(_mouse),img_r)
+            #     cv2.imshow("1",imlist[_mouse-2])
+            #     # load new instructions to blank copy
+            #     inst = cv2.putText(_mats[0].copy(), "Do the other", (50,100),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
+            #     cv2.imshow("0",inst)
 
             # Wait for enter
             key = cv2.waitKey(20)
-            if(key & 0xFF == 13 and _mouse):
+            # if(key & 0xFF == 13 and _mouse):
+            if(key & 0xFF == 13):
                 # Save chosen homography
                 path = rospack.get_path('mill_controller') + '/homographies/ws_hom.npy'
-                np.save(path,homlist[_mouse-2])
+                # np.save(path,homlist[_mouse-2])
+                np.save(path,homlist[0])
                 calibrated = True
                 break
             if(key & 0xFF == 27):
@@ -168,7 +174,9 @@ def calibrate_materialspace(img):
 
         # Acquire corner selection from user
         # Load instructions on blank copy
-        inst = cv2.putText(_mats[0].copy(), "Do this again", (50,100),cv2.FONT_HERSHEY_PLAIN,3,(255,255,255))
+        inst = cv2.putText(_mats[0].copy(), "Click and drag the circles", (20,25),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
+        inst = cv2.putText(inst.copy(), "to the corners of the material.", (20,50),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
+        inst = cv2.putText(inst.copy(), "Then press Enter.", (20,75),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
         cv2.imshow("0",inst)
         # Wait for feedback
         while(1):
@@ -186,33 +194,38 @@ def calibrate_materialspace(img):
         ref = np.zeros((640,int(640*.75),3), np.uint8)
         plist = np.array(_corners)
         rlist = np.array([[0,0],[640,0],[640,480],[0,480]])
-        for i in range(4):
+        for i in range(1):
             homlist.append(cv2.findHomography(plist,rlist)[0])
             imlist.append(cv2.warpPerspective(img.copy(),homlist[i],(640,480)))
 
         # Request choice of homography from user
         _confirming = True
         # Load instructions on blank copy
-        inst = cv2.putText(_mats[0].copy(), "Do that again", (50,100),cv2.FONT_HERSHEY_PLAIN,3,(255,255,255))
+        inst = cv2.putText(_mats[0].copy(), "Press Enter to save this", (20,25),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
+        inst = cv2.putText(inst.copy(), "homography and exit.", (20,50),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
+        inst = cv2.putText(inst.copy(), "Press Esc to try again.", (20,75),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
         cv2.imshow("0",inst)
+        cv2.imshow("1",imlist[0])
         # Wait for feedback
         while(1):
-            for i in range(4):
-                cv2.imshow(str(i+2),imlist[i])
-            if _mouse:
-                img_r = cv2.rectangle(imlist[_mouse-2].copy(),(50,50),(450,450),(0,255,0),2)
-                cv2.imshow(str(_mouse),img_r)
-                cv2.imshow("1",imlist[_mouse-2])
-                # load new instructions to blank copy
-                inst = cv2.putText(_mats[0].copy(), "Do the other again", (50,100),cv2.FONT_HERSHEY_PLAIN,3,(255,255,255))
-                cv2.imshow("0",inst)
+            # for i in range(4):
+            #     cv2.imshow(str(i+2),imlist[i])
+            # if _mouse:
+            #     img_r = cv2.rectangle(imlist[_mouse-2].copy(),(50,50),(450,450),(0,255,0),2)
+            #     cv2.imshow(str(_mouse),img_r)
+            #     cv2.imshow("1",imlist[_mouse-2])
+            #     # load new instructions to blank copy
+            #     inst = cv2.putText(_mats[0].copy(), "Do the other again", (50,100),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
+            #     cv2.imshow("0",inst)
 
             # Wait for enter
             key = cv2.waitKey(20)
-            if(key & 0xFF == 13 and _mouse):
+            # if(key & 0xFF == 13 and _mouse):
+            if(key & 0xFF ==13):
                 # Save chosen homography
                 path = rospack.get_path('mill_controller') + '/homographies/ms_hom.npy'
-                np.save(path,homlist[_mouse-2])
+                # np.save(path,homlist[_mouse-2])
+                np.save(path,homlist[0])
                 calibrated = True
                 break
             if(key & 0xFF == 27):
@@ -232,17 +245,19 @@ def prep_windows():
     global _mats
 
     # list of empty mats
-    _mats.append(np.zeros((300,300,3),np.uint8))
+    _mats.append(np.zeros((400,600,3),np.uint8))
     _mats.append(np.zeros((700,700,3),np.uint8))
     for i in range(2,6):
-        _mats.append(np.zeros((200,200,3),np.uint8))
+        _mats.append(np.zeros((400,400,3),np.uint8))
 
     # Create and move windows around
-    coords = [(100,100),(300,100),(100,300),(300,300),(100,500),(300,500)]
-    for i in range(6):
-        cv2.namedWindow(str(i),cv2.WINDOW_GUI_NORMAL)
+    coords = [(50,50),(700,50),(100,430),(500,430),(100,730),(500,730)]
+    for i in range(2):
+        cv2.namedWindow(str(i),cv2.WINDOW_AUTOSIZE)
+        # cv2.resizeWindow(str(i),_mats[i].shape[1],_mats[i].shape[0])
+        cv2.waitKey(2)
         cv2.moveWindow(str(i),coords[i][0],coords[i][1])
-        clear_windows()
+    clear_windows()
 
 
 
@@ -251,7 +266,7 @@ def clear_windows(w_list=[]):
 
     if len(w_list) == 0:
         # Clear all windows
-        for i in range(6):
+        for i in range(2):
             cv2.imshow(str(i),_mats[i])
     else:
         for i in range(len(w_list)):
@@ -262,8 +277,9 @@ def clear_windows(w_list=[]):
 
 def prep_mice():
     # Start mouse callbacks for each window
-    callback = [m_call_0, m_call_1, m_call_2, m_call_3, m_call_4, m_call_5]
-    for i in range(6):
+    # callback = [m_call_0, m_call_1, m_call_2, m_call_3, m_call_4, m_call_5]
+    callback = [m_call_0, m_call_1]
+    for i in range(2):
         # tie callback[i] to window[i]
         cv2.setMouseCallback(str(i), callback[i])
 
@@ -302,29 +318,29 @@ def find_distance(point1, point2):
     d = math.sqrt(pow(point1[0]-point2[0],2) + pow(point1[1]-point2[1],2))
     return d
 
-def m_call_2(event, x, y, flags, param):
-    global _confirming, _mouse
-    # Selection window mouse handler
-    if event == cv2.EVENT_LBUTTONDOWN and _confirming:
-        _mouse = 2
+# def m_call_2(event, x, y, flags, param):
+#     global _confirming, _mouse
+#     # Selection window mouse handler
+#     if event == cv2.EVENT_LBUTTONDOWN and _confirming:
+#         _mouse = 2
 
-def m_call_3(event, x, y, flags, param):
-    global _confirming, _mouse
-    # Selection window mouse handler
-    if event == cv2.EVENT_LBUTTONDOWN and _confirming:
-        _mouse = 3
+# def m_call_3(event, x, y, flags, param):
+#     global _confirming, _mouse
+#     # Selection window mouse handler
+#     if event == cv2.EVENT_LBUTTONDOWN and _confirming:
+#         _mouse = 3
 
-def m_call_4(event, x, y, flags, param):
-    global _confirming, _mouse
-    # Selection window mouse handler
-    if event == cv2.EVENT_LBUTTONDOWN and _confirming:
-        _mouse = 4
+# def m_call_4(event, x, y, flags, param):
+#     global _confirming, _mouse
+#     # Selection window mouse handler
+#     if event == cv2.EVENT_LBUTTONDOWN and _confirming:
+#         _mouse = 4
 
-def m_call_5(event, x, y, flags, param):
-    global _confirming, _mouse
-    # Selection window mouse handler
-    if event == cv2.EVENT_LBUTTONDOWN and _confirming:
-        _mouse = 5
+# def m_call_5(event, x, y, flags, param):
+#     global _confirming, _mouse
+#     # Selection window mouse handler
+#     if event == cv2.EVENT_LBUTTONDOWN and _confirming:
+#         _mouse = 5
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
