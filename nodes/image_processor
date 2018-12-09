@@ -3,6 +3,10 @@
 """
 This script contains a ROS node that will receive Image messages over the topic 'raw_image', convert them into OpenCV images, perform computer vision tasks, currently placeholder, convert them back into Image messages and publish them on the topic 'processed_image'.
 """
+'''
+TODO
+adjust image dimensions of aligned images
+'''
 
 import rospkg
 import rospy
@@ -30,8 +34,8 @@ _img = None
 _old_img = None
 _point = (0,0)
 _counter = 0
-_w_h = False
-_m_h = False
+_ws_hom = False
+_ms_hom = False
 
 # Constants
 MAX_FEATURES = 500
@@ -39,7 +43,7 @@ GOOD_MATCH_PERCENT = 0.67
 
 
 def callback(input):
-    # The callback accepts an Image message, performs visual processing and masking on it, and publishes the result. Exact processing is placeholder. I'm going to start by assuming the presence of material at every location in the frame except where darker colors are present. Darker pixels will then be changed to black, non-dark pixels will be made white.
+    # The callback accepts an Image message, performs visual processing, and publishes the result. Darker pixels will be changed to black, non-dark pixels will be made white.
 
     # Translate Image message into a cv2 image assuming bgr8 encoding. The image will revert to a more general CV encoding, like 8UC3.
     cv_image = converter.imgmsg_to_cv2(input,"bgr8")
@@ -48,11 +52,12 @@ def callback(input):
     cv_image = cv_image.copy()
 
     # Apply a homography to warp the new image to match the reference
-    aligned_cv_image = cv2.warpPerspective(cv_image, _h, (_width, _height))
+    semi_aligned_img = cv2.warpPerspective(cv_image, _ws_hom, (500, 500))
+    aligned_img = cv2.warpPerspective(semi_aligned_img, _ms_hom, (640,int(640*.75)))
 
     # Perform visual processing on the image to extract relevant data.
     # Extract a tuple containing the number of (rows, columns, channels).
-    (rows,cols,chans)  = aligned_cv_image.shape
+    (rows,cols,chans)  = aligned_img.shape
 
     # Cycle through each row
     for row in range(rows):
@@ -62,21 +67,21 @@ def callback(input):
             # Cycle through each channel
             for chan in range(chans):
                 # Sum the intensity of the channels
-                total += aligned_cv_image.item(row,col,chan)
+                total += aligned_img.item(row,col,chan)
 
             # Cycle through each channel
             for chan in range(chans):
                 # If the total intensity is less than the threshold
                 if (total < threshold):
                     # Set color to black
-                    aligned_cv_image.itemset((row,col,chan),0)
+                    aligned_img.itemset((row,col,chan),0)
                 else:
                     # Set the color to white
-                    aligned_cv_image.itemset((row,col,chan),255)
+                    aligned_img.itemset((row,col,chan),255)
 
 
     # Translate cv2 image back to an Image message using existing encoding. This will be a generic encoding like 8UC3.
-    msg = converter.cv2_to_imgmsg(aligned_cv_image,"passthrough")
+    msg = converter.cv2_to_imgmsg(aligned_img,"passthrough")
 
     # Assert encoding. CV generally uses bgr8.
     msg.encoding = "bgr8"
@@ -132,33 +137,6 @@ def setup_callback(input):
     # Set globals width, height. Channels will be discarded.
     _height, _width, channels = ref_img.shape
 
-# The behavior of mouse input during image alignment
-def mouse_callback(event, x, y, flags, param):
-    global _l_down, _img, _old_img, _point
-
-    # Handle mouse event type
-    if event == cv2.EVENT_LBUTTONDOWN:
-        _img = _old_img.copy()
-        cv2.circle(_img,(x,y),10,(0,0,0))
-        _point = (x,y)
-        _l_down = True
-    elif event == cv2.EVENT_MOUSEMOVE and _l_down:
-        _img = _old_img.copy()
-        cv2.circle(_img,(x,y),10,(0,0,0))
-    elif event == cv2.EVENT_LBUTTONUP:
-        _l_down = False
-
-def align_image(input):
-    # Accepts a ROS Image message and takes user input to prepare homographies for image alignment.
-    global _img, _old_img, _counter, _point, _w_h, _m_h
-
-    w_h_accepted = False
-    m_h_accepted = False
-    # A list to hold clicked points
-    plist = [(0,0),(0,0),(0,0),(0,0)]
-
-    # Convert new image using bgr8 encoding(?).
-    img = converter.imgmsg_to_cv2(input,"bgr8")
 
 
 
@@ -169,9 +147,16 @@ def main():
     rospy.init_node("image_processor_node")
 
 
-    # Receive a single message from camera
-    msg = rospy.wait_for_message('usb_cam/image_raw',Image,None)
-    align_image(msg)
+    # Load homography data for image alignment
+    rospack = rospkg.RosPack()
+    path = rospack.get_path('mill_controller') + '/homographies/'
+    try:
+        _ws_hom = np.load(path + 'ws_hom.npy')
+        _ms_hom = np.load(path + 'ms_hom.npy')
+    except IOError:
+        rospy.logerr("Error loading calibration. File not found. Run image_calibration node.")
+        return 1
+
 
 
     # Initialize Main Subscriber
