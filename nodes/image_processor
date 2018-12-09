@@ -25,21 +25,11 @@ converter = CvBridge()
 # Set threshold for color processing
 threshold = 500
 
-# Initialize global variables for homography, width, and height to None
-_h = _width = _height = None
 
 # Calibration Globals
-_l_down = False
-_img = None
-_old_img = None
-_point = (0,0)
-_counter = 0
 _ws_hom = False
 _ms_hom = False
 
-# Constants
-MAX_FEATURES = 500
-GOOD_MATCH_PERCENT = 0.67
 
 
 def callback(input):
@@ -88,54 +78,6 @@ def callback(input):
 
     # Publish image message
     pub.publish(msg)
-
-
-def setup_callback(input):
-    # Obsolete callback intended to perform image alignment of material automatically. Kept for quick reference.
-    # Calculate the homography between the new image and the reference
-    # Save homography, reference width and height into global variable
-
-    # Declare the use of global _h
-    global _h, _width, _height
-
-    # Convert new image using bgr8 encoding(?).
-    cam_img = converter.imgmsg_to_cv2(input,"bgr8")
-    # Read in reference image
-    rospack = rospkg.RosPack()
-    path = rospack.get_path('mill_controller') + '/images/tags_r.jpg'
-    ref_img = cv2.imread(path, cv2.IMREAD_COLOR)
-
-
-    # Convert images to grayscale
-    cam_img_gray = cv2.cvtColor(cam_img, cv2.COLOR_BGR2GRAY)
-    ref_img_gray = cv2.cvtColor(ref_img, cv2.COLOR_BGR2GRAY)
-
-    # Detect ORB features and compute descriptors.
-    orb = cv2.ORB_create(MAX_FEATURES)
-    keypoints1, descriptors1 = orb.detectAndCompute(cam_img_gray, None)
-    keypoints2, descriptors2 = orb.detectAndCompute(ref_img_gray, None)
-
-    # Match features
-    matcher = cv2.DescriptorMatcher_create(cv2.DESCRIPTOR_MATCHER_BRUTEFORCE_HAMMING)
-    matches = matcher.match(descriptors1, descriptors2, None)
-
-    # Rank and Cull matches
-    matches.sort(key=lambda x: x.distance, reverse=False)
-    numGoodMatches = int(len(matches) * GOOD_MATCH_PERCENT)
-    matches = matches[:numGoodMatches]
-
-    # Produce lists of match coordinates
-    points1 = np.zeros((len(matches), 2), dtype=np.float32)
-    points2 = np.zeros((len(matches), 2), dtype=np.float32)
-
-    for i, match in enumerate(matches):
-        points1[i, :] = keypoints1[match.queryIdx].pt
-        points2[i, :] = keypoints2[match.trainIdx].pt
-
-    # Find homography using RANSAC algorithm
-    _h, mask = cv2.findHomography(points1, points2, cv2.RANSAC)
-    # Set globals width, height. Channels will be discarded.
-    _height, _width, channels = ref_img.shape
 
 
 
