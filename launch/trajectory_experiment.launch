@@ -1,0 +1,13 @@
+<launch>
+  <!-- Parameters -->
+  <param name="m_width" type="double" value="10.0" />
+
+
+
+  <!-- Input Pipeline Nodes -->
+  <!--
+  <node name="string_parser_node" pkg="mill_controller" type="string_parser" />
+  <node name="trajectory_parser_node" pkg="mill_controller" type="trajectory_parser" />
+  <node name="gcode_sender_node" pkg="mill_controller" type="gcode_sender" />
+  -->
+</launch>
