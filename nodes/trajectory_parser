@@ -11,10 +11,9 @@ Uses the following parameters:
   x_offset
   y_offset
 '''
+
 '''
 TODO
-Peel out x and y data from commands, transform into w_space using T matrix
-z coordinates won't change, even when we move to 3d, so re-assemble the command and parse it into Gcode
 Add workspace and machine space safety checks?
 '''
 
@@ -32,6 +31,9 @@ pub = rospy.Publisher('gcode_ready_flag',Bool,queue_size=1)
 
 def callback(message):
     # Upon receiving a Trajectory message, parse the information and write a GCode file based on it.
+
+    # Make a copy of message so that it can be modified
+    msg = Trajectory()
 
     # Read parameters from the namespace or use reasonable defaults
     width = rospy.get_param("m_width", 279.4)
@@ -51,11 +53,19 @@ def callback(message):
     Twm[1,2] = y_offset
     Twm[2,2] = 1.0
 
-    # TODO: for i in range(message.length)
-    #           vector = np.array(3x1, x, y, 1)
-    #           vector = T.dot(vector)
-    #           message.x[i] = vector[0]
-    #           message.y[i] = vector[1]
+    print type(msg.x)
+
+    # Transform the x and y of the input message into world frame coordinates
+    for i in range(message.length):
+        vector = np.ones((3,1))
+        vector[0,0] = message.x[i]
+        vector[1,0] = message.y[i]
+        vector = Twm.dot(vector)
+        msg.x[i] = vector[0,0]
+        msg.y[i] = vector[1,0]
+        print (str(msg.x[i])+'\t'+str(msg.y[i]))
+
+    return 0
 
     # Open output file
     f = open('output.gcode', 'w')
