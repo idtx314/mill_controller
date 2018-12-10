@@ -1,10 +1,18 @@
 <launch>
 
   <!-- Arguments -->
-  <arg name="m_width" default="10.0" />
+  <arg name="m_width" default="279.4" />
+  <arg name="m_height" default="215.9" />
+  <arg name="m_angle" default="0.0" />
+  <arg name="x_offset" default="0.0" />
+  <arg name="y_offset" default="0.0" />
 
   <!-- Parameters -->
   <param name="m_width" type="double" value="$(arg m_width)" />
+  <param name="m_height" type="double" value="$(arg m_height)" />
+  <param name="m_angle" type="double" value="$(arg m_angle)" />
+  <param name="x_offset" type="double" value="$(arg x_offset)" />
+  <param name="y_offset" type="double" value="$(arg y_offset)" />
 
 
 
