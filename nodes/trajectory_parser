@@ -14,6 +14,8 @@ Uses the following parameters:
 
 '''
 TODO
+Move transformation into gcode line assembly loop and pull from vec
+Add interpolation between arbitrary ranges in the same loop
 Add workspace and machine space safety checks?
 '''
 
@@ -42,7 +44,7 @@ def callback(message):
     x_offset = rospy.get_param("x_offset", 0.0)
     y_offset = rospy.get_param("y_offset", 0.0)
 
-    # Compose parameter data to produce a T matrix from material to machine
+    # Compose Transformation matrix from material to machine space
     Twm = np.zeros((3,3))
     Twm[2,2] = 1.0
     Twm[0,0] = np.cos(np.deg2rad(theta))
@@ -52,20 +54,6 @@ def callback(message):
     Twm[1,1] = np.cos(np.deg2rad(theta))
     Twm[1,2] = y_offset
     Twm[2,2] = 1.0
-
-    print type(msg.x)
-
-    # Transform the x and y of the input message into world frame coordinates
-    for i in range(message.length):
-        vector = np.ones((3,1))
-        vector[0,0] = message.x[i]
-        vector[1,0] = message.y[i]
-        vector = Twm.dot(vector)
-        msg.x[i] = vector[0,0]
-        msg.y[i] = vector[1,0]
-        print (str(msg.x[i])+'\t'+str(msg.y[i]))
-
-    return 0
 
     # Open output file
     f = open('output.gcode', 'w')
@@ -92,13 +80,23 @@ def callback(message):
 
     f.write(s)
 
+
     # Follow trajectory. Operating on the assumption that the trajectory can be approximated as a series of straight line motions from point to point. Improvement of this model will probably need example trajectories to test. Starting with fixed feed rate.
     for index in range(message.length):
-        s = 'G1' + ' X' + str(message.x[index]) + ' Y' + str(message.y[index]) + ' F200.0' + '\n'
-        # Write appropriate command to output
+        # Transform x and y into machine coordinates
+        vector = np.ones((3,1))
+        vector[0,0] = message.x[index]
+        vector[1,0] = message.y[index]
+        vector = Twm.dot(vector)
+
+        # Compose gcode string
+        s = 'G1' + ' X' + str(vector[0,0]) + ' Y' + str(vector[1,0]) + ' F200.0' + '\n'
+
+        # Write command to output
         f.write(s)
+        print s
 
-
+    return 0
 
     # Write the Footer
     s = ''
