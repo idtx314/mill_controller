@@ -14,8 +14,6 @@ Uses the following parameters:
 
 '''
 TODO
-Move transformation into gcode line assembly loop and pull from vec
-Add interpolation between arbitrary ranges in the same loop
 Add workspace and machine space safety checks?
 '''
 
@@ -43,10 +41,12 @@ def callback(message):
     theta = rospy.get_param("m_angle", 0.0)
     x_offset = rospy.get_param("x_offset", 0.0)
     y_offset = rospy.get_param("y_offset", 0.0)
-    x_max = rospy.get_param("x_max", 1.0)
-    x_min = rospy.get_param("x_min", 0.0)
-    y_max = rospy.get_param("y_max", 1.0)
-    y_min = rospy.get_param("y_min", 0.0)
+    x_range = rospy.get_param("x_range")
+    y_range = rospy.get_param("y_range")
+    x_max = x_range[1]
+    x_min = x_range[0]
+    y_max = y_range[1]
+    y_min = y_range[0]
 
 
     # Compose Transformation matrix from material to machine space
@@ -105,6 +105,8 @@ def callback(message):
         vector[0,0] = x
         vector[1,0] = y
         vector = Twm.dot(vector)
+
+        # TODO Check whether the commanded motions are within the limits of machine space.
 
         # Compose gcode string
         s = 'G1' + ' X' + str(vector[0,0]) + ' Y' + str(vector[1,0]) + ' F200.0' + '\n'
