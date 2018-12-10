@@ -11,7 +11,7 @@ pub = rospy.Publisher('trajectory_input',Trajectory,queue_size=1)
 
 
 
-def callback(input):
+def callback(msg):
     # What does the callback do?
 
 

@@ -18,10 +18,31 @@ from std_msgs.msg import String
 from mill_controller.msg import Trajectory
 
 
+# Use this publisher to send the output
+pub = rospy.Publisher('trajectory_input',Trajectory,queue_size=1)
 
 
 def callback(msg):
     # This function receives a string message as an argument. It attempts to interpret that string as an absolute file path of a csv file, opens the file, and parses the contained data into a Trajectory message. The Trajectory message is then published to /trajectory_input
+
+    # TODO Sanity check the input to see if it is a directory
+        # Error and return if failed
+    # Attempt to open a file at the location
+        # Error and return if failed
+
+    # Create Trajectory message
+
+    # Parse file
+    # For each line in file:
+        # Split at commas
+        # message.x.append([0])
+        # message.y.append([1])
+        # message.z.append([2])
+        # message.t.append([3])
+        # message.length += 1
+
+    # Close the file
+    # Publish the message
 
     print type(msg)
     print msg
