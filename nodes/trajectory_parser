@@ -43,6 +43,11 @@ def callback(message):
     theta = rospy.get_param("m_angle", 0.0)
     x_offset = rospy.get_param("x_offset", 0.0)
     y_offset = rospy.get_param("y_offset", 0.0)
+    x_max = rospy.get_param("x_max", 1.0)
+    x_min = rospy.get_param("x_min", 0.0)
+    y_max = rospy.get_param("y_max", 1.0)
+    y_min = rospy.get_param("y_min", 0.0)
+
 
     # Compose Transformation matrix from material to machine space
     Twm = np.zeros((3,3))
@@ -82,11 +87,23 @@ def callback(message):
 
 
     # Follow trajectory. Operating on the assumption that the trajectory can be approximated as a series of straight line motions from point to point. Improvement of this model will probably need example trajectories to test. Starting with fixed feed rate.
+
+
+    # Shift range limits so that range bottoms at zero
+    x_max = x_max-x_min
+    y_max = y_max-y_min
+
     for index in range(message.length):
-        # Transform x and y into machine coordinates
+        # Interpolate from input ranges to material ranges
+        x = message.x[index] - x_min
+        y = message.y[index] - y_min
+        x = x/x_max * width
+        y = y/y_max * height
+
+        # Transform from material space into machine space
         vector = np.ones((3,1))
-        vector[0,0] = message.x[index]
-        vector[1,0] = message.y[index]
+        vector[0,0] = x
+        vector[1,0] = y
         vector = Twm.dot(vector)
 
         # Compose gcode string
