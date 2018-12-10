@@ -1,0 +1,20 @@
+<launch>
+  <!-- usb_cam arguments -->
+  <arg name="video_device" default="/dev/video1" />
+  <arg name="pixel_format" default="yuyv" />
+  <arg name="camera_name"  default="mill_camera" />
+
+  <!-- Calibration Node Arguments -->
+  <arg name="board_size" default="11x7" />
+  <arg name="square_size" default=".01745" />
+
+  <!-- USB Camera Driver -->
+  <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" />
+    <param name="usb_cam/video_device" value="/dev/video1" />
+    <param name="usb_cam/pixel_format" value="yuyv" />
+    <param name="usb_cam/camera_name" value="mill_camera" />
+
+  <!-- Camera Calibration Node -->
+  <node name="cameracalibrator_node" pkg="camera_calibration" type="cameracalibrator.py" args="--size $(arg board_size) --square $(arg square_size) image:=/usb_cam/image_raw camera:=/usb_cam" />
+
+</launch>
