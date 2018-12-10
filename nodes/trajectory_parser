@@ -107,15 +107,17 @@ def callback(message):
         vector = Twm.dot(vector)
 
         # TODO Check whether the commanded motions are within the limits of machine space.
+        if(vector[0,0] > 500.0 or vector[0,0] < 500.0 or vector[1,0] > 500.0 or vector[1,0] < 500.0):
+            rospy.logerr("Commanded coordinates are out of machine bounds. Aborting GCode write.")
+            f.close()
+            return 1
 
         # Compose gcode string
         s = 'G1' + ' X' + str(vector[0,0]) + ' Y' + str(vector[1,0]) + ' F200.0' + '\n'
 
         # Write command to output
         f.write(s)
-        print s
 
-    return 0
 
     # Write the Footer
     s = ''
