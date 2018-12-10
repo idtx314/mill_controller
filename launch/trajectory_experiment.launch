@@ -1,6 +1,10 @@
 <launch>
+
+  <!-- Arguments -->
+  <arg name="m_width" default="10.0" />
+
   <!-- Parameters -->
-  <param name="m_width" type="double" value="10.0" />
+  <param name="m_width" type="double" value="$(arg m_width)" />
 
 
 
