@@ -4,10 +4,22 @@
 This script contains a ROS node that accepts Trajectory messages and produces a GCode file based on the included trajectory data. Publishes a bool message as a notification to the next node in the pipeline.
 This script presumes that the CNC machine has been properly homed and had the G54 workspace set up beforehand. It will not make any safety checks on input coordinates.
 For more information on the appropriate format of Trajectory messages, see Trajectory.msg in the msgs directory.
+Uses the following parameters:
+  m_width
+  m_height
+  m_angle
+  x_offset
+  y_offset
 '''
-# TODO
-# Add workspace and machine space safety checks?
-
+'''
+TODO
+Import ros parameters using rospy.get_param('relative name','default value')
+Form a rotation matrix and a translation vector
+Form a transformation matrix SE(2)
+Peel out x and y data from commands, transform into w_space using T matrix
+z coordinates won't change, even when we move to 3d, so re-assemble the command and parse it into Gcode
+Add workspace and machine space safety checks?
+'''
 
 import rospy
 import sys
@@ -22,6 +34,21 @@ pub = rospy.Publisher('gcode_ready_flag',Bool,queue_size=1)
 
 def callback(message):
     # Upon receiving a Trajectory message, parse the information and write a GCode file based on it.
+
+    # Read parameters from the namespace or use reasonable defaults
+    width = rospy.get_param("m_width", 279.4)
+    height = rospy.get_param("m_height", 215.9)
+    angle = rospy.get_param("m_angle", 0.0)
+    x_offset = rospy.get_param("x_offset", 0.0)
+    y_offset = rospy.get_param("y_offset", 0.0)
+
+    # TODO: Compose parameter data to produce a T matrix from material to machine
+
+    # TODO: for i in range(message.length)
+    #           vector = np.array(3x1, x, y, 1)
+    #           vector = T.dot(vector)
+    #           message.x[i] = vector[0]
+    #           message.y[i] = vector[1]
 
     # Open output file
     f = open('output.gcode', 'w')
