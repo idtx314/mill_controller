@@ -18,6 +18,7 @@ Add workspace and machine space safety checks?
 '''
 
 import numpy as np
+import rospkg
 import rospy
 import sys
 from std_msgs.msg import Bool
@@ -60,8 +61,11 @@ def callback(message):
     Twm[1,2] = y_offset
     Twm[2,2] = 1.0
 
+    # Get system directory for file locations
+    rospack = rospkg.RosPack()
+    path = rospack.get_path('mill_controller') + '/output.gcode'
     # Open output file
-    f = open('output.gcode', 'w')
+    f = open(path, 'w')
 
     # Write the Header
     s = ''

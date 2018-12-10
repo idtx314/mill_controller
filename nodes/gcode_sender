@@ -32,6 +32,7 @@ THE SOFTWARE.
 ---------------------
 """
 
+import rospkg
 import rospy
 import sys
 import serial
@@ -49,8 +50,11 @@ def callback(input):
     # Open grbl serial port
     s = serial.Serial('/dev/ttyUSB0',115200)
 
+    # Get package directory for file locations
+    rospack = rospkg.RosPack()
+    path = rospack.get_path('mill_controller') + '/output.gcode'
     # Open g-code file
-    f = open('output.gcode','r');
+    f = open(path,'r');
 
     # Wake up grbl
     s.write("\r\n\r\n")
