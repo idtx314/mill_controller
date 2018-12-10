@@ -13,14 +13,12 @@ Uses the following parameters:
 '''
 '''
 TODO
-Import ros parameters using rospy.get_param('relative name','default value')
-Form a rotation matrix and a translation vector
-Form a transformation matrix SE(2)
 Peel out x and y data from commands, transform into w_space using T matrix
 z coordinates won't change, even when we move to 3d, so re-assemble the command and parse it into Gcode
 Add workspace and machine space safety checks?
 '''
 
+import numpy as np
 import rospy
 import sys
 from std_msgs.msg import Bool
@@ -38,11 +36,20 @@ def callback(message):
     # Read parameters from the namespace or use reasonable defaults
     width = rospy.get_param("m_width", 279.4)
     height = rospy.get_param("m_height", 215.9)
-    angle = rospy.get_param("m_angle", 0.0)
+    theta = rospy.get_param("m_angle", 0.0)
     x_offset = rospy.get_param("x_offset", 0.0)
     y_offset = rospy.get_param("y_offset", 0.0)
 
-    # TODO: Compose parameter data to produce a T matrix from material to machine
+    # Compose parameter data to produce a T matrix from material to machine
+    Twm = np.zeros((3,3))
+    Twm[2,2] = 1.0
+    Twm[0,0] = np.cos(np.deg2rad(theta))
+    Twm[0,1] = -np.sin(np.deg2rad(theta))
+    Twm[0,2] = x_offset
+    Twm[1,0] = np.sin(np.deg2rad(theta))
+    Twm[1,1] = np.cos(np.deg2rad(theta))
+    Twm[1,2] = y_offset
+    Twm[2,2] = 1.0
 
     # TODO: for i in range(message.length)
     #           vector = np.array(3x1, x, y, 1)
