@@ -12,6 +12,7 @@ Read this parameter when launched. If not null, initiate the callback with that 
 if run with an argument, attempt to parse that argument into an absolute path. Return error if unsuccessful, run with that path if successful. It has been typed in during run and should override parameter
 '''
 
+import rospkg
 import rospy
 import sys
 from std_msgs.msg import String
@@ -22,30 +23,47 @@ from mill_controller.msg import Trajectory
 pub = rospy.Publisher('trajectory_input',Trajectory,queue_size=1)
 
 
-def callback(msg):
+def callback(input):
     # This function receives a string message as an argument. It attempts to interpret that string as an absolute file path of a csv file, opens the file, and parses the contained data into a Trajectory message. The Trajectory message is then published to /trajectory_input
 
+
+
+    # Find package directory to locate trajectory csv.
+    rospack = rospkg.RosPack()
+    path = rospack.get_path('mill_controller') + '/trajectories/'+input.data
     # TODO Sanity check the input to see if it is a directory
         # Error and return if failed
     # Attempt to open a file at the location
-        # Error and return if failed
+    try:
+        f = open(path, "r")
+    except OSError:
+        rospy.logerr("Error opening file. Path Invalid or malformed.")
+        return 1
 
     # Create Trajectory message
+    msg = Trajectory()
 
     # Parse file
-    # For each line in file:
-        # Split at commas
-        # message.x.append([0])
-        # message.y.append([1])
-        # message.z.append([2])
-        # message.t.append([3])
-        # message.length += 1
+    for line in f:
+        # Parse csv format into Trajectory message
+        line = line.strip()
+        line = line.split(',')
+        print line
+        try:
+            msg.x.append(float(line[0]))
+            msg.y.append(float(line[1]))
+            msg.z.append(float(line[2]))
+            msg.t.append(float(line[3]))
+        except ValueError:
+            rospy.logerr("Unable to parse input in line "+str(msg.length+1))
+            return 1
+        msg.length += 1
 
     # Close the file
+    f.close()
     # Publish the message
+    pub.publish(msg)
 
-    print type(msg)
-    print msg
 
 
 
