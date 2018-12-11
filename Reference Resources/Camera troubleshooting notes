@@ -18,3 +18,5 @@ Further restarts return the same error
 Disconnecting and reconnecting the camera resolves this issue, reproducing the three step sequence outlined above.
 
 restarting roscore seems to have no effect
+usb_cam default setting for autofocus should be off, but removing anything that sets it to be true doesn't seem to eliminate the warnings. I should try explicitly setting it to false.
+Aamir says he noticed a similar issue, but Moshe says that he hasn't had to restart it with such reliability.
