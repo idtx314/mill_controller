@@ -7,6 +7,7 @@
   <arg name="x_offset" default="0.0" />
   <arg name="y_offset" default="0.0" />
   <arg name="csv_name" default="null" />
+  <arg name="horizon_time" default="0.0" />
   <arg name="x_range" default="[0.0,1.0]" />
   <arg name="y_range" default="[0.0,1.0]" />
 
@@ -17,12 +18,14 @@
   <param name="x_offset" type="double" value="$(arg x_offset)" />
   <param name="y_offset" type="double" value="$(arg y_offset)" />
   <param name="csv_name" type="str" value="$(arg csv_name)" />
+  <param name="horizon_time" type="double" value="$(arg horizon_time)" />
   <rosparam param="x_range" subst_value="True">$(arg x_range)</rosparam>
   <rosparam param="y_range" subst_value="True">$(arg y_range)</rosparam>
 
 
 
   <!-- Input Pipeline Nodes -->
+  <node name="csv_parser_node" pkg="mill_controller" type="csv_parser" />
   <node name="string_parser_node" pkg="mill_controller" type="string_parser" />
   <node name="trajectory_parser_node" pkg="mill_controller" type="trajectory_parser" />
   <!-- <node name="gcode_sender_node" pkg="mill_controller" type="gcode_sender" /> -->
