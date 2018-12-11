@@ -1,0 +1,20 @@
+Upon being hooked up the camera starts as normal, presenting the following warnings:
+[ WARN] [1544491904.906006618]: white_balance_temperature_auto: Input/output error
+VIDIOC_S_CTRL: failed: Input/output error
+
+[ WARN] [1544491904.917183967]: unknown control 'focus_auto'
+
+In one instance it presented only the last of those, was restarted, presented all of them, was restarted, and then presented as below
+
+
+After being hit with ctrl-C and restarted, the start attempt failed with the following error:
+[ERROR] [1544491921.640870105]: VIDIOC_S_FMT error 5, Input/output error
+
+
+
+While we've been looking at focus_auto, its possible that this is a more advanced stage of the white_balance_temperature_auto warning
+
+Further restarts return the same error
+Disconnecting and reconnecting the camera resolves this issue, reproducing the three step sequence outlined above.
+
+restarting roscore seems to have no effect
