@@ -6,6 +6,7 @@
   <arg name="m_angle" default="0.0" />
   <arg name="x_offset" default="0.0" />
   <arg name="y_offset" default="0.0" />
+  <arg name="csv_name" default="null" />
   <arg name="x_range" default="[0.0,1.0]" />
   <arg name="y_range" default="[0.0,1.0]" />
 
@@ -15,6 +16,7 @@
   <param name="m_angle" type="double" value="$(arg m_angle)" />
   <param name="x_offset" type="double" value="$(arg x_offset)" />
   <param name="y_offset" type="double" value="$(arg y_offset)" />
+  <param name="csv_name" type="str" value="$(arg csv_name)" />
   <rosparam param="x_range" subst_value="True">$(arg x_range)</rosparam>
   <rosparam param="y_range" subst_value="True">$(arg y_range)</rosparam>
 
