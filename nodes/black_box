@@ -4,9 +4,10 @@ This script contains a ROS node that will read a trajectory out of a csv file in
 """
 '''
 TODO
-Change output2 topic to something less generic
 '''
 
+import os
+import rospkg
 import rospy
 import sys
 from std_msgs.msg import String
@@ -24,6 +25,53 @@ def callback(msg):
     # Callback receives Occupancy messages. Each time it is called it increases the counter by one, updates the csv output file timestamps, and publishes the file name to csv_name.
     global _counter
 
+    # Open input csv and output csv in package directory.
+    rospack = rospkg.RosPack()
+    path = rospack.get_path('mill_controller') + '/trajectories/'
+    try:
+        fi = open(path+ 'fake.csv',"r")
+    except IOError:
+        rospy.logerr("No input file found.")
+        return 1
+    fo = open(path+ 'trajectorybb.csv', 'w')
+
+    # Prep variables
+    _counter += 1
+    horizon_time = rospy.get_param("horizon_time", 0.0)
+
+    # Bail out if not in feedback mode and first send complete
+    if (not horizon_time and _counter):
+        print("Not in feedback mode. Output sequence complete.")
+        return 0
+
+    # Read from the input file and write to the output file based on variables.
+    for line in fi:
+        line = line.strip()
+        line = line.split(',')
+        line[3] = float(line[3])
+        line[3] -= horizon_time * _counter
+        if(line[3] < 0.0):
+            continue
+        else:
+            line[3] = str(line[3])
+            line = ','.join(line)
+            fo.write(line+'\n')
+
+    # Close files
+    fi.close()
+    fo.close()
+
+    # If the output file is empty, Sequence complete
+    if (os.stat(path+ 'trajectorybb.csv').st_size == 0):
+        print("Trajectory complete. Output sequence complete. Restart Node to reset")
+        return 0
+
+
+    # Publish the output file name
+    s = String()
+    s.data = 'trajectorybb.csv'
+    pub.publish(s)
+
 
 
 
@@ -36,7 +84,10 @@ def main():
     rospy.Subscriber('output2', Occupancy, callback)
 
     # Create empty message
+    msg = Occupancy()
+
     # Run callback
+    callback(msg)
 
 
     # Spin until shut down
