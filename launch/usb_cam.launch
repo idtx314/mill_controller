@@ -12,6 +12,7 @@
         <param name="framerate" value="30" />
         <param name="pixel_format" value="yuyv" />
         <param name="camera_frame_id" value="camera_link" />
+        <param name="autofocus" value="false" />
 
     </node>
 </launch>
