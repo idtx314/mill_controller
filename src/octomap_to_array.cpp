@@ -1,12 +1,11 @@
 /*
 This script contains a ROS node that receives Octomap messages over the topic 'octomap_full' and builds several representations of the octomap data in alternate formats.
-    Marker message: A points message is built based on the occupied nodes in the octomap message.
+    Marker message: A points message is built based on the occupied nodes in the octomap message. This is published on the topic "octomap_to_cloud" and should match the node centers pointcloud published by octomap itself.
     Multidimensional array: A binary 3D array is built based on the occupied and unoccpied cells in the octomap message. This is printed to a console, provided a console is available. Note: This does not work with a launch file right now.
-    Occupancy message: This message is used to record the indexes of all points in the array representation that are 0 (not occupied). This message is then published on the topic 'output2'. This permits the array to be rebuilt in other nodes by implicitly encoding the status of all indices in the array. See Occupany.msg in the msgs directory for more information on using this message type.
+    Occupancy message: This message is used to record the indexes of all points in the array representation that are 0 (not occupied). This message is then published on the topic 'octomap_to_occupancy'. This permits the array to be rebuilt in other nodes by implicitly encoding the status of all indices in the array. See Occupany.msg in the msgs directory for more information on using this message type.
 */
 
 /* TODO
-Change the names of the topics to something more self explanatory.
 Implement a solution for octomap size changing based on "empty" pixels in the input image.
 Consider switching from index math to incrementing by resolution when determining xcoord, ycoord, and zcoord.
 */
@@ -205,8 +204,8 @@ int main(int argc, char** argv)
     ros::Subscriber sub = nh.subscribe("octomap_full", 1, callback);
 
     // Initialize publishers
-    pub = nh.advertise<visualization_msgs::Marker>("output", 1);
-    pub2 = nh.advertise<mill_controller::Occupancy>("output2", 1);
+    pub = nh.advertise<visualization_msgs::Marker>("octomap_to_cloud", 1);
+    pub2 = nh.advertise<mill_controller::Occupancy>("octomap_to_occupancy", 1);
 
     // Spin until shut down
     ros::spin();
