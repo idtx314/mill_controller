@@ -28,10 +28,6 @@ TODO
 Recolor corners (base on position?), add a cross, add lines between corners
 Add a third window and use it to show homography preview in real time
     Calculate each while loop, or base on mouse event and bootstrap?
-Add bail out option
-    Add waitKey response for ord('q') = 113
-    returns 0
-    Add lines to instruction strings
 Add running homography preview
 See Meeting - 2018-12-07 Notes for cool ideas
 '''
@@ -106,6 +102,7 @@ def calibrate_workspace(img):
         inst = cv2.putText(_mats[0].copy(), "Click and drag the circles", (20,25),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
         inst = cv2.putText(inst.copy(), "to the corners of the workspace.", (20,50),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
         inst = cv2.putText(inst.copy(), "Then press Enter.", (20,75),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
+        inst = cv2.putText(inst.copy(), "Press q to quit.", (20,125),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
         cv2.imshow("0",inst)
         # Wait for feedback
         while(1):
@@ -118,6 +115,8 @@ def calibrate_workspace(img):
             key = cv2.waitKey(20)
             if(key & 0xFF == 13):
                 break
+            if(key & 0xFF == ord('q')):
+                sys.exit(0)
 
         # Calculate and apply homographies
         ref = np.zeros((500,500,3), np.uint8)
@@ -133,6 +132,7 @@ def calibrate_workspace(img):
         inst = cv2.putText(_mats[0].copy(), "Press Enter to save this", (20,25),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
         inst = cv2.putText(inst.copy(), "homography and exit.", (20,50),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
         inst = cv2.putText(inst.copy(), "Press Esc to try again.", (20,75),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
+        inst = cv2.putText(inst.copy(), "Press q to quit.", (20,125),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
         cv2.imshow("0",inst)
         cv2.imshow("1",imlist[0])
         # Wait for feedback
@@ -159,6 +159,9 @@ def calibrate_workspace(img):
                 break
             if(key & 0xFF == 27):
                 break
+            if(key & 0xFF == ord('q')):
+                sys.exit(0)
+
 
         # clear variables
         _confirming = False
@@ -186,6 +189,7 @@ def calibrate_materialspace(img):
         inst = cv2.putText(_mats[0].copy(), "Click and drag the circles", (20,25),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
         inst = cv2.putText(inst.copy(), "to the corners of the material.", (20,50),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
         inst = cv2.putText(inst.copy(), "Then press Enter.", (20,75),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
+        inst = cv2.putText(inst.copy(), "Press q to quit.", (20,125),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
         cv2.imshow("0",inst)
         # Wait for feedback
         while(1):
@@ -198,6 +202,8 @@ def calibrate_materialspace(img):
             key = cv2.waitKey(20)
             if(key & 0xFF == 13):
                 break
+            if(key & 0xFF == ord('q')):
+                sys.exit(0)
 
         # Calculate and apply homographies
         ref = np.zeros((640,int(640*.75),3), np.uint8)
@@ -213,6 +219,7 @@ def calibrate_materialspace(img):
         inst = cv2.putText(_mats[0].copy(), "Press Enter to save this", (20,25),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
         inst = cv2.putText(inst.copy(), "homography and exit.", (20,50),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
         inst = cv2.putText(inst.copy(), "Press Esc to try again.", (20,75),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
+        inst = cv2.putText(inst.copy(), "Press q to quit.", (20,125),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
         cv2.imshow("0",inst)
         cv2.imshow("1",imlist[0])
         # Wait for feedback
@@ -239,6 +246,8 @@ def calibrate_materialspace(img):
                 break
             if(key & 0xFF == 27):
                 break
+            if(key & 0xFF == ord('q')):
+                sys.exit(0)
 
         # clear variables
         _confirming = False
