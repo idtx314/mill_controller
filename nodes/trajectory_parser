@@ -15,7 +15,8 @@ Uses the following parameters:
 '''
 TODO
 Add offsets for new marker holder.
-Add time horizon functionality. Read a time parameter and stop writing instructions beyond that time.
+    Add to x and y foreach loop
+
 '''
 
 import numpy as np
@@ -38,6 +39,7 @@ def callback(message):
     msg = Trajectory()
 
     # Read parameters from the namespace or use reasonable defaults
+    horizon_time = rospy.get_param("horizon_time", 0.0)
     width = rospy.get_param("m_width", 279.4)
     height = rospy.get_param("m_height", 215.9)
     theta = rospy.get_param("m_angle", 0.0)
@@ -116,6 +118,10 @@ def callback(message):
             rospy.logerr("Commanded coordinates are out of machine bounds. Aborting GCode write.")
             f.close()
             return 1
+
+        # Check whether the command is from beyond the time horizon
+        if(message.t[index] > horizon_time and horizon_time > 0.0):
+            break
 
         # Compose gcode string
         s = 'G1' + ' X' + str(vector[0,0]) + ' Y' + str(vector[1,0]) + ' F200.0' + '\n'
