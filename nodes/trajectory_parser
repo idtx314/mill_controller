@@ -14,9 +14,6 @@ Uses the following parameters:
 
 '''
 TODO
-Add offsets for new marker holder.
-    Add to x and y foreach loop
-
 '''
 
 import numpy as np
@@ -112,6 +109,10 @@ def callback(message):
         vector[0,0] = x
         vector[1,0] = y
         vector = Twm.dot(vector)
+
+        # Add offsets for pen mounting from mill carriage position
+        vector[0,0] += 46.65
+        vector[1,0] += 13.828
 
         # Check whether the commanded motions are within the limits of machine space.
         if(vector[0,0] > 500.0 or vector[0,0] < 500.0 or vector[1,0] > 500.0 or vector[1,0] < 500.0):
