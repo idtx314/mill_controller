@@ -29,6 +29,9 @@ Recolor corners (base on position?), add a cross, add lines between corners
 Add a third window and use it to show homography preview in real time
     Calculate each while loop, or base on mouse event and bootstrap?
 Add bail out option
+    Add waitKey response for ord('q') = 113
+    returns 0
+    Add lines to instruction strings
 Add running homography preview
 See Meeting - 2018-12-07 Notes for cool ideas
 '''
