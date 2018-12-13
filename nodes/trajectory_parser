@@ -19,6 +19,7 @@ Uses the following parameters:
 TODO
 Add feed rate variation based on time between current and last point.
 Relocate safe position.
+Add dry run option
 '''
 
 import numpy as np
