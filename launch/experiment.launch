@@ -1,4 +1,9 @@
 <launch>
+  <!-- usb_cam arguments -->
+  <arg name="video_device" default="/dev/video1" />
+  <arg name="pixel_format" default="yuyv" />
+  <arg name="camera_name"  default="mill_camera" />
+
   <!-- Input Pipeline Nodes -->
   <node name="string_parser_node" pkg="mill_controller" type="string_parser" />
   <node name="trajectory_parser_node" pkg="mill_controller" type="trajectory_parser" />
@@ -6,9 +11,9 @@
 
   <!-- USB Camera Driver -->
   <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" />
-    <param name="usb_cam/video_device" value="/dev/video1" />
-    <param name="usb_cam/pixel_format" value="yuyv" />
-    <param name="usb_cam/camera_name" value="mill_camera" />
+    <param name="usb_cam/video_device" value="$(arg video_device)" />
+    <param name="usb_cam/pixel_format" value="$(arg pixel_format)" />
+    <param name="usb_cam/camera_name" value="$(arg camera_name)" />
 
   <!-- New Output Pipeline Nodes -->
   <node name="image_collector_node" pkg="mill_controller" type="image_collector" />

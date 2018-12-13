@@ -7,6 +7,11 @@
     <arg name="cam_info_topic" default="/usb_cam/camera_info" />
     <arg name="output_frame" default="/base" />
 
+    <!-- usb_cam arguments -->
+    <arg name="video_device" default="/dev/video0" />
+    <arg name="pixel_format" default="yuyv" />
+    <arg name="camera_name"  default="tracker_camera" />
+
     <node name="ar_track_alvar" pkg="ar_track_alvar" type="individualMarkersNoKinect" respawn="false" output="screen">
         <param name="marker_size"           type="double" value="$(arg marker_size)" />
         <param name="max_new_marker_error"  type="double" value="$(arg max_new_marker_error)" />
@@ -19,9 +24,9 @@
 
   <!-- USB Camera Driver -->
   <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" />
-    <param name="usb_cam/video_device" value="/dev/video1" />
-    <param name="usb_cam/pixel_format" value="yuyv" />
-    <param name="usb_cam/camera_name" value="tracker_camera" />
+    <param name="usb_cam/video_device" value="$(arg video_device)" />
+    <param name="usb_cam/pixel_format" value="$(arg pixel_format)" />
+    <param name="usb_cam/camera_name" value="$(arg camera_name)" />
 
     <node name="rviz" pkg="rviz" type="rviz" />
 

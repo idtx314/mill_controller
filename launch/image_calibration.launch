@@ -3,13 +3,18 @@
   <!--Input Arguments-->
   <arg name="calibration" default="NORMAL" doc="Controls the amount of calibration do: 'FULL' to calibrate workspace and material space. 'NORMAL' to calibrate material space. 'NONE' to skip calibrations. Defaults to 'NORMAL'"/>
 
+  <!-- usb_cam arguments -->
+  <arg name="video_device" default="/dev/video1" />
+  <arg name="pixel_format" default="yuyv" />
+  <arg name="camera_name"  default="mill_camera" />
+
   <!--The Calibration Node-->
   <node name="image_calibration_node" pkg="mill_controller" type="image_calibration" required="true" args="$(arg calibration)" />
 
   <!--USB Camera Driver to collect image-->
   <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" />
-    <param name="usb_cam/video_device" value="/dev/video1" />
-    <param name="usb_cam/pixel_format" value="yuyv" />
-    <param name="usb_cam/camera_name" value="mill_camera" />
+    <param name="usb_cam/video_device" value="$(arg video_device)" />
+    <param name="usb_cam/pixel_format" value="$(arg pixel_format)" />
+    <param name="usb_cam/camera_name" value="$(arg camera_name)" />
 
 </launch>
