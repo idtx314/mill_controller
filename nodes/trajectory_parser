@@ -17,7 +17,6 @@ Uses the following parameters:
 
 '''
 TODO
-Relocate safe position.
 Add dry run option
 Validate feed rate calculation. May have divide by zero at first point.
 '''
@@ -174,9 +173,8 @@ def callback(message):
     s = s + 'G94' + '\n'                    # Set feed rate to mm/min
     s = s + 'G54' + '\n'                    # Use WCS G54 Coordinates
 
-    s = s + 'G1 Z-15 F50' + '\n'       # Move bit out of harms way
-    s = s + 'G0 Z0' + '\n'
-    s = s + 'G0 X450 Y350' + '\n'
+    s = s + 'G0 Z0' + '\n'                  # Move bit out of harms way
+    s = s + 'G0 X450 Y500' + '\n'
 
     s = s + 'G4 P0.1' + '\n'                # Dwell for a moment
     f.write(s)                              # Write to file
