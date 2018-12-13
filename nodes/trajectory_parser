@@ -17,9 +17,8 @@ Uses the following parameters:
 
 '''
 TODO
-Altering pen holder, increase pen x offset to compensate ~1.5mm
 Add feed rate variation based on time between current and last point.
-Header start position is not being interpolated or frame shifted before being written. Fix!
+Relocate safe position.
 '''
 
 import numpy as np
@@ -55,6 +54,9 @@ def callback(message):
     y_max = y_range[1]
     y_min = y_range[0]
 
+    # Shift range limits so that range bottoms at zero
+    x_max = x_max-x_min
+    y_max = y_max-y_min
 
     # Compose Transformation matrix from material to machine space
     Twm = np.zeros((3,3))
@@ -88,10 +90,28 @@ def callback(message):
 
 
     # Write the Body
+
+    # Interpolate from input ranges to material ranges
+    x = message.x[0] - x_min
+    y = message.y[0] - y_min
+    x = x/x_max * width
+    y = y/y_max * height
+
+    # Transform from material space into machine space
+    vector = np.ones((3,1))
+    vector[0,0] = x
+    vector[1,0] = y
+    vector = Twm.dot(vector)
+
+    # Add offsets for pen mounting from mill carriage position
+    vector[0,0] += 49.8
+    vector[1,0] += 14.2
+    vector[2,0] = -20.00 # -48.00
+
     # Set Feed rate and move to starting point.
-    s = 'G0' + ' X' + str(message.x[0]) + ' Y' + str(message.y[0]) + '\n'
-    s = s + 'G0' + ' Z-15' + '\n'
-    s = s + 'G1' + ' Z-20' + ' F50' + '\n' # Z-48
+    s = 'G0' + ' X' + str(vector[0,0]) + ' Y' + str(vector[1,0]) + ' F200\n'
+    s = s + 'G0' + ' Z' + str(vector[2,0] + 5.0) + '\n'
+    s = s + 'G1' + ' Z' + str(vector[2,0]) + ' F50' + '\n' # Z-48
 
     f.write(s)
 
@@ -99,9 +119,7 @@ def callback(message):
     # Follow trajectory. Operating on the assumption that the trajectory can be approximated as a series of straight line motions from point to point. Improvement of this model will probably need example trajectories to test. Starting with fixed feed rate.
 
 
-    # Shift range limits so that range bottoms at zero
-    x_max = x_max-x_min
-    y_max = y_max-y_min
+
 
     for index in range(message.length):
         # Interpolate from input ranges to material ranges
