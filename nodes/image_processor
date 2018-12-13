@@ -23,7 +23,7 @@ pub = rospy.Publisher('processed_image',Image,queue_size=1)
 converter = CvBridge()
 
 # Set threshold for color processing
-threshold = 500
+threshold = 275
 
 
 # Calibration Globals
@@ -38,13 +38,19 @@ def callback(input):
 
     # Translate Image message into a cv2 image assuming bgr8 encoding. The image will revert to a more general CV encoding, like 8UC3.
     cv_image = converter.imgmsg_to_cv2(input,"bgr8")
+    height, width = cv_image.shape[:2]
+    m_width = rospy.get_param("m_width",279.4)
+    m_height = rospy.get_param("m_height",215.9)
+    m_ratio = m_height/m_width
+    height2 = int(width*m_ratio)
+
 
     # Make a copy, as the original image will not be editable after conversion
     cv_image = cv_image.copy()
 
-    # Apply a homography to warp the new image to match the reference
-    semi_aligned_img = cv2.warpPerspective(cv_image, _ws_hom, (500, 500))
-    aligned_img = cv2.warpPerspective(semi_aligned_img, _ms_hom, (640,int(640*.75)))
+    # Apply homographies to warp the image
+    semi_aligned_img = cv2.warpPerspective(cv_image, _ws_hom, (width,width))
+    aligned_img = cv2.warpPerspective(semi_aligned_img, _ms_hom, (width,height2))
 
     # Perform visual processing on the image to extract relevant data.
     # Extract a tuple containing the number of (rows, columns, channels).
