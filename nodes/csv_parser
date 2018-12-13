@@ -1,0 +1,92 @@
+#!/usr/bin/env python
+
+"""
+This script contains a ROS node that subscribes to a string input topic. When a string is received, the node will parse it as the nae of a .csv file in the mill_controller/trajectories/ directory. It will attempt to open that file at that location and parse the contents into a Trajectory message. The message will be published to the topic /trajectory_input.
+"""
+'''
+TODO
+'''
+
+import rospkg
+import rospy
+import sys
+from std_msgs.msg import String
+from mill_controller.msg import Trajectory
+
+
+# Use this publisher to send the output
+pub = rospy.Publisher('trajectory_input',Trajectory,queue_size=1)
+
+
+def callback(input):
+    # This function receives a string message as an argument. It interprets that string as the name of a csv file in the mill_controller/trajectories/ directory, opens the file, and parses the contained data into a Trajectory message. The Trajectory message is then published to /trajectory_input
+
+    # Find package directory to locate trajectory csv.
+    rospack = rospkg.RosPack()
+    path = rospack.get_path('mill_controller') + '/trajectories/'+input.data
+
+    # Attempt to open a file at the location
+    try:
+        f = open(path, "r")
+    except OSError:
+        rospy.logerr("Error opening file. Path Invalid or malformed.")
+        return 1
+
+    # Create Trajectory message
+    msg = Trajectory()
+
+    # Attempt to parse csv file into Trajectory message
+    for line in f:
+        line = line.strip()
+        line = line.split(',')
+        try:
+            msg.x.append(float(line[0]))
+            msg.y.append(float(line[1]))
+            msg.z.append(float(line[2]))
+            msg.t.append(float(line[3]))
+        except ValueError:
+            rospy.logerr("Unable to parse input in line "+str(msg.length+1))
+            f.close()
+            return 1
+        msg.length += 1
+
+    # Close the file
+    f.close()
+
+    # Publish the message
+    pub.publish(msg)
+
+
+
+
+def main(args):
+    # This function accepts arguments from the command line. If any are received it creates a string message with the argument as data and activates callback, passing the message. If no argument is received, it attempts to read a parameter. If the parameter is read and is not 'null', it creates a string message with the parameter as data and activates callback, passing the message. It then proceeds to spin.
+
+    # Initialize the ROS node
+    rospy.init_node("csv_parser_node")
+
+    # If two arguments were passed, assume that user ran with file name input, create a message and pass it to callback()
+    if len(args) == 2:
+        msg = String()
+        msg.data = args[1]
+        callback(msg)
+    else:
+        # If a parameter was set, create a message and pass it to callback()
+        param = rospy.get_param("csv_name", "null")
+        if param != "null":
+            msg = String()
+            msg.data = param
+            callback(msg)
+
+
+    # Initialize the subscriber
+    rospy.Subscriber('csv_name_topic', String, callback)
+
+    # Spin until shut down
+    rospy.spin()
+
+
+
+
+if __name__ == '__main__':
+    main(sys.argv)

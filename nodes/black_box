@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-This script contains a ROS node that will read a trajectory out of a csv file in the mill_controller/trajectories/ directory. Each time the node receives a message over the "octomap_to_occupancy" topic the trajectory's time stamps will be reduced by the amount of the time horizon parameter, points at t<0 will be removed, and the revised file name will be published to /csv_name to be run on the X-Carve. This cycle will continue until no points remain in the trajectory, simulating closed loop input.
+This script contains a ROS node that will read a trajectory out of a csv file in the mill_controller/trajectories/ directory. Each time the node receives a message over the "octomap_to_occupancy" topic the trajectory's time stamps will be reduced by the amount of the time horizon parameter, points at t<0 will be removed, and the revised file name will be published to /csv_name_topic to be run on the X-Carve. This cycle will continue until no points remain in the trajectory, simulating closed loop input.
 """
 '''
 TODO
@@ -15,7 +15,7 @@ from mill_controller.msg import Occupancy
 
 
 # Use this publisher to send the output
-pub = rospy.Publisher('csv_name',String,queue_size=1)
+pub = rospy.Publisher('csv_name_topic',String,queue_size=1)
 
 # Globals
 _counter = -1
