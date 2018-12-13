@@ -1,12 +1,23 @@
 <launch>
 
-  <!--Input Arguments-->
+  <!-- Arguments-->
   <arg name="calibration" default="NORMAL" doc="Controls the amount of calibration do: 'FULL' to calibrate workspace and material space. 'NORMAL' to calibrate material space. 'NONE' to skip calibrations. Defaults to 'NORMAL'"/>
+  <arg name="m_width" default="279.4" />
+  <arg name="m_height" default="215.9" />
+  <arg name="m_angle" default="0.0" />
+  <arg name="x_offset" default="0.0" />
+  <arg name="y_offset" default="0.0" />
 
-  <!-- usb_cam arguments -->
   <arg name="video_device" default="/dev/video1" />
   <arg name="pixel_format" default="yuyv" />
   <arg name="camera_name"  default="mill_camera" />
+
+  <!-- Parameters -->
+  <param name="m_width" type="double" value="$(arg m_width)" />
+  <param name="m_height" type="double" value="$(arg m_height)" />
+  <param name="m_angle" type="double" value="$(arg m_angle)" />
+  <param name="x_offset" type="double" value="$(arg x_offset)" />
+  <param name="y_offset" type="double" value="$(arg y_offset)" />
 
   <!--The Calibration Node-->
   <node name="image_calibration_node" pkg="mill_controller" type="image_calibration" required="true" args="$(arg calibration)" />

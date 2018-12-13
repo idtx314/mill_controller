@@ -14,6 +14,7 @@ from cv_bridge import CvBridge
 from sensor_msgs.msg import Image
 
 
+# Global Variables
 _l_down = False
 _dragging = -1
 _confirming = True
@@ -21,6 +22,12 @@ _mouse = 0
 _mats = []
 # Corner order: top left, top right, bottom right, bottom left
 _corners = [(100,100),(200,100),(200,200),(100,200)]
+_m_width = rospy.get_param("m_width", 279.4)
+_m_height = rospy.get_param("m_height", 215.9)
+_m_ratio = _m_height/_m_width
+
+print _m_ratio
+
 
 
 '''
@@ -66,6 +73,8 @@ def main(args):
     # Convert new image using bgr8 encoding(?).
     img = converter.imgmsg_to_cv2(msg,"bgr8")
 
+    height,width = img.shape[:2]
+
     if(full_cal):
         calibrate_workspace(img)
 
@@ -77,7 +86,7 @@ def main(args):
         rospy.logerr("Error loading ws_hom.npy. File not found. Perform full calibration.")
         return 1
 
-    ws_img = cv2.warpPerspective(img.copy(),ws_hom,(500,500))
+    ws_img = cv2.warpPerspective(img.copy(),ws_hom,(width,width))
 
     calibrate_materialspace(ws_img)
 
@@ -93,6 +102,9 @@ def calibrate_workspace(img):
     calibrated = False
     homlist = []
     imlist = []
+
+    # Get dimensions
+    height,width = img.shape[:2]
 
     while not calibrated:
         clear_windows()
@@ -119,12 +131,12 @@ def calibrate_workspace(img):
                 sys.exit(0)
 
         # Calculate and apply homographies
-        ref = np.zeros((500,500,3), np.uint8)
+        ref = np.zeros((width,width,3), np.uint8)
         plist = np.array(_corners)
-        rlist = np.array([[0,0],[500,0],[500,500],[0,500]])
+        rlist = np.array([[0,0],[width,0],[width,width],[0,width]])
         for i in range(1):
             homlist.append(cv2.findHomography(plist,rlist)[0])
-            imlist.append(cv2.warpPerspective(img.copy(),homlist[i],(500,500)))
+            imlist.append(cv2.warpPerspective(img.copy(),homlist[i],(width,width)))
 
         # Request choice of homography from user
         _confirming = True
@@ -175,11 +187,15 @@ def calibrate_workspace(img):
 
 
 def calibrate_materialspace(img):
-    global _confirming, _mats, _corners, _mouse
+    global _confirming, _mats, _corners, _mouse, _m_ratio
     rospack = rospkg.RosPack()
     calibrated = False
     homlist = []
     imlist = []
+
+    # Get Dimensions
+    width = img.shape[1]
+    height = int(width * _m_ratio)
 
     while not calibrated:
         clear_windows()
@@ -206,12 +222,12 @@ def calibrate_materialspace(img):
                 sys.exit(0)
 
         # Calculate and apply homographies
-        ref = np.zeros((640,int(640*.75),3), np.uint8)
+        ref = np.zeros((height,width,3), np.uint8)
         plist = np.array(_corners)
-        rlist = np.array([[0,0],[640,0],[640,480],[0,480]])
+        rlist = np.array([[0,0],[width,0],[width,height],[0,height]])
         for i in range(1):
             homlist.append(cv2.findHomography(plist,rlist)[0])
-            imlist.append(cv2.warpPerspective(img.copy(),homlist[i],(640,480)))
+            imlist.append(cv2.warpPerspective(img.copy(),homlist[i],(width,height)))
 
         # Request choice of homography from user
         _confirming = True
