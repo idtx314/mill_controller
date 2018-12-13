@@ -5,6 +5,7 @@ This script contains a ROS node that subscribes to a string input topic. When a 
 """
 '''
 TODO
+Add more advanced argument parsing, probably flag based. Current version is very delicate to unexpected input.
 '''
 
 import rospkg

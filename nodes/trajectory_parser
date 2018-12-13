@@ -19,6 +19,7 @@ Uses the following parameters:
 TODO
 Altering pen holder, increase pen x offset to compensate ~1.5mm
 Add feed rate variation based on time between current and last point.
+Header start position is not being interpolated or frame shifted before being written. Fix!
 '''
 
 import numpy as np
