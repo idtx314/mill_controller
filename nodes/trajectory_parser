@@ -17,9 +17,9 @@ Uses the following parameters:
 
 '''
 TODO
-Add feed rate variation based on time between current and last point.
 Relocate safe position.
 Add dry run option
+Validate feed rate calculation. May have divide by zero at first point.
 '''
 
 import numpy as np
@@ -109,6 +109,10 @@ def callback(message):
     vector[1,0] += 14.2
     vector[2,0] = -48.0
 
+    # Update saved values for next calculation
+    oldvector = vector.copy()
+    oldtime = message.t[0]
+
     # Set Feed rate and move to starting point.
     s = 'G0' + ' X' + str(vector[0,0]) + ' Y' + str(vector[1,0]) + ' F200\n'
     s = s + 'G0' + ' Z' + str(vector[2,0] + 5.0) + '\n'
@@ -118,10 +122,6 @@ def callback(message):
 
 
     # Follow trajectory. Operating on the assumption that the trajectory can be approximated as a series of straight line motions from point to point. Improvement of this model will probably need example trajectories to test. Starting with fixed feed rate.
-
-
-
-
     for index in range(message.length):
         # Interpolate from input ranges to material ranges
         x = message.x[index] - x_min
@@ -140,6 +140,15 @@ def callback(message):
         vector[1,0] += 14.2
         vector[2,0] =  -48.0
 
+        # Calculate feed rate
+        distance = numpy.linalg.norm(vect-oldvect)
+        dt = message.t[index] - oldtime
+        feed = distance/dt
+
+        # Update saved values for next calculation
+        oldvector = vector.copy()
+        oldtime = message.t[index]
+
         # Check whether the commanded motions are within the limits of machine space.
         if(vector[0,0] > 500.0 or vector[0,0] < 0.0 or vector[1,0] > 500.0 or vector[1,0] < 0.0):
             rospy.logerr("Commanded coordinates are out of machine bounds. Aborting GCode write.")
@@ -151,7 +160,7 @@ def callback(message):
             break
 
         # Compose gcode string
-        s = 'G1' + ' X' + str(vector[0,0]) + ' Y' + str(vector[1,0]) + ' Z' + str(vector[2,0]) + ' F200.0' + '\n'
+        s = 'G1' + ' X' + str(vector[0,0]) + ' Y' + str(vector[1,0]) + ' Z' + str(vector[2,0]) + ' F' + str(feed) + '\n'
 
         # Write command to output
         f.write(s)
