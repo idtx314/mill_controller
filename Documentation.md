@@ -1,3 +1,6 @@
+# Introduction
+What this package is, even.
+
 ## Build Instructions
     This package was developed on Linux Ubuntu 16.04 (Xenial Xerus), with ROS Kinetic Kame.
 
@@ -48,10 +51,11 @@ If images of the material appear to be warped or misaligned, then try recalibrat
 
 6. The image alignment script will guide you through calibrating the location of the X-Carve cutting board and the material you intend to be working with in the image taken from your webcam. This information will be used in image processing so that output information will consist of just the working material rather than the whole image.
 
-### Preparing a trajectory using .csv input.
+### Preparing a Trajectory Using .csv File Input.
 Assumptions in instructions:
     1. Your catkin workspace is in the user's home folder and is named "catkin_ws"
-While there are a number of possible input methods for the control program, the most straightforward and flexible one is to use .csv files to store your trajectory input. 
+    2. You 
+While there are a number of possible input methods for the mill controller, the most straightforward and flexible one is to use .csv files to store your trajectory input. 
 You will need to store csv files in the trajectories/ directory of the installed mill_controller package in your catkin workspace's src/ directory. To navigate a terminal here, for example, you might enter `cd ~/catkin_ws/src/mill_controller/trajectories/`.
 These instructions will walk you through examining an example csv file, creating a simple csv file of your own, and having it read as trajectory input.
 
@@ -61,28 +65,42 @@ These instructions will walk you through examining an example csv file, creating
 
 3. The file should contain some simple formatted text.
 
-   `1,2,3,4`  
-   `5,6,7,8`
+   `0.1,0.2,0.3,4`  
+   `0.5,0.6,0.7,8`
 
    This is the correct format for trajectory input. Each line represents a distinct x,y,z point along the trajectory at a given time t.  
-   The value of each piece of information can be written as integers or decimal numbers representing millimeters and seconds, arranged in the format x,y,z,t.  
-   This example file contains a 2 point trajectory, from (x=1.0, y=2.0, z=3.0) at t=4.0 seconds to (x=5.0, y=6.0, z=7.0) at t=8.0 seconds.  
-   No spaces should be included in a line. Trajectories do not need to start at 0 seconds, although the program will generally treat them as though they had.
+   The value of each piece of information can be written as integers or decimal numbers representing percentage of material dimension and seconds, arranged in the format x,y,z,t.  
+   The material origin is considered to be in bottom left corner of the material, with positive x toward the material's bottom right corner and positive y toward the material's top left corner.  
+   The appropriate input ranges of x and y can be set when you start the mill controller. See the Launch Files and Arguments section for a more complete explanation of input range. By default the input ranges are from 0.0 to 1.0, representing percentage of the material's dimension along that axis.  
+   This example file contains a 2 point trajectory, from (x=10%, y=20%, z=30%) at t=4.0 seconds to (x=50%, y=60%, z=70%) at t=8.0 seconds.  
+   No spaces should be included in a line. Trajectories do not need to start at 0 seconds, although the mill controller will generally treat them as though they had.  
 
 4. To create your own csv file, open an empty file and add lines to it following the format demonstrated in the last step. Once you are finished adding lines, save your file in the "trajectories/" directory as "your_file.csv"
 
-5. Refer to the section below to have the control program run your trajectory on the X-Carve.
+5. Refer to the section below to have the mill controller run your trajectory on the X-Carve.
+
+### Running a Trajectory
+Assumptions in instructions:
+1. Your catkin workspace is in the user's home folder and is named "catkin_ws"
+2. You are using the bash interpreter to run your terminal environment.
+
+1. Open a terminal and move into your catkin workspace, for example by entering `cd ~/catkin_ws/`
+2. Source your setup.\*sh file, for example by entering `source devel/setup.bash`.
+3. Have a trajectory csv file as described in [Preparing a Trajectory Using csv Input] section. This should be in the mill_controller/trajectories/ directory. We will call this "my_trajectory.csv" in these instructions.
+4. Connect your X-Carve and USB camera to your computer. 
+4. Calibrate your workspace and the location of the material for imaging by following the [Calibrating The Workspace and Material] instructions above. **You must calibrate the workspace for the position that you intend the working material to occupy during trajectory execution.** If none of your calibration data has changed since the last time you calibrated, then you may skip this step and the most recent data will be used.
+5. Launch the mill controller by entering `roslaunch mill_controller mill_controller.launch`.  
+By default, the mill controller will expect you to be placing an 11"x8.5" piece of paper in the lower left corner of the workspace, with the long side parallel to the workspace's bottom edge. You can customize the dimensions, location, and rotation of the material by adding input arguments to the command. These arguments are explained in detail in the [Launch Files and Arguments] section. For example: to change the position of the material's origin to 200mm on the x axis and 150mm on the y axis in the machine workspace, we would instead enter the command:  
+`roslaunch mill_controller mill_controller.launch x_offset:=200 y_offset:=150`
+
+   You should also change the usb port and video port if necessary using the appropriate arguments. Determining what video port your camera is on is described in the [Calibrating the Workspace and Material] section. You can identify the usb port your X-Carve has been assigned by using the same method with the command `ls /dev/ttyUSB*`.
+6. Now that your material is in place, the workspace is calibrated, your trajectory is ready, and you have launched the mill controller with arguments to inform it of the material position and dimensions, it is time to run your trajectory. Since we did not launch the mill controller with a file name to run automatically (see [Launch Files and Arguments] for more on this option) we will need to publish a string message containing the name of our trajectory csv file. Open a new console and enter the following command, replacing the name of the trajectory file if necessary:  
+`rostopic pub /csv_name_topic std_msgs/String "data: 'my_trajectory.csv'"`
+7. The mill controller will now read my_trajectory.csv from the trajectories/ directory, translate it into a gcode file named "output.gcode", and stream those gcode commands to the X-Carve. Since we did not place the X-Carve in closed loop mode, it will run the entire trajectory before taking an image of the completed drawing and publishing its output.
+8. The X-Carve should provide several visual representations of output along with an Occupancy message that encodes an array representing locations on the material that have and have not been worked. Understanding this output is covered in the [Interpreting Mill Controller Output] section.
 
 
-
-    Command trajectory run with arguments
-        Explanation of passing csv names to csv_parser.
-        Explain main launch file and available arguments for changing.
-        Explain what to expect from input and output.
-
-    Using the black_box node? Maybe just add to node explanations
-
-    Decoding output array
+### Interpreting Mill Controller Output
         Explain the nature of the output array
         Explain the helper class if I've actually finished it.
 
@@ -91,6 +109,11 @@ These instructions will walk you through examining an example csv file, creating
 
 
 
+Separate section for identifying the USB and video port?
+Input option notes
 Using the pen holder
 Function and Node Notes
+    Using the black_box node? Maybe just add to node explanations
 Launch files and arguments
+    The limits of the input ranges will correspond to the working material's dimensions on the x and y axes, with those dimensions also being possible launch arguments. 
+    Explain main launch file and available arguments for changing.
