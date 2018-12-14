@@ -1,3 +1,8 @@
 <launch>
-  <include file="$(find mill_controller)/launch/inclusion.launch"/>
+  <arg name="custom" default="122.5" />
+
+  <include file="$(find mill_controller)/launch/inclusion.launch">
+    <arg name="x_offset" value="$(arg custom)" />
+  </include>
+
 </launch>
