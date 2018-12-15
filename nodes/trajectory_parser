@@ -18,6 +18,7 @@ Uses the following parameters:
 '''
 TODO
 Add dry run option
+Add warning for attempting to exceed machine speed limits (8000 mm/min)
 '''
 
 import numpy as np

@@ -210,6 +210,8 @@ Launch files and arguments
 Input method options notes
 Function and Node Notes
     Using the black_box node? Maybe just add to node explanations
+    Each node has a description in the script. I can probably save a lot of work with that.
+calibrating camera
 
 
 ### Known bugs
