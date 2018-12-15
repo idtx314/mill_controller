@@ -1,5 +1,7 @@
 # Introduction
-What this package is, even.
+This is the code of a ROS package designed to provide computer vision based feedback control for an X-Carve CNC mill configured to operate as a pen plotter with time controlled x, y, and z input. The package has several methods of accepting (x,y,z,time) trajectories, which it then parses into GCode and sends to the mill to execute.  
+After a given time horizon has passed, the mill is instructed to stop operating and move the equipment away from the material. Images of the material are taken by a fixed usb camera and then processed by the package to identify locations where the mill has drawn on the paper. This data is visualized in Rviz, and published to ROS topics in a variety of formats.  
+The motivation underlying the construction of this project is to support the ergodic trajectory research of Ahalya Prabhakar and the Neuroscience and Robotics Laboratory at Northwestern University. As part of the lab's ongoing mandate to explore neurology by implementing unusual behaviour in robotic platforms, Ahalya's research explores the remarkably life like results of using time sensitive x, y, and z trajectories to guide activities such as drawing and exploring. 
 
 ## Build Instructions
     This package was developed on Linux Ubuntu 16.04 (Xenial Xerus), with ROS Kinetic Kame.
@@ -120,7 +122,8 @@ Using mill_controller.launch provides a set of
 /octomap_to_occupancy is an Occupancy message as defined in the mill_controller package. This contains the dimensions of the full array
 
 Interpreting Occupancy messages
-        Explain the helper class if I've actually finished it.
+
+    Explain the helper class if I've actually finished it.
 
 
 ### An Example Run in Video
@@ -158,30 +161,30 @@ The origin of the X-Carve standard workspace has been designated as being in the
 ### How to Identify Assigned USB and video Ports
 These instructions will guide you through the commands used to identify the ports your computer assigns to devices you plug in. On Linux, usb ports will be of the form `/dev/ttyUSB0`, while video ports are of the form `/dev/video0`. The number in the port name will vary depending on the order in which things are plugged in. Some devices attached to your ports may be built into your computer. For example a built in web camera is usually assigned `/dev/video0`. By default, the package will assume that your camera is on `/dev/video1`, and that the X-Carve is attached to `/dev/ttyUSB0`. If that is not the case then you will need to identify the ports these devices are attached to and either include the correct ports as arguments at launch time, or alter the launch files so that they are the default.  
 To identify the port of your usb camera:
- 1. Disconnect the camera.
+1. Disconnect the camera.
 
- 2. Open a terminal and enter `ls /dev/video*`. Take note of the ports listed, if any.
+2. Open a terminal and enter `ls /dev/video*`. Take note of the ports listed, if any.
 
- 3. Reconnect the camera.
+3. Reconnect the camera.
 
- 3. In the terminal, enter `ls /dev/video*` again.
+3. In the terminal, enter `ls /dev/video*` again.
 
- 4. Compare the two lists. The name that appeared when you reconnected your camera is the camera's port name. If it isn't `/dev/video1`, then you should substitute your port name whenever the camera port is used in these instructions.
+4. Compare the two lists. The name that appeared when you reconnected your camera is the camera's port name. If it isn't `/dev/video1`, then you should substitute your port name whenever the camera port is used in these instructions.
 
 To identify the port of the X-Carve
-    1. Disconnect the X-Carve.
+1. Disconnect the X-Carve.
 
-    2. Open a terminal and enter `ls /dev/ttyUSB*`. Take note of the ports listed, if any.
+2. Open a terminal and enter `ls /dev/ttyUSB*`. Take note of the ports listed, if any.
 
-    3. Reconnect the X-Carve.
+3. Reconnect the X-Carve.
 
-    3. In the terminal, enter `ls /dev/ttyUSB*` again.
+3. In the terminal, enter `ls /dev/ttyUSB*` again.
 
-    4. Compare the two lists. The name that appeared when you reconnected the X-Carve is the X-Carve's port name. If it isn't `/dev/ttyUSB0`, then you should substitute your port name whenever the USB port is used in these instructions.
+4. Compare the two lists. The name that appeared when you reconnected the X-Carve is the X-Carve's port name. If it isn't `/dev/ttyUSB0`, then you should substitute your port name whenever the USB port is used in these instructions.
 
 
 ### Connecting the Marker Holder
-TODO pictures here
+    TODO pictures here
 These are visual instructions for attaching the marker holder to the side of the X-Carve and loading it with a Marker.
 
 1. Collect the upper and lower portions of the marker holder, a fine point sharpie marker, a spring, and 3 M4 screws of approximately 8mm length, along with an appropriate screwdriver.
@@ -199,16 +202,21 @@ These are visual instructions for attaching the marker holder to the side of the
 7. Press the upper marker holder against the side of the lower marker holder so that the sharpie is held vertically, and then tighten the screw on the upper marker holder to secure it in place.
 
 
-Input method options notes
-Function and Node Notes
-    Using the black_box node? Maybe just add to node explanations
+### Sections Unwritten
 Launch files and arguments
     The limits of the input ranges will correspond to the working material's dimensions on the x and y axes, with those dimensions also being possible launch arguments. 
     Explain main launch file and available arguments for changing.
+Input method options notes
+Function and Node Notes
+    Using the black_box node? Maybe just add to node explanations
 
 
-Known bugs
-    Occupancy messages don't have reliable dimensions. The dimensions are based on the octomap, which automatically limits its own dimensions to the smallest dimensions that will fit the point cloud input.
-    Occupancy messages don't actually have all the unoccupied points. Related!
-    Camera driver is unreliable. Have to disconnect between calibration and running.
-    Currently the camera is viewing the workspace upside down compared to how the trajectory is processed. This can be worked around by rotating the corners to match the workspace orientation, as demonstrated in the [An Example Run in Video] section's calibration demo.
+### Known bugs
+* Occupancy messages don't have reliable dimensions. The dimensions are based on the octomap, which automatically limits its own dimensions to the smallest dimensions that will fit the point cloud input.
+* Occupancy messages don't actually have all the unoccupied points. Related!
+* Camera driver is unreliable. Have to disconnect between calibration and running.
+* Currently the camera is viewing the workspace upside down compared to how the trajectory is processed. This can be worked around by rotating the corners to match the workspace orientation, as demonstrated in the [An Example Run in Video] section's calibration demo.
+
+
+### References
+This section should contain both references to Ahalya's research from the introduction and to 3rd party libraries and packages used in creating the project.
