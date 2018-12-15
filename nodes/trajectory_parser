@@ -106,7 +106,7 @@ def callback(message):
     # Add offsets for pen mounting from mill carriage position
     vector[0,0] += 49.8
     vector[1,0] += 14.2
-    vector[2,0] = -48.0
+    vector[2,0] = -40.0 #-48.0
 
     # Update saved values for next calculation
     oldvector = vector.copy()
@@ -121,7 +121,7 @@ def callback(message):
 
 
     # Follow trajectory. Operating on the assumption that the trajectory can be approximated as a series of straight line motions from point to point. Improvement of this model will probably need example trajectories to test. Starting with fixed feed rate.
-    for index in range(message.length):
+    for index in range(1,message.length):
         # Interpolate from input ranges to material ranges
         x = message.x[index] - x_min
         y = message.y[index] - y_min
@@ -137,10 +137,10 @@ def callback(message):
         # Add offsets for pen mounting from mill carriage position
         vector[0,0] += 49.8
         vector[1,0] += 14.2
-        vector[2,0] =  -48.0
+        vector[2,0] =  -40.0 #-48.0
 
         # Calculate feed rate
-        distance = numpy.linalg.norm(vect-oldvect)
+        distance = np.linalg.norm(vector-oldvector)
         dt = message.t[index] - oldtime
         feed = distance/dt
 

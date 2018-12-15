@@ -101,9 +101,21 @@ By default, the mill controller will expect you to be placing an 11"x8.5" piece 
 
 
 ### Interpreting Mill Controller Output
-        Explain the nature of the output array
+Using mill_controller.launch provides a set of 
+
+/octomap_to_cloud is a marker message based on pointcloud centers. This corresponds to /octomap_point_cloud_centers published by the /octomap_server node.
+/camera_depth_points is a pointcloud2 message representing every white pixel in the processed image. This represents the full data before it is passed to octomap to be, essentially, decimated.
+
+/occupied_cells_vis_array is a MarkerArray topic that represents regions of the picture that contain white pixels with a green cube. 
+/free_cells_vis_array is a MarkerArray topic that cells known to be unoccupied with a green cube. Because of how the octomap is generated, not all cells in the array are known. This greatly reduces the usefulness of the topic.
+
+/octomap_to_occupancy is an Occupancy message as defined in the mill_controller package. This contains the dimensions of the full array
+
+Interpreting Occupancy messages
         Explain the helper class if I've actually finished it.
 
+
+### An Example in Video
     Example Run through, including input and output.
 
 
@@ -117,3 +129,9 @@ Function and Node Notes
 Launch files and arguments
     The limits of the input ranges will correspond to the working material's dimensions on the x and y axes, with those dimensions also being possible launch arguments. 
     Explain main launch file and available arguments for changing.
+
+
+Known bugs
+    Occupancy messages don't actually have the right dimensions.
+    Occupancy messages don't actually have all the unoccupied points. Related!
+    Camera driver is unreliable. Have to disconnect between calibration and running.
