@@ -121,6 +121,7 @@ Interpreting Occupancy messages
 
 
 
+During calibration, suggest moving mill carriage to x250 y500 to show corners
 Separate section for identifying the USB and video port?
 Input option notes
 Using the pen holder
