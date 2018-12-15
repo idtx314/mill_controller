@@ -6,6 +6,7 @@ This script contains a ROS node that will receive Image messages over the topic 
 '''
 TODO
 adjust image dimensions of aligned images
+Get threshold to auto adjust
 '''
 
 import rospkg
@@ -23,7 +24,7 @@ pub = rospy.Publisher('processed_image',Image,queue_size=1)
 converter = CvBridge()
 
 # Set threshold for color processing
-threshold = 275
+threshold = 550
 
 
 # Calibration Globals
