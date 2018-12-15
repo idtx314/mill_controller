@@ -19,6 +19,7 @@ Uses the following parameters:
 TODO
 Add dry run option
 Validate feed rate calculation. May have divide by zero at first point.
+Change feed rate calculation to mm/minute instead of second.
 '''
 
 import numpy as np
@@ -139,7 +140,7 @@ def callback(message):
         vector[1,0] += 14.2
         vector[2,0] =  -40.0 #-48.0
 
-        # Calculate feed rate
+        # Calculate feed rate (TODO, this is in mm/sec. Should be per minute)
         distance = np.linalg.norm(vector-oldvector)
         dt = message.t[index] - oldtime
         feed = distance/dt

@@ -8,6 +8,7 @@
   <arg name="y_offset" default="0.0" />
   <arg name="csv_name" default="null" />
   <arg name="horizon_time" default="0.0" />
+  <arg name="usb_port" default="/dev/ttyUSB0" />
   <arg name="x_range" default="[0.0,1.0]" />
   <arg name="y_range" default="[0.0,1.0]" />
 
@@ -19,6 +20,7 @@
   <param name="y_offset" type="double" value="$(arg y_offset)" />
   <param name="csv_name" type="str" value="$(arg csv_name)" />
   <param name="horizon_time" type="double" value="$(arg horizon_time)" />
+  <param name="usb_port" type="str" value="$(arg usb_port)" />
   <rosparam param="x_range" subst_value="True">$(arg x_range)</rosparam>
   <rosparam param="y_range" subst_value="True">$(arg y_range)</rosparam>
 
