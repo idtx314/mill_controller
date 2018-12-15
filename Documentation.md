@@ -34,20 +34,18 @@ Assumptions in instructions:
 It will be necessary to perform a NORMAL calibration of the camera each time you want to change the size or location of your material.  
 If the position of the camera itself is adjusted, or the camera is detached and re-attached, then a FULL calibration will be necessary.  
 If images of the material appear to be warped or misaligned, then try recalibrating the camera by following these steps.  
+
 1. Have the camera plugged into the USB port. The camera driver used by the package is compatible with most USB cameras. 
 
-2. Identify the port name assigned to your camera. This will be of the form "/dev/video1" on linux, with the number varying. By default, the package will assume that your camera is on /dev/video1, and we will often use that in examples. To identify the port of your usb camera:
-     1. Disconnect the camera.
-     2. Open a terminal and enter `ls /dev/video*`.
-     3. Reconnect the camera.
-     3. In the terminal, enter `ls /dev/video*` again.
-     4. Compare the two lists. The name that appeared when you reconnected your camera is the camera's port name. If it isn't video1, then whenever you see the name "video1" in these instructions, you should change it to match your setup.
+2. Identify the port name assigned to your camera. See the [How to Identify Assigned USB and video Ports] section for more instructions on this. 
 
 3. In your terminal, move into your catkin workspace by entering `cd ~/catkin_ws` 
 
 4. Set up your terminal environment by entering `source devel/setup.bash`
 
 5. Enter `roslaunch mill_controller image_calibration.launch`. If your video port is not /dev/video1, add the argument ` video_device:=/dev/video#`, replacing # with the number of your video port name. The launch file will begin a NORMAL calibration by default. If you wish to perform a FULL calibration, add the argument `calibration:=FULL`
+
+6. You should be presented with two windows: an image of the X-Carve workspace, and a window with instructions. If the x axis carriage is blocking the corners of the workspace in the image, consider moving it by operating the X-Carve directly and sending the command `G0 X250 Y500` while in G90 and G21 modes. See the [Operating the X-Carve Directly] section for more details.
 
 6. The image alignment script will guide you through calibrating the location of the X-Carve cutting board and the material you intend to be working with in the image taken from your webcam. This information will be used in image processing so that output information will consist of just the working material rather than the whole image.
 
@@ -84,19 +82,29 @@ Assumptions in instructions:
 1. Your catkin workspace is in the user's home folder and is named "catkin_ws"
 2. You are using the bash interpreter to run your terminal environment.
 
+These instructions will guide you through running a trajectory of your own.
+
 1. Open a terminal and move into your catkin workspace, for example by entering `cd ~/catkin_ws/`
+
 2. Source your setup.\*sh file, for example by entering `source devel/setup.bash`.
+
 3. Have a trajectory csv file as described in [Preparing a Trajectory Using csv Input] section. This should be in the mill_controller/trajectories/ directory. We will call this "my_trajectory.csv" in these instructions.
-4. Connect your X-Carve and USB camera to your computer. 
+
+4. Connect your X-Carve and USB camera to your computer. Turn the X-Carve on.
+
 4. Calibrate your workspace and the location of the material for imaging by following the [Calibrating The Workspace and Material] instructions above. **You must calibrate the workspace for the position that you intend the working material to occupy during trajectory execution.** If none of your calibration data has changed since the last time you calibrated, then you may skip this step and the most recent data will be used.
+
 5. Launch the mill controller by entering `roslaunch mill_controller mill_controller.launch`.  
 By default, the mill controller will expect you to be placing an 11"x8.5" piece of paper in the lower left corner of the workspace, with the long side parallel to the workspace's bottom edge. You can customize the dimensions, location, and rotation of the material by adding input arguments to the command. These arguments are explained in detail in the [Launch Files and Arguments] section. For example: to change the position of the material's origin to 200mm on the x axis and 150mm on the y axis in the machine workspace, we would instead enter the command:  
 `roslaunch mill_controller mill_controller.launch x_offset:=200 y_offset:=150`
 
    You should also change the usb port and video port if necessary using the appropriate arguments. Determining what video port your camera is on is described in the [Calibrating the Workspace and Material] section. You can identify the usb port your X-Carve has been assigned by using the same method with the command `ls /dev/ttyUSB*`.
+
 6. Now that your material is in place, the workspace is calibrated, your trajectory is ready, and you have launched the mill controller with arguments to inform it of the material position and dimensions, it is time to run your trajectory. Since we did not launch the mill controller with a file name to run automatically (see [Launch Files and Arguments] for more on this option) we will need to publish a string message containing the name of our trajectory csv file. Open a new console and enter the following command, replacing the name of the trajectory file if necessary:  
 `rostopic pub /csv_name_topic std_msgs/String "data: 'my_trajectory.csv'"`
+
 7. The mill controller will now read my_trajectory.csv from the trajectories/ directory, translate it into a gcode file named "output.gcode", and stream those gcode commands to the X-Carve. Since we did not place the X-Carve in closed loop mode, it will run the entire trajectory before taking an image of the completed drawing and publishing its output.
+
 8. The X-Carve should provide several visual representations of output along with an Occupancy message that encodes an array representing locations on the material that have and have not been worked. Understanding this output is covered in the [Interpreting Mill Controller Output] section.
 
 
@@ -115,25 +123,66 @@ Interpreting Occupancy messages
         Explain the helper class if I've actually finished it.
 
 
-### An Example in Video
+### An Example Run in Video
     Example Run through, including input and output.
 
 
+### Operating the X-Carve Directly
+The X-Carve uses a customised [grbl] controller. The specifics of grbl are beyond the scope of this readme, but the controller accepts most standard gcode commands. These instructions will allow you to operate the X-Carve directly using the program [Screen].
+
+1. Plug the X-Carve USB cord into your computers USB port and turn the X-Carve on.
+
+2. Determine what usb port the X-Carve has been assigned. You can reference the [How to Identify Assigned USB and video Ports] section for more detailed instructions. 
+
+3. Open a terminal and enter the command `screen /dev/ttyUSB0 115200`, replacing "/dev/ttyUSB0" with the correct usb port name if necessary.
+
+4. Since this is the first connection the X-Carve has received since being turned on, you should receive a short greeting text with some instructions.
+
+5. You will need to home the X-Carve before it is ready to use. Type `$H` and press `Enter`. You will not see the text you type, but the X-Carve should begin seeking its home position.
+
+6. Once the X-Carve has homed, an `ok` will appear in your terminal. The X-Carve is now ready to receive further commands.
+
+### Resetting the Workspace Origin
+The origin of the X-Carve standard workspace has been designated as being in the bottom left of the 500mm by 500mm silkscreen grid drawn on the X-Carve base board, from the perspective of a person standing in front of the X-Carve and looking directly at it. The official designation of this workspace is G54. Should the origin need to be reset at some point, follow these instructions.
+
+1. Follow the instructions in the [Operating the X-Carve Directly] section to connect to the X-Carve and begin homing it.
+
+2. Once the X-Carve is homed, enter the command `G91 G21` to place the controller in Incremental mode, interpreting commands in millimeters.
+
+3. Enter the command `G0 X17 Y5 Z-20` to move the mill carriage to the appropriate 0,0,0 position. 
+
+5. Enter the command `G10 L20 P1 X0 Y0 Z0` to set the G54 workspace origin to the current position.
+
+6. Enter the command `G90 G21` to return the controller to Absolute mode, interpreting commands in millimeters.
+
+### How to Identify Assigned USB and video Ports
+These instructions will guide you through the commands used to identify the ports your computer assigns to devices you plug in. On Linux, usb ports will be of the form `/dev/ttyUSB0`, while video ports are of the form `/dev/video0`. The number in the port name will vary depending on the order in which things are plugged in. Some devices attached to your ports may be built into your computer. For example a built in web camera is usually assigned `/dev/video0`. By default, the package will assume that your camera is on `/dev/video1`, and that the X-Carve is attached to `/dev/ttyUSB0`. If that is not the case then you will need to identify the ports these devices are attached to and either include the correct ports as arguments at launch time, or alter the launch files so that they are the default.  
+To identify the port of your usb camera:
+     1. Disconnect the camera.
+     2. Open a terminal and enter `ls /dev/video*`. Take note of the ports listed, if any.
+     3. Reconnect the camera.
+     3. In the terminal, enter `ls /dev/video*` again.
+     4. Compare the two lists. The name that appeared when you reconnected your camera is the camera's port name. If it isn't `/dev/video1`, then you should substitute your port name whenever the camera port is used in these instructions.
+To identify the port of the X-Carve
+    1. Disconnect the X-Carve.
+    2. Open a terminal and enter `ls /dev/ttyUSB*`. Take note of the ports listed, if any.
+    3. Reconnect the X-Carve.
+    3. In the terminal, enter `ls /dev/ttyUSB*` again.
+    4. Compare the two lists. The name that appeared when you reconnected the X-Carve is the X-Carve's port name. If it isn't `/dev/ttyUSB0`, then you should substitute your port name whenever the USB port is used in these instructions.
 
 
-During calibration, suggest moving mill carriage to x250 y500 to show corners
-Separate section for identifying the USB and video port?
-Input option notes
+
+Input method options notes
 Using the pen holder
 Function and Node Notes
     Using the black_box node? Maybe just add to node explanations
 Launch files and arguments
     The limits of the input ranges will correspond to the working material's dimensions on the x and y axes, with those dimensions also being possible launch arguments. 
     Explain main launch file and available arguments for changing.
-Resetting the workspace location.
 
 
 Known bugs
     Occupancy messages don't actually have the right dimensions.
     Occupancy messages don't actually have all the unoccupied points. Related!
     Camera driver is unreliable. Have to disconnect between calibration and running.
+    Currently the camera is viewing the workspace upside down compared to how the trajectory is processed. This can be worked around by rotating the corners to match the workspace orientation, as demonstrated in the [An Example Run in Video] section's calibration demo.
