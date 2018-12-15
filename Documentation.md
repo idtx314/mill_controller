@@ -158,22 +158,48 @@ The origin of the X-Carve standard workspace has been designated as being in the
 ### How to Identify Assigned USB and video Ports
 These instructions will guide you through the commands used to identify the ports your computer assigns to devices you plug in. On Linux, usb ports will be of the form `/dev/ttyUSB0`, while video ports are of the form `/dev/video0`. The number in the port name will vary depending on the order in which things are plugged in. Some devices attached to your ports may be built into your computer. For example a built in web camera is usually assigned `/dev/video0`. By default, the package will assume that your camera is on `/dev/video1`, and that the X-Carve is attached to `/dev/ttyUSB0`. If that is not the case then you will need to identify the ports these devices are attached to and either include the correct ports as arguments at launch time, or alter the launch files so that they are the default.  
 To identify the port of your usb camera:
-     1. Disconnect the camera.
-     2. Open a terminal and enter `ls /dev/video*`. Take note of the ports listed, if any.
-     3. Reconnect the camera.
-     3. In the terminal, enter `ls /dev/video*` again.
-     4. Compare the two lists. The name that appeared when you reconnected your camera is the camera's port name. If it isn't `/dev/video1`, then you should substitute your port name whenever the camera port is used in these instructions.
+ 1. Disconnect the camera.
+
+ 2. Open a terminal and enter `ls /dev/video*`. Take note of the ports listed, if any.
+
+ 3. Reconnect the camera.
+
+ 3. In the terminal, enter `ls /dev/video*` again.
+
+ 4. Compare the two lists. The name that appeared when you reconnected your camera is the camera's port name. If it isn't `/dev/video1`, then you should substitute your port name whenever the camera port is used in these instructions.
+
 To identify the port of the X-Carve
     1. Disconnect the X-Carve.
+
     2. Open a terminal and enter `ls /dev/ttyUSB*`. Take note of the ports listed, if any.
+
     3. Reconnect the X-Carve.
+
     3. In the terminal, enter `ls /dev/ttyUSB*` again.
+
     4. Compare the two lists. The name that appeared when you reconnected the X-Carve is the X-Carve's port name. If it isn't `/dev/ttyUSB0`, then you should substitute your port name whenever the USB port is used in these instructions.
 
 
+### Connecting the Marker Holder
+TODO pictures here
+These are visual instructions for attaching the marker holder to the side of the X-Carve and loading it with a Marker.
+
+1. Collect the upper and lower portions of the marker holder, a fine point sharpie marker, a spring, and 3 M4 screws of approximately 8mm length, along with an appropriate screwdriver.
+
+2. Facing the X-Carve from the front, the 3 screw holes are on the left side of the mill carriage.
+
+3. Attach the lower marker holder to the lower two screw holes on the mill carriage.
+
+4. Remove the cap from the sharpie marker and place the tip into the lower marker holder.
+
+5. Attach the upper marker holder to the upper screw hole on the mill carriage. Leave the screw loose enough that the holder can slide freely along its screw slot.
+
+6. Place the spring into the upper marker holder and slide the upper marker holder down onto the top of the sharpie. Allow the upper marker holder to drop onto the marker freely until the force of the spring holds it up.
+
+7. Press the upper marker holder against the side of the lower marker holder so that the sharpie is held vertically, and then tighten the screw on the upper marker holder to secure it in place.
+
 
 Input method options notes
-Using the pen holder
 Function and Node Notes
     Using the black_box node? Maybe just add to node explanations
 Launch files and arguments
@@ -182,7 +208,7 @@ Launch files and arguments
 
 
 Known bugs
-    Occupancy messages don't actually have the right dimensions.
+    Occupancy messages don't have reliable dimensions. The dimensions are based on the octomap, which automatically limits its own dimensions to the smallest dimensions that will fit the point cloud input.
     Occupancy messages don't actually have all the unoccupied points. Related!
     Camera driver is unreliable. Have to disconnect between calibration and running.
     Currently the camera is viewing the workspace upside down compared to how the trajectory is processed. This can be worked around by rotating the corners to match the workspace orientation, as demonstrated in the [An Example Run in Video] section's calibration demo.
