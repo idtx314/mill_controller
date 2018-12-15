@@ -130,6 +130,7 @@ Function and Node Notes
 Launch files and arguments
     The limits of the input ranges will correspond to the working material's dimensions on the x and y axes, with those dimensions also being possible launch arguments. 
     Explain main launch file and available arguments for changing.
+Resetting the workspace location.
 
 
 Known bugs
