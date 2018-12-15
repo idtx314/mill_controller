@@ -1,0 +1,61 @@
+<launch>
+  <!-- Arguments -->
+  <arg name="m_width" default="279.4" />
+  <arg name="m_height" default="215.9" />
+  <arg name="m_angle" default="0.0" />
+  <arg name="x_offset" default="0.0" />
+  <arg name="y_offset" default="0.0" />
+  <arg name="csv_name" default="null" />
+  <arg name="horizon_time" default="0.0" />
+  <arg name="usb_port" default="/dev/ttyUSB0" />
+  <arg name="x_range" default="[0.0,1.0]" />
+  <arg name="y_range" default="[0.0,1.0]" />
+
+  <!-- Parameters -->
+  <param name="m_width" type="double" value="$(arg m_width)" />
+  <param name="m_height" type="double" value="$(arg m_height)" />
+  <param name="m_angle" type="double" value="$(arg m_angle)" />
+  <param name="x_offset" type="double" value="$(arg x_offset)" />
+  <param name="y_offset" type="double" value="$(arg y_offset)" />
+  <param name="csv_name" type="str" value="$(arg csv_name)" />
+  <param name="horizon_time" type="double" value="$(arg horizon_time)" />
+  <param name="usb_port" type="str" value="$(arg usb_port)" />
+  <rosparam param="x_range" subst_value="True">$(arg x_range)</rosparam>
+  <rosparam param="y_range" subst_value="True">$(arg y_range)</rosparam>
+
+  <!-- usb_cam arguments -->
+  <arg name="video_device" default="/dev/video1" />
+  <arg name="pixel_format" default="yuyv" />
+  <arg name="camera_name"  default="mill_camera" />
+
+  <!-- Input Pipeline Nodes -->
+  <node name="csv_parser_node" pkg="mill_controller" type="csv_parser" />
+  <node name="string_parser_node" pkg="mill_controller" type="string_parser" />
+  <node name="trajectory_parser_node" pkg="mill_controller" type="trajectory_parser" />
+  <node name="gcode_sender_node" pkg="mill_controller" type="gcode_sender" />
+
+  <!-- USB Camera Driver -->
+  <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" />
+    <param name="usb_cam/video_device" value="$(arg video_device)" />
+    <param name="usb_cam/pixel_format" value="$(arg pixel_format)" />
+    <param name="usb_cam/camera_name" value="$(arg camera_name)" />
+
+  <!-- Output Pipeline Nodes -->
+  <node name="image_collector_node" pkg="mill_controller" type="image_collector" />
+  <node name="image_processor_node" pkg="mill_controller" type="image_processor" />
+  <node name="image_translator_node" pkg="mill_controller" type="image_translator" />
+  <!-- Octomap mapping launch. The frame ID and input topic are set within. -->
+  <include file="$(find mill_controller)/launch/octomap_mapping.launch"/>
+  <node name="octomap_to_array_node" pkg="mill_controller" type="octomap_to_array" />
+
+  <!-- tf frames for data visualization-->
+  <node pkg="tf" type="static_transform_publisher" name="map_cam_tf" args="0 0 0 0 0 0 map camera_depth_optical_frame 100"/>
+  <node pkg="tf" type="static_transform_publisher" name="base_map_tf" args="0 0 0 0 0 0 base map 100"/>
+
+  <!-- Rviz and image_view for visualizing -->
+  <node name="rviz" pkg="rviz" type="rviz" args="$(find mill_controller)/rviz/octomap_vis.rviz" required="true" />
+  <node name= "raw_image" pkg="image_view" type="image_view" args="image:=/raw_image" />
+  <node name="processed_image" pkg="image_view" type="image_view" args="image:=/processed_image" />
+
+
+</launch>
