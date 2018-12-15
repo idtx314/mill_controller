@@ -13,13 +13,13 @@ The motivation underlying the construction of this project is to support the erg
 
 3. Install dependencies
 
-4. Change directory into catkin_ws/src
+4. Open a terminal and move to your catkin workspace's src directory by entering, for example: `cd ~/catkin_ws/src` if your workspace is in the home directory.
 
 5. Clone this package using `git clone` with a link from the "clone or download" button on the top right of this page.
 
-6. `cd ..` to move back to the workspace root.
+6. Enter `cd ..` to move back to the workspace root.
 
-7. `catkin_make install` to build all the packages in the workspace.
+7. Enter `catkin_make install` to build and install all the packages in the workspace.
 
 If all dependencies are installed correctly, the package should now be ready to run.
 
@@ -42,13 +42,14 @@ If images of the material appear to be warped or misaligned, then try recalibrat
 
 2. Identify the port name assigned to your camera. See the [How to Identify Assigned USB and video Ports] section for more instructions on this. 
 
-3. In your terminal, move into your catkin workspace by entering `cd ~/catkin_ws` 
+3. In your terminal, move into your catkin workspace by entering, for example, `cd ~/catkin_ws`.
 
 4. Set up your terminal environment by entering `source devel/setup.bash`
 
 5. Enter `roslaunch mill_controller image_calibration.launch`. If your video port is not /dev/video1, add the argument ` video_device:=/dev/video#`, replacing # with the number of your video port name. The launch file will begin a NORMAL calibration by default. If you wish to perform a FULL calibration, add the argument `calibration:=FULL`
 
-6. You should be presented with two windows: an image of the X-Carve workspace, and a window with instructions. If the x axis carriage is blocking the corners of the workspace in the image, consider moving it by operating the X-Carve directly and sending the command `G0 X250 Y500` while in G90 and G21 modes. See the [Operating the X-Carve Directly] section for more details.
+6. You should be presented with two windows: an image of the X-Carve workspace, and a window with instructions. If the mill carriage is blocking the image, consider moving it by operating the X-Carve directly and sending the command `G0 X250 Y500` while in G90 and G21 modes. See the [Operating the X-Carve Directly] section for more details.
+[calibration window](./media/im_calibration4.png)
 
 6. The image alignment script will guide you through calibrating the location of the X-Carve cutting board and the material you intend to be working with in the image taken from your webcam. This information will be used in image processing so that output information will consist of just the working material rather than the whole image.
 
@@ -144,7 +145,7 @@ The X-Carve uses a customised [grbl] controller. The specifics of grbl are beyon
 
 5. You will need to home the X-Carve before it is ready to use. Type `$H` and press `Enter`. You will not see the text you type, but the X-Carve should begin seeking its home position.
 
-6. Once the X-Carve has homed, an `ok` will appear in your terminal. The X-Carve is now ready to receive further commands.
+6. Once the X-Carve has homed, an `ok` will appear in your terminal. The X-Carve is now ready to receive further commands. A full list of commands can be found [TODO]
 
 ### Resetting the Workspace Origin
 The origin of the X-Carve standard workspace has been designated as being in the bottom left of the 500mm by 500mm silkscreen grid drawn on the X-Carve base board, from the perspective of a person standing in front of the X-Carve and looking directly at it. The official designation of this workspace is G54. Should the origin need to be reset at some point, follow these instructions.
