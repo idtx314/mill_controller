@@ -63,9 +63,9 @@ def callback(input):
     # Flush startup text in serial input
     s.flushInput()
 
-    # Command grbl to home the machine and wait until complete
-    s.write("$H" + '\n')
-    grbl_out = s.readline()
+    # # Command grbl to home the machine and wait until complete
+    # s.write("$H" + '\n')
+    # grbl_out = s.readline()
 
     # Stream g-code to grbl
     for line in f:

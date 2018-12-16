@@ -66,9 +66,7 @@ These instructions will walk you through examining an example csv file, creating
 2. In this directory there should already be a pair of csv files, "example.csv" and "fake.csv". To find out about fake.csv, refer to the notes on the black_box node in the "Nodes" section. Open example.csv in your preferred text editor.
 
 3. The file should contain some simple formatted text.
-
-   `0.1,0.2,0.3,4`  
-   `0.5,0.6,0.7,8`
+[example.csv](./media/csv.png)
 
    This is the correct format for trajectory input. Each line represents a distinct x,y,z point along the trajectory at a given time t.  
    The value of each piece of information can be written as integers or decimal numbers representing percentage of material dimension and seconds, arranged in the format x,y,z,t.  
@@ -94,9 +92,9 @@ These instructions will guide you through running a trajectory of your own.
 
 3. Have a trajectory csv file as described in [Preparing a Trajectory Using csv Input] section. This should be in the mill_controller/trajectories/ directory. We will call this "my_trajectory.csv" in these instructions.
 
-4. Connect your X-Carve and USB camera to your computer. Turn the X-Carve on.
+4. Connect your X-Carve and USB camera to your computer. Turn the X-Carve on using the switch at the back of the X-Controller.
 
-4. Calibrate your workspace and the location of the material for imaging by following the [Calibrating The Workspace and Material] instructions above. **You must calibrate the workspace for the position that you intend the working material to occupy during trajectory execution.** If none of your calibration data has changed since the last time you calibrated, then you may skip this step and the most recent data will be used.
+4. Calibrate your workspace and the location of the material for imaging by following the instructions in the [Calibrating The Workspace and Material] section. If none of your calibration data has changed since the last time you calibrated, then you may skip this step and the most recent data will be used.
 
 5. Launch the mill controller by entering `roslaunch mill_controller mill_controller.launch`.  
 By default, the mill controller will expect you to be placing an 11"x8.5" piece of paper in the lower left corner of the workspace, with the long side parallel to the workspace's bottom edge. You can customize the dimensions, location, and rotation of the material by adding input arguments to the command. These arguments are explained in detail in the [Launch Files and Arguments] section. For example: to change the position of the material's origin to 200mm on the x axis and 150mm on the y axis in the machine workspace, we would instead enter the command:  
