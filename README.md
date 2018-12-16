@@ -11,7 +11,7 @@ The motivation underlying the construction of this project is to support the erg
 
 2. Create a catkin workspace using the methods described here: http://wiki.ros.org/ROS/Tutorials/InstallingandConfiguringROSEnvironment. This directory will be referred to as "catkin_ws" during the rest of these instructions.
 
-3. (TODO) Install dependencies: I have tried to include as many system and package dependencies as I can in the package.xml, but I have not yet had time to build the package on a clean system.
+3. (TODO) Install dependencies: I have tried to list as many system and package dependencies as I can in the package.xml, but no rules have been created for rosdep, and the list is likely incomplete. These are a few of the major dependencies to get you started, if you're intent on building the package yourself.
   1. ros-kinetic-octomap-mapping
   2. ros-kinetic-octomap-rviz-plugins
   3. ros-kinetic-image-view
