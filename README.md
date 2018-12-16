@@ -133,7 +133,7 @@ Interpreting Occupancy messages
 ### An Example Run in Video
     Example Run through, including input and output.
 
-![Example Run](./images/example_run.png)
+[![Example Run](./images/example_run.png)](https://vimeo.com/306697325)
 
 
 ### Operating the X-Carve Directly
