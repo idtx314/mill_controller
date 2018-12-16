@@ -69,8 +69,8 @@ These instructions will walk you through examining an example csv file, creating
 
 2. In this directory there should already be a pair of csv files, "example.csv" and "fake.csv". To find out about fake.csv, refer to the notes on the black_box node in the "Nodes" section. Open example.csv in your preferred text editor.
 
-3. The file should contain some simple formatted text.
-[example.csv](./images/csv.png)
+3. The file should contain some simple formatted text.  
+![example.csv](./images/csv.png)
 
    This is the correct format for trajectory input. Each line represents a distinct x,y,z point along the trajectory at a given time t.  
    The value of each piece of information can be written as integers or decimal numbers representing percentage of material dimension and seconds, arranged in the format x,y,z,t.  
@@ -132,6 +132,8 @@ Interpreting Occupancy messages
 
 ### An Example Run in Video
     Example Run through, including input and output.
+
+[![Example Run](./example_run.png)](https://vimeo.com/306697325)
 
 
 ### Operating the X-Carve Directly
