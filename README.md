@@ -2,7 +2,7 @@
 This is the code of a ROS package designed to provide computer vision based feedback control for an X-Carve CNC mill configured to operate as a pen plotter with time controlled x, y, and z input. The package has several methods of accepting (x,y,z,time) trajectories, which it then parses into GCode and sends to the mill to execute.  
 After a given time horizon has passed, the mill is instructed to stop operating and move the equipment away from the material. Images of the material are taken by a fixed usb camera and then processed by the package to identify locations where the mill has drawn on the paper. This data is visualized in Rviz, and published to ROS topics in a variety of formats.  
 The published data can be used to determine how well the mill has performed in executing the trajectory so far, and what alterations to the planned trajectory are necessary to achieve the desired end result of the trajectory planner.  
-The motivation underlying the construction of this project is to support the ergodic trajectory research of Ahalya Prabhakar and the Neuroscience and Robotics Laboratory at Northwestern University. As part of the lab's ongoing mandate to explore neurology by implementing unusual behaviour in robotic platforms, Ahalya's research explores the remarkably life like results of using time sensitive x, y, and z trajectories to guide activities such as drawing and exploring. 
+The motivation underlying the construction of this project is to support the ergodic trajectory research of Ahalya Prabhakar and the Neuroscience and Robotics Laboratory at Northwestern University. As part of the lab's ongoing mandate to explore behaviour and brain function in living beings by implementing similar behaviour in robotic platforms, Ahalya's research explores the remarkably organic results of using time sensitive x, y, and z trajectories to guide activities such as drawing and exploring. 
 
 ## Build Instructions
     This package was developed on Linux Ubuntu 16.04 (Xenial Xerus), with ROS Kinetic Kame.
@@ -11,7 +11,10 @@ The motivation underlying the construction of this project is to support the erg
 
 2. Create a catkin workspace using the methods described here: http://wiki.ros.org/ROS/Tutorials/InstallingandConfiguringROSEnvironment. This directory will be referred to as "catkin_ws" during the rest of these instructions.
 
-3. Install dependencies
+3. (TODO) Install dependencies: I have tried to include as many system and package dependencies as I can in the package.xml, but I have not yet had time to build the package on a clean system.
+  1. ros-kinetic-octomap-mapping
+  2. ros-kinetic-octomap-rviz-plugins
+  3. ros-kinetic-image-view
 
 4. Open a terminal and move to your catkin workspace's src directory by entering, for example: `cd ~/catkin_ws/src` if your workspace is in the home directory.
 
