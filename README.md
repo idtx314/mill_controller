@@ -52,7 +52,7 @@ If images of the material appear to be warped or misaligned, then try recalibrat
 5. Enter `roslaunch mill_controller image_calibration.launch`. If your video port is not /dev/video1, add the argument ` video_device:=/dev/video#`, replacing # with the number of your video port name. The launch file will begin a NORMAL calibration by default. If you wish to perform a FULL calibration, add the argument `calibration:=FULL`
 
 6. You should be presented with two windows: an image of the X-Carve workspace, and a window with instructions. If the mill carriage is blocking the image, consider moving it by operating the X-Carve directly and sending the command `G0 X250 Y500` while in G90 and G21 modes. See the [Operating the X-Carve Directly] section for more details.
-[calibration window](./media/im_calibration4.png)
+[calibration window](./images/im_calibration4.png)
 
 6. The image alignment script will guide you through calibrating the location of the X-Carve cutting board and the material you intend to be working with in the image taken from your webcam. This information will be used in image processing so that output information will consist of just the working material rather than the whole image.
 
@@ -69,7 +69,7 @@ These instructions will walk you through examining an example csv file, creating
 2. In this directory there should already be a pair of csv files, "example.csv" and "fake.csv". To find out about fake.csv, refer to the notes on the black_box node in the "Nodes" section. Open example.csv in your preferred text editor.
 
 3. The file should contain some simple formatted text.
-[example.csv](./media/csv.png)
+[example.csv](./images/csv.png)
 
    This is the correct format for trajectory input. Each line represents a distinct x,y,z point along the trajectory at a given time t.  
    The value of each piece of information can be written as integers or decimal numbers representing percentage of material dimension and seconds, arranged in the format x,y,z,t.  
