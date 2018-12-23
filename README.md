@@ -133,7 +133,7 @@ Interpreting Occupancy messages
 ### An Example Run in Video
     Example Run through, including input and output.
 
-<iframe src="https://player.vimeo.com/video/306697325" width="640" height="360" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen> </iframe>
+<iframe src="https://player.vimeo.com/video/306697325" width="640" height="360" frameborder="0"> </iframe>
 
 
 ### Operating the X-Carve Directly
