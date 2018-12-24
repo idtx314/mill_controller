@@ -133,7 +133,7 @@ Interpreting Occupancy messages
 ### An Example Run in Video
     Example Run through, including input and output.
 
-<video poster="./images/im_calibration4.png" width="640" height="360" controls>
+<video poster="./images/im_calibration4.png" width="640" height="360" controls preload>
   <source src="https://player.vimeo.com/video/306697325"> </source>
 </video>
 
