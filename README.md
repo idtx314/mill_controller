@@ -133,10 +133,13 @@ Interpreting Occupancy messages
 ### An Example Run in Video
     Example Run through, including input and output.
 
-<!-- <video poster="./images/im_calibration4.png" width="640" height="360" controls preload>
-  <source src="https://player.vimeo.com/video/306697325"> </source>
-</video> -->
-<video src="images/Instructional.mp4" width="320" height="200" controls preload></video>
+##### Calibrating the Workspace
+[![Mill Calibration](./images/thumb_calibration.png)](https://vimeo.com/306694098)
+
+
+##### Operating the Mill
+[![Example Run](./images/thumb_example_run.png)](https://vimeo.com/308028935)
+
 
 
 ### Operating the X-Carve Directly
