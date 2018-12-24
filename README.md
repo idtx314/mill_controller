@@ -136,6 +136,9 @@ Interpreting Occupancy messages
 <iframe src="https://player.vimeo.com/video/306697325" width="640" height="360" frameborder="0"> </iframe>
 
 
+<video src="https://player.vimeo.com/video/306697325" width="640" height="360" controls preload></video>
+
+
 ### Operating the X-Carve Directly
 The X-Carve uses a customised [grbl] controller. The specifics of grbl are beyond the scope of this readme, but the controller accepts most standard gcode commands. These instructions will allow you to operate the X-Carve directly using the program [Screen].
 
