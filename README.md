@@ -133,7 +133,9 @@ Interpreting Occupancy messages
 ### An Example Run in Video
     Example Run through, including input and output.
 
-<video src="https://player.vimeo.com/video/306697325" poster="./images/im_calibration4.png" width="640" height="360" controls> </video>
+<video poster="./images/im_calibration4.png" width="640" height="360" controls>
+  <source src="https://player.vimeo.com/video/306697325"> </source>
+</video>
 
 
 ### Operating the X-Carve Directly
