@@ -228,7 +228,7 @@ calibrating camera
 ### Known bugs
 * Occupancy messages don't have reliable dimensions. The dimensions are based on the octomap, which automatically limits its own dimensions to the smallest dimensions that will fit the point cloud input.
 * Occupancy messages don't actually have all the unoccupied points. Related!
-* Camera driver is unreliable. Have to disconnect between calibration and running.
+* The usb_cam node may enter a state where it will fail to start after being launched several times. The error "VIDIOC_S_FMT error 5, Input/output error" will be displayed. If this occurs, unplug the usb camera, wait five seconds, and then plug in the usb camera.
 * Currently the camera is viewing the workspace upside down compared to how the trajectory is processed. This can be worked around by rotating the corners to match the workspace orientation, as demonstrated in the [An Example Run in Video] section's calibration demo.
 
 
