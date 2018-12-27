@@ -22,7 +22,7 @@ The motivation underlying the construction of this project is to support the erg
 
 6. Enter `cd ..` to move back to the workspace root.
 
-7. Enter `catkin_make install` to build and install all the packages in the workspace.
+7. Enter `catkin_make` to build the packages in the workspace.
 
 If all dependencies are installed correctly, the package should now be ready to run.
 
