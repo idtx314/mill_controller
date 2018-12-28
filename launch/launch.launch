@@ -1,4 +1,5 @@
 <launch>
+  <!-- This launch is for playing back bagged data from stereo cameras -->
   <param name="use_sim_time" type="bool" value="true"/>
 
   <!-- This file can be overidden with a command line argument like "rosbag_file:=/path/to/file.bag" -->

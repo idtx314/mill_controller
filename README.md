@@ -220,6 +220,24 @@ These are visual instructions for attaching the marker holder to the side of the
 
 7. Press the upper marker holder against the side of the lower marker holder so that the sharpie is held vertically, and then tighten the screw on the upper marker holder to secure it in place.
 
+### Launch Files and Nodes
+
+  image_calibration.launch
+  mill_controller.launch
+  octomap_mapping.launch
+
+  black_box
+  csv_parser
+  gcode_sender
+  image_calibration
+  image_collector
+  image_processor
+  image_saver
+  string_parser
+  trajectory_parser
+  image_translator.cpp
+  octomap_to_array.cpp
+
 
 
 ### Sections Unwritten
