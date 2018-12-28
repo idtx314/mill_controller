@@ -74,7 +74,7 @@ These instructions will walk you through examining an example csv file, creating
 
 1. Navigate to the directory containing your package, inside of your catkin workspace. From there, open the trajectories/ directory. In addition to the commands above, you could also bring a terminal to this directory by entering `roscd mill_controller/trajectories/`.
 
-2. In this directory there should already be a pair of csv files, "example.csv" and "fake.csv". To find out about fake.csv, refer to the notes on the black_box node in the [Launch Files and Nodes] section. Open example.csv in your preferred text editor.
+2. In this directory there should already be a pair of csv files, "example.csv" and "fake.csv". To find out about fake.csv, refer to the notes on the black_box node in the [Launch Files, Nodes, and Arguments] section. Open example.csv in your preferred text editor.
 
 3. The file should contain some simple formatted text.  
 ![example.csv](./images/csv.png)
@@ -82,7 +82,7 @@ These instructions will walk you through examining an example csv file, creating
    This is the correct format for trajectory input. Each line represents a distinct x,y,z point along the trajectory at a given time t.  
    The value of each piece of information can be written as integers or decimal numbers representing percentage of material dimension and seconds, arranged in the format x,y,z,t.  
    The material origin is considered to be in bottom left corner of the material, with positive x toward the material's bottom right corner and positive y toward the material's top left corner.  
-   The appropriate input ranges of x and y can be set when you start the mill controller. See the Launch Files and Arguments section for a more complete explanation of input range. By default the input ranges are from 0.0 to 1.0, representing percentage of the material's dimension along that axis.  
+   The appropriate input ranges of x and y can be set when you start the mill controller. See the [Launch Files, Nodes, and Arguments] section for a more complete explanation of input range. By default the input ranges are from 0.0 to 1.0, representing percentage of the material's dimension along that axis.  
    This example file contains a 2 point trajectory, from (x=10%, y=20%, z=30%) at t=4.0 seconds to (x=50%, y=60%, z=70%) at t=8.0 seconds.  
    No spaces should be included in a line. Trajectories do not need to start at 0 seconds, although the mill controller will generally treat them as though they had.  
 
@@ -107,12 +107,12 @@ These instructions will guide you through running a trajectory of your own.
 4. Calibrate your workspace and the location of the material for imaging by following the instructions in the [Calibrating The Workspace and Material] section. If none of your calibration data has changed since the last time you calibrated, then you may skip this step and the most recent data will be used.
 
 5. Launch the mill controller by entering `roslaunch mill_controller mill_controller.launch`.  
-By default, the mill controller will expect you to be placing an 11"x8.5" piece of paper in the lower left corner of the workspace, with the long side parallel to the workspace's bottom edge. You can customize the dimensions, location, and rotation of the material by adding input arguments to the command. These arguments are explained in detail in the [Launch Files and Arguments] section. For example: to change the position of the material's origin to 200mm on the x axis and 150mm on the y axis in the machine workspace, we would instead enter the command:  
+By default, the mill controller will expect you to be placing an 11"x8.5" piece of paper in the lower left corner of the workspace, with the long side parallel to the workspace's bottom edge. You can customize the dimensions, location, and rotation of the material by adding input arguments to the command. These arguments are explained in detail in the [Launch Files, Nodes, and Arguments] section. For example: to change the position of the material's origin to 200mm on the x axis and 150mm on the y axis in the machine workspace, we would instead enter the command:  
 `roslaunch mill_controller mill_controller.launch x_offset:=200 y_offset:=150`
 
    You should also change the usb port and video port if necessary using the appropriate arguments. Determining what video port your camera is on is described in the [Calibrating the Workspace and Material] section. You can identify the usb port your X-Carve has been assigned by using the same method with the command `ls /dev/ttyUSB*`.
 
-6. Now that your material is in place, the workspace is calibrated, your trajectory is ready, and you have launched the mill controller with arguments to inform it of the material position and dimensions, it is time to run your trajectory. Since we did not launch the mill controller with a file name to run automatically (see [Launch Files and Arguments] for more on this option) we will need to publish a string message containing the name of our trajectory csv file. Open a new console and enter the following command, replacing the name of the trajectory file if necessary:  
+6. Now that your material is in place, the workspace is calibrated, your trajectory is ready, and you have launched the mill controller with arguments to inform it of the material position and dimensions, it is time to run your trajectory. Since we did not launch the mill controller with a file name to run automatically (see [Launch Files, Nodes, and Arguments] for more on this option) we will need to publish a string message containing the name of our trajectory csv file. Open a new console and enter the following command, replacing the name of the trajectory file if necessary:  
 `rostopic pub /csv_name_topic std_msgs/String "data: 'my_trajectory.csv'"`
 
 7. The mill controller will now read my_trajectory.csv from the trajectories/ directory, translate it into a gcode file named "output.gcode", and stream those gcode commands to the X-Carve. Since we did not place the X-Carve in closed loop mode, it will run the entire trajectory before taking an image of the completed drawing and publishing its output.
@@ -131,7 +131,7 @@ Using mill_controller.launch provides a set of
 
 /octomap_to_occupancy is an Occupancy message as defined in the mill_controller package. This contains the dimensions of the full array
 
-Interpreting Occupancy messages
+TODO Interpreting Occupancy messages
 
     Explain the helper class if I've actually finished it.
 
@@ -220,12 +220,128 @@ These are visual instructions for attaching the marker holder to the side of the
 
 7. Press the upper marker holder against the side of the lower marker holder so that the sharpie is held vertically, and then tighten the screw on the upper marker holder to secure it in place.
 
-### Launch Files and Nodes
+### Launch Files, Nodes, and Arguments
+The package includes a handful of launch files that cover most intended use cases, preventing the user from having to launch nodes directly through rosrun or script execution.  
+The user may use ROS's remapping syntax, "variable:=value", at the time of launch to alter the settings being used by the system. If they are not changed, these settings have default values consistent with a pen plotter using a black ink pen and white paper. These default values can also be changed by editing the launch files themselves.
 
-  image_calibration.launch
-  mill_controller.launch
-  octomap_mapping.launch
+##### Launch Files
+  * image_calibration.launch: Launches the nodes needed to calibrate the image alignments used during image processing. A full calibration should be run whenever the camera is moved relative to the workspace. A normal calibration should be run whenever the location or dimensions of the material being worked with by the mill changes.  
+  Valid Arguments: 
+    * calibration: 
+      * Type: String
+      * Default: NORMAL
+      * Can be set to "FULL" to run a calibration of the workspace location and material position, "NORMAL" to run a calibration of the material position only, or "NONE to skip calibration.
+    * m_width: 
+      * Type: Double
+      * Default: 279.4
+      * Represents the length of the material along its own x axis in mm.
+    * m_height: 
+      * Type: Double
+      * Default: 215.9
+      * Represents the length of the material along its own y axis in mm.
+    * m_angle: 
+      * Type: Double
+      * Default: 0.0
+      * Represents the angle of rotation from the workspace x axis to the material x axis in degrees.
+    * x_offset: 
+      * Type: Double
+      * Default: 0.0
+      * Represents the offset from the workspace origin to the material origin along the workspace x axis in millimeters.
+    * y_offset: 
+      * Type: Double
+      * Default: 0.0
+      * Represents the offset from the workspace origin to the material origin along the workspace y axis in millimeters.
+    * x_range: 
+      * Type: List of doubles
+      * Default: [0.0,1.0]
+      * Represents the acceptable input range for the material x axis. The ends of this range will correlate to the edges of the material on the material's x axis, while values within the range will be scaled appropriately to the size of the material. See the [Preparing a Trajectory Using .csv File Input.] section for more information.
+    * y_range: 
+      * Type: List of doubles
+      * Default: [0.0,1.0]
+      * Represents the acceptable input range for the material y axis. The ends of this range will correlate to the edges of the material on the material's y axis, while values within the range will be scaled appropriately to the size of the material. See the [Preparing a Trajectory Using .csv File Input.] section for more information. Ex: [0.0,1.0]
+    * horizon_time: 
+      * Type: Double
+      * Default: 0.0
+      * Represents the number of seconds of a trajectory to execute before stopping, performing image processing, and outputting data. If set to "0.0", the controller will operate in open loop mode, executing the full trajectory before performing any image processing.
+    * csv_name: 
+      * Type: String
+      * Default: null
+      * If this argument is not null, then the controller will immediately look for a file name matching the provided string in the trajectories/ directory of the package and attempt to execute it once the launch is complete. This allows you to have the controller begin following a trajectory immediately when launched.
+    * usb_port:
+      * Type: String
+      * Default: /dev/ttyUSB0
+      * The name of the usb port assigned to the X-Carve.
+    * video_device: 
+      * Type: String
+      * Default: /dev/video1
+      * The name of the video port assigned to the usb camera.
+    * pixel_format: 
+      * Type: String
+      * Default: yuyv
+      * The pixel format to be used when collecting images from the camera.
+    * camera_name: 
+      * Type: String
+      * Default: mill_camera
+      * The name to be assigned to the usb camera. This is mostly used for retrieving the correct calibration file.
 
+  * mill_controller.launch: Launches the nodes needed to execute trajectories on the X-Carve.  
+  Valid Arguments:
+    * m_width: 
+      * Type: Double
+      * Default: 279.4
+      * Represents the length of the material along its own x axis in mm.
+    * m_height: 
+      * Type: Double
+      * Default: 215.9
+      * Represents the length of the material along its own y axis in mm.
+    * m_angle: 
+      * Type: Double
+      * Default: 0.0
+      * Represents the angle of rotation from the workspace x axis to the material x axis in degrees.
+    * x_offset: 
+      * Type: Double
+      * Default: 0.0
+      * Represents the offset from the workspace origin to the material origin along the workspace x axis in millimeters.
+    * y_offset: 
+      * Type: Double
+      * Default: 0.0
+      * Represents the offset from the workspace origin to the material origin along the workspace y axis in millimeters.
+    * x_range: 
+      * Type: List of doubles
+      * Default: [0.0,1.0]
+      * Represents the acceptable input range for the material x axis. The ends of this range will correlate to the edges of the material on the material's x axis, while values within the range will be scaled appropriately to the size of the material. See the [Preparing a Trajectory Using .csv File Input.] section for more information.
+    * y_range: 
+      * Type: List of doubles
+      * Default: [0.0,1.0]
+      * Represents the acceptable input range for the material y axis. The ends of this range will correlate to the edges of the material on the material's y axis, while values within the range will be scaled appropriately to the size of the material. See the [Preparing a Trajectory Using .csv File Input.] section for more information. Ex: [0.0,1.0]
+    * horizon_time: 
+      * Type: Double
+      * Default: 0.0
+      * Represents the number of seconds of a trajectory to execute before stopping, performing image processing, and outputting data. If set to "0.0", the controller will operate in open loop mode, executing the full trajectory before performing any image processing.
+    * csv_name: 
+      * Type: String
+      * Default: null
+      * If this argument is not null, then the controller will immediately look for a file name matching the provided string in the trajectories/ directory of the package and attempt to execute it once the launch is complete. This allows you to have the controller begin following a trajectory immediately when launched.
+    * usb_port:
+      * Type: String
+      * Default: /dev/ttyUSB0
+      * The name of the usb port assigned to the X-Carve.
+    * video_device: 
+      * Type: String
+      * Default: /dev/video1
+      * The name of the video port assigned to the usb camera.
+    * pixel_format: 
+      * Type: String
+      * Default: yuyv
+      * The pixel format to be used when collecting images from the camera.
+    * camera_name: 
+      * Type: String
+      * Default: mill_camera
+      * The name to be assigned to the usb camera. This is mostly used for retrieving the correct calibration file.
+
+  * octomap_mapping.launch: Launches an octomap server node. This file is intended only for inclusion in other launch files, although at the moment altering the resolution of the octomap must be done here by editing the private parameter "resolution".
+
+##### Nodes
   black_box
   csv_parser
   gcode_sender
