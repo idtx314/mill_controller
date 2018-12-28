@@ -31,11 +31,19 @@ If all dependencies are installed correctly, the package should now be ready to 
 ## Run Instructions
     Lots of images and video in this section
 
+### Calibrating the Camera
+The camera_calibration package contains tools to identify and compensate for any imperfections in your camera lens, and is fully compatible with most ROS camera drivers. Find detailed information on the package [here], and a tutorial on using it [here]. Be sure to set the image topic and camera name correctly.:
+
+1. Open a terminal and enter `roscore` to start a new ros master process.
+
+2. Open a terminal and enter `rosrun usb_cam usb_cam_node _video_device:=/dev/video1 _pixel_format:=yuyv _camera_name:=mill_camera`.
+
+3. Open a terminal and enter `rosrun camera_calibration cameracalibrator.py --size 8x6 --square .0245 image:=/usb_cam/image_raw camera:=/usb_cam`. The checkboard size argument is based on the number of inner corners (the number of squares-1), while the size is a measurement in meters.
+
 ### Calibrating The Workspace and Material
 Assumptions in instructions:
 1. Your catkin workspace is in the user's home folder and is named "catkin_ws"
-2. You are using the bash interpreter to run your terminal environment.
-3. You are using a USB camera compatible with the package camera driver.
+2. You are using a USB camera compatible with the package camera driver.
 
 It will be necessary to perform a NORMAL calibration of the camera each time you want to change the size or location of your material.  
 If the position of the camera itself is adjusted, or the camera is detached and re-attached, then a FULL calibration will be necessary.  
@@ -47,7 +55,7 @@ If images of the material appear to be warped or misaligned, then try recalibrat
 
 3. In your terminal, move into your catkin workspace by entering, for example, `cd ~/catkin_ws`.
 
-4. Set up your terminal environment by entering `source devel/setup.bash`
+4. Source your development setup.\*sh file, for example by entering `source devel/setup.bash` if you are using a bash terminal.
 
 5. Enter `roslaunch mill_controller image_calibration.launch`. If your video port is not /dev/video1, add the argument ` video_device:=/dev/video#`, replacing # with the number of your video port name. The launch file will begin a NORMAL calibration by default. If you wish to perform a FULL calibration, add the argument `calibration:=FULL`
 
@@ -60,14 +68,13 @@ If images of the material appear to be warped or misaligned, then try recalibrat
 ### Preparing a Trajectory Using .csv File Input.
 Assumptions in instructions:
     1. Your catkin workspace is in the user's home folder and is named "catkin_ws"
-    2. You 
 While there are a number of possible input methods for the mill controller, the most straightforward and flexible one is to use .csv files to store your trajectory input. 
 You will need to store csv files in the trajectories/ directory of the installed mill_controller package in your catkin workspace's src/ directory. To navigate a terminal here, for example, you might enter `cd ~/catkin_ws/src/mill_controller/trajectories/`.
 These instructions will walk you through examining an example csv file, creating a simple csv file of your own, and having it read as trajectory input.
 
-1. Navigate to the directory containing your package, inside of your catkin workspace. From there, open the "trajectories" directory. In addition to the commands above, you could also bring a terminal to this directory by entering `roscd mill_controller/trajectories/`.
+1. Navigate to the directory containing your package, inside of your catkin workspace. From there, open the trajectories/ directory. In addition to the commands above, you could also bring a terminal to this directory by entering `roscd mill_controller/trajectories/`.
 
-2. In this directory there should already be a pair of csv files, "example.csv" and "fake.csv". To find out about fake.csv, refer to the notes on the black_box node in the "Nodes" section. Open example.csv in your preferred text editor.
+2. In this directory there should already be a pair of csv files, "example.csv" and "fake.csv". To find out about fake.csv, refer to the notes on the black_box node in the [Launch Files and Nodes] section. Open example.csv in your preferred text editor.
 
 3. The file should contain some simple formatted text.  
 ![example.csv](./images/csv.png)
@@ -86,13 +93,12 @@ These instructions will walk you through examining an example csv file, creating
 ### Running a Trajectory
 Assumptions in instructions:
 1. Your catkin workspace is in the user's home folder and is named "catkin_ws"
-2. You are using the bash interpreter to run your terminal environment.
 
 These instructions will guide you through running a trajectory of your own.
 
 1. Open a terminal and move into your catkin workspace, for example by entering `cd ~/catkin_ws/`
 
-2. Source your setup.\*sh file, for example by entering `source devel/setup.bash`.
+2. Source your development setup.\*sh file, for example by entering `source devel/setup.bash` if you are using a bash terminal.
 
 3. Have a trajectory csv file as described in [Preparing a Trajectory Using csv Input] section. This should be in the mill_controller/trajectories/ directory. We will call this "my_trajectory.csv" in these instructions.
 
@@ -172,6 +178,7 @@ The origin of the X-Carve standard workspace has been designated as being in the
 
 ### How to Identify Assigned USB and video Ports
 These instructions will guide you through the commands used to identify the ports your computer assigns to devices you plug in. On Linux, usb ports will be of the form `/dev/ttyUSB0`, while video ports are of the form `/dev/video0`. The number in the port name will vary depending on the order in which things are plugged in. Some devices attached to your ports may be built into your computer. For example a built in web camera is usually assigned `/dev/video0`. By default, the package will assume that your camera is on `/dev/video1`, and that the X-Carve is attached to `/dev/ttyUSB0`. If that is not the case then you will need to identify the ports these devices are attached to and either include the correct ports as arguments at launch time, or alter the launch files so that they are the default.  
+
 To identify the port of your usb camera:
 1. Disconnect the camera.
 
@@ -214,22 +221,30 @@ These are visual instructions for attaching the marker holder to the side of the
 7. Press the upper marker holder against the side of the lower marker holder so that the sharpie is held vertically, and then tighten the screw on the upper marker holder to secure it in place.
 
 
+
 ### Sections Unwritten
 Launch files and arguments
     The limits of the input ranges will correspond to the working material's dimensions on the x and y axes, with those dimensions also being possible launch arguments. 
     Explain main launch file and available arguments for changing.
 Input method options notes
-Function and Node Notes
+  string, csv, and direct trajectory message
+Launch Files and Nodes
     Using the black_box node? Maybe just add to node explanations
     Each node has a description in the script. I can probably save a lot of work with that.
-calibrating camera
+future development
+assumptions
+  camera name
+  catkin ws
+  video#
+  ttyusb#
+  trajectory name
 
 
 ### Known bugs
 * Occupancy messages don't have reliable dimensions. The dimensions are based on the octomap, which automatically limits its own dimensions to the smallest dimensions that will fit the point cloud input.
 * Occupancy messages don't actually have all the unoccupied points. Related!
-* The usb_cam node may enter a state where it will fail to start after being launched several times. The error "VIDIOC_S_FMT error 5, Input/output error" will be displayed. If this occurs, unplug the usb camera, wait five seconds, and then plug in the usb camera.
-* Currently the camera is viewing the workspace upside down compared to how the trajectory is processed. This can be worked around by rotating the corners to match the workspace orientation, as demonstrated in the [An Example Run in Video] section's calibration demo.
+* The usb_cam node may enter a state where it will fail to start after being launched several times. The error "VIDIOC_S_FMT error 5, Input/output error" will be displayed. If this occurs you should shut down any launched nodes, unplug the usb camera, wait five seconds, and then plug in the usb camera.
+* Currently the camera is viewing the workspace upside down relative to the workspace's reference frame. This can be worked around by rotating the corners to match the workspace orientation during image calibration, as demonstrated in the [An Example Run in Video] section's calibration video.
 
 
 ### References
