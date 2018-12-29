@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+'''
+This node subscribes to the Image topic 'raw_image'. When an Image message is received the node saves it as a jpg with the name "mill_cam_#.jpg". "#" is replaced with the number of images saved so far, and increments each time an image is saved. This node is not included in any launch file, and should be run using `rosrun`. All images will be saved in the working directory of the terminal running the node.
+'''
+
 import rospy
 import sys
 import cv2

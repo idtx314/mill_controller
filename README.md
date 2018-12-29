@@ -258,7 +258,7 @@ The user may use ROS's remapping syntax, "variable:=value", at the time of launc
     * y_range: 
       * Type: List of doubles
       * Default: [0.0,1.0]
-      * Represents the acceptable input range for the material y axis. The ends of this range will correlate to the edges of the material on the material's y axis, while values within the range will be scaled appropriately to the size of the material. See the [Preparing a Trajectory Using .csv File Input.] section for more information. Ex: [0.0,1.0]
+      * Represents the acceptable input range for the material y axis. The ends of this range will correlate to the edges of the material on the material's y axis, while values within the range will be scaled appropriately to the size of the material. See the [Preparing a Trajectory Using .csv File Input.] section for more information.
     * horizon_time: 
       * Type: Double
       * Default: 0.0
@@ -313,7 +313,7 @@ The user may use ROS's remapping syntax, "variable:=value", at the time of launc
     * y_range: 
       * Type: List of doubles
       * Default: [0.0,1.0]
-      * Represents the acceptable input range for the material y axis. The ends of this range will correlate to the edges of the material on the material's y axis, while values within the range will be scaled appropriately to the size of the material. See the [Preparing a Trajectory Using .csv File Input.] section for more information. Ex: [0.0,1.0]
+      * Represents the acceptable input range for the material y axis. The ends of this range will correlate to the edges of the material on the material's y axis, while values within the range will be scaled appropriately to the size of the material. See the [Preparing a Trajectory Using .csv File Input.] section for more information.
     * horizon_time: 
       * Type: Double
       * Default: 0.0
@@ -321,7 +321,7 @@ The user may use ROS's remapping syntax, "variable:=value", at the time of launc
     * csv_name: 
       * Type: String
       * Default: null
-      * If this argument is not null, then the controller will immediately look for a file name matching the provided string in the trajectories/ directory of the package and attempt to execute it once the launch is complete. This allows you to have the controller begin following a trajectory immediately when launched.
+      * If this argument is not null, then the controller will look for a file name matching the string in the trajectories/ directory of the package and attempt to execute it once the node launches. This allows you to have the controller begin following a trajectory immediately when launched.
     * usb_port:
       * Type: String
       * Default: /dev/ttyUSB0
@@ -342,17 +342,109 @@ The user may use ROS's remapping syntax, "variable:=value", at the time of launc
   * octomap_mapping.launch: Launches an octomap server node. This file is intended only for inclusion in other launch files, although at the moment altering the resolution of the octomap must be done here by editing the private parameter "resolution".
 
 ##### Nodes
-  black_box
-  csv_parser
-  gcode_sender
-  image_calibration
-  image_collector
-  image_processor
-  image_saver
-  string_parser
-  trajectory_parser
-  image_translator.cpp
-  octomap_to_array.cpp
+  * black_box: This node can be used to simulate a feedback control loop. To use the node you should first calibrate and launch the mill controller, then open a new console and enter `rosrun mill_controller black_box`. When launched, the node reads a trajectory out of a file named "fake.csv" in the mill_controller/trajectories/ directory. The node produces an output file named trajectorybb.csv, then publishes that file name to be executed by the mill controller. Each time the mill controller publishes feedback information the node reads fake.csv again, adjusts the trajectory's time stamps based on the horizon_time parameter, and removes the part of the trajectory already completed. trajectorybb.csv is then updated and its name is again published for execution. This cycle continues until the original trajectory has been completed. If horizon_time is set to 0.0, black_box will have the trajectory in fake.csv run a single time.  
+  Relevant Parameters:
+    * horizon_time: 
+      * Type: Double
+      * Default: 0.0
+      * The trajectory will be run using this value to determine how many seconds are executed at a time.
+  * csv_parser: This node subscribes to the String topic csv_name_topic. Messages are parsed as the name of a .csv file in the mill_controller/trajectories/ directory. The node will attempt to open that file, parse the contents into a Trajectory message, and publish that message to the topic trajectory_input to be executed.  
+  Relevant Parameters:
+    * csv_name:
+      * Type: String
+      * Default: null
+      * If this argument is not null, then the controller will look for a file name matching the string in the trajectories/ directory of the package and attempt to execute it once the node launches. This allows you to have the controller begin following a trajectory immediately when launched.
+  * gcode_sender: This node subscribes to the Bool topic 'gcode_ready_flag'. When a message is received, it opens a file called 'output.gcode' located in the package directory and sends the contents line by line to a CNC controller over a serial port specified by the parameter usb_port. After each line is sent, the script waits for confirmation to be received over the port. The script is based on simple_stream.py, a gcode streaming script under the MIT License.  
+  Relevant Parameters:
+    * usb_port:
+      * Type: String
+      * Default: /dev/ttyUSB0
+      * The name of the usb port assigned to the X-Carve.
+  * image_calibration: This node guides the user through calibration of the image alignment functions. It is intended to be run using image_calibration.launch. It makes use of a GUI to instruct the user and saves information in the homographies/ directory of the mill_controller package. The parameters m_width and m_height are used to determine appropriate resolutions for image processing.  
+  Relevant Parameters:
+    * m_width: 
+      * Type: Double
+      * Default: 279.4
+      * Represents the length of the material along its own x axis in mm.
+    * m_height: 
+      * Type: Double
+      * Default: 215.9
+      * Represents the length of the material along its own y axis in mm.
+  * image_collector: This node subscribes to the Image topic 'usb_cam/image_raw' and the Bool topic 'gcode_sent_flag'. When an Image message is received it will be saved as the most recent image. When a Bool message is received it will publish the most recent image on the topic 'raw_image'.  
+  Relevant Parameters:
+    * None
+  * image_processor: This node subscribes to the Image topic 'raw_image'. When an Image message is received the node converts it into an OpenCV image, performs image processing, converts it into a new Image message, and publishes the new message on the topic 'processed_image'. The parameters m_width and m_height are used to determine appropriate resolutions for image processing.  
+  Relevant Parameters:
+    * m_width: 
+      * Type: Double
+      * Default: 279.4
+      * Represents the length of the material along its own x axis in mm.
+    * m_height: 
+      * Type: Double
+      * Default: 215.9
+      * Represents the length of the material along its own y axis in mm.
+  * image_saver: This node subscribes to the Image topic 'raw_image'. When an Image message is received the node saves it as a jpg with the name "mill_cam_#.jpg". "#" is replaced with the number of images saved so far, and increments each time an image is saved. This node is not included in any launch file, and should be run using `rosrun`. All images will be saved in the working directory of the terminal running the node.  
+  Relevant Parameters:
+    * None
+  * string_parser: This node subscribes to the String topic 'string_input'. When a String message is received, the string will be parsed into a Trajectory message and published on the Trajectory topic 'trajectory_input'. This allows the manual input of simple trajectories.  
+  The input string should be formatted as a list of lists, using python notation. Each sub-list should contain an x,y,z coordinate and a time as decimal numbers: [x,y,z,t]. Acceptable ranges of x and y are determined based on the x_range and y_range parameters, while t represents seconds.
+  Ex Input:  
+  '[[0.0,1.0,1.0,0.0],[0.1,1.0,1.0,1.0],[0.2,1.0,1.0,2.0]]'  
+  Relevant Parameters:
+    * x_range: 
+      * Type: List of doubles
+      * Default: [0.0,1.0]
+      * Represents the acceptable input range for the material x axis. The ends of this range will correlate to the edges of the material on the material's x axis, while values within the range will be scaled appropriately to the size of the material. See the [Preparing a Trajectory Using .csv File Input.] section for more information.
+    * y_range: 
+      * Type: List of doubles
+      * Default: [0.0,1.0]
+      * Represents the acceptable input range for the material y axis. The ends of this range will correlate to the edges of the material on the material's y axis, while values within the range will be scaled appropriately to the size of the material. See the [Preparing a Trajectory Using .csv File Input.] section for more information.
+  * trajectory_parser: This node subscribes to the Trajectory topic 'trajectory_input'. When a Trajectory message is received the contents are parsed into a GCode file named output.gcode, which is saved into the mill_controller directory. The node then publishes a message on the Bool topic 'gcode_ready_flag'. The node will not accept coordinates outside the 500mmx500mm machine workspace, but it presumes that the G54 workspace has been set up as described in the [Resetting the Workspace Origin] section.  
+  Relevant Parameters:
+    * m_width: 
+      * Type: Double
+      * Default: 279.4
+      * Represents the length of the material along its own x axis in mm.
+    * m_height: 
+      * Type: Double
+      * Default: 215.9
+      * Represents the length of the material along its own y axis in mm.
+    * m_angle: 
+      * Type: Double
+      * Default: 0.0
+      * Represents the angle of rotation from the workspace x axis to the material x axis in degrees.
+    * x_offset: 
+      * Type: Double
+      * Default: 0.0
+      * Represents the offset from the workspace origin to the material origin along the workspace x axis in millimeters.
+    * y_offset: 
+      * Type: Double
+      * Default: 0.0
+      * Represents the offset from the workspace origin to the material origin along the workspace y axis in millimeters.
+    * x_range: 
+      * Type: List of doubles
+      * Default: [0.0,1.0]
+      * Represents the acceptable input range for the material x axis. The ends of this range will correlate to the edges of the material on the material's x axis, while values within the range will be scaled appropriately to the size of the material. See the [Preparing a Trajectory Using .csv File Input.] section for more information.
+    * y_range: 
+      * Type: List of doubles
+      * Default: [0.0,1.0]
+      * Represents the acceptable input range for the material y axis. The ends of this range will correlate to the edges of the material on the material's y axis, while values within the range will be scaled appropriately to the size of the material. See the [Preparing a Trajectory Using .csv File Input.] section for more information.
+    * horizon_time: 
+      * Type: Double
+      * Default: 0.0
+      * Represents the number of seconds of a trajectory to execute before stopping, performing image processing, and outputting data. If set to "0.0", the controller will operate in open loop mode, executing the full trajectory before performing any image processing.
+  * image_translator.cpp: This node subscribes to the Image topic 'processed_image'. When an Image message is received it is translated into an OpenCV image and used to build a PCL point cloud based on the locations of black and white pixels in the image. The point cloud is translated into a PointCloud2 message and published on the PointCloud2 topic 'camera/depth/points'. A PCL visualizer window displays the point cloud during processing.  
+  Relevant Parameters:
+    * None
+  * octomap_server_node: Part of the octomap_server package, this node listens to incoming PointCloud2 data and incrementally builds an octomap. The data is sent out in different representations. See www.ros.org/wiki/octomap_server for details.  
+  Relevant Parameters:
+    * None
+  * octomap_to_array.cpp: This node subscribes to the Octomap topic "octomap_full". When an Octomap message is received the node builds several representations of the octomap data in alternate formats.  
+  __Marker message__: A Marker message is built based on the occupied nodes in the octomap message. This is published on the Marker topic "octomap_to_cloud" and should match the data published on the PointCloud2 topic /octomap_point_cloud_centers by the octomap_server_node.  
+  __Multidimensional Array__: A binary 3D array is built based on the occupied, unoccpied, and unknown cells in the octomap message. Each z layer is printed to the standard output if possible. To see this output when using a launch file add the argument `--screen` to the launch command.  
+  __Occupancy message__: An Occupancy message is built based on the indexes of all points in the array representation that are 0 (not occupied) and the array dimensions. This is published on the Occupancy topic 'octomap_to_occupancy'. This permits the array to be rebuilt in other nodes by implicitly encoding the status of all indices in the array. See the [Interpreting Mill Controller Output] section for more information on using Occupancy messages.  
+  Relevant Parameters:
+    * None
 
 
 
@@ -372,6 +464,7 @@ assumptions
   video#
   ttyusb#
   trajectory name
+securing material
 
 
 ### Known bugs
@@ -383,3 +476,4 @@ assumptions
 
 ### References
 This section should contain both references to Ahalya's research from the introduction and to 3rd party libraries and packages used in creating the project.
+simplestream.py

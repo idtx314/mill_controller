@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-This script contains a ROS node that waits for a bool variable to be published over the topic '/gcode_ready_flag'. When received, it opens a file called 'output.gcode' located in the current directory and sends the contents line by line over the serial port 'ttyUSB0'.
+This script contains a ROS node that waits for a bool variable to be published over the topic 'gcode_ready_flag'. When received, it opens a file called 'output.gcode' located in the package directory and sends the contents line by line over a serial port specified by the parameter usb_port.
 The heart of this script is simple_stream.py, a basic gcode streaming script under the MIT License. The License header is posted below.
 """
 
@@ -47,8 +47,11 @@ pub = rospy.Publisher('gcode_sent_flag',Bool,queue_size=1)
 def callback(input):
     # Upon receiving a message, reads a GCode file and sends the commands within to a GRBL controller over a serial connection
 
+    # Get serial port name
+    port = rospy.get_param("usb_port", '/dev/ttyUSB0')
+
     # Open grbl serial port
-    s = serial.Serial('/dev/ttyUSB0',115200)
+    s = serial.Serial(port, 115200)
 
     # Get package directory for file locations
     rospack = rospkg.RosPack()

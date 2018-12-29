@@ -1,8 +1,8 @@
 /*
-This script contains a ROS node that receives Octomap messages over the topic 'octomap_full' and builds several representations of the octomap data in alternate formats.
-    Marker message: A points message is built based on the occupied nodes in the octomap message. This is published on the topic "octomap_to_cloud" and should match the node centers pointcloud published by octomap itself.
-    Multidimensional array: A binary 3D array is built based on the occupied and unoccpied cells in the octomap message. This is printed to a console, provided a console is available. Note: This does not work with a launch file right now.
-    Occupancy message: This message is used to record the indexes of all points in the array representation that are 0 (not occupied). This message is then published on the topic 'octomap_to_occupancy'. This permits the array to be rebuilt in other nodes by implicitly encoding the status of all indices in the array. See Occupany.msg in the msgs directory for more information on using this message type.
+This node subscribes to the Octomap topic "octomap_full". When an Octomap message is received the node builds several representations of the octomap data in alternate formats.
+    Marker message: A Marker message is built based on the occupied nodes in the octomap message. This is published on the Marker topic "octomap_to_cloud" and should match the data published on the PointCloud2 topic /octomap_point_cloud_centers by the octomap_server_node.
+    Multidimensional array: A binary 3D array is built based on the occupied, unoccpied, and unknown cells in the octomap message. Each z layer is printed to the standard output if possible. To see this output when using a launch file add the argument `--screen` to the launch command.
+    Occupancy message: An Occupancy message is built based on the indexes of all points in the array representation that are 0 (not occupied) and the array dimensions. This is published on the Occupancy topic 'octomap_to_occupancy'. This permits the array to be rebuilt in other nodes by implicitly encoding the status of all indices in the array. See the [Interpreting Mill Controller Output] section in the README for more information on using Occupancy messages.
 */
 
 /* TODO

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 '''
-This script launches a ROS node that guides the user through calibration of the image processing functions.
+This script launches a ROS node that guides the user through calibration of the image alignment functions. It is intended to be run using image_calibration.launch. It makes use of a GUI to instruct the user and saves information in the homographies/ directory of the mill_controller package.
 '''
 
 import cv2

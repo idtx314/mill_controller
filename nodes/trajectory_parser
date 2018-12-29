@@ -1,18 +1,7 @@
 #!/usr/bin/env python
 
 '''
-This script contains a ROS node that accepts Trajectory messages and produces a GCode file based on the included trajectory data. Publishes a bool message as a notification to the next node in the pipeline.
-This script presumes that the CNC machine has been properly homed and had the G54 workspace set up beforehand. It will not make any safety checks on input coordinates.
-For more information on the appropriate format of Trajectory messages, see Trajectory.msg in the msgs directory.
-Uses the following parameters:
-  horizon_time
-  m_width
-  m_height
-  m_angle
-  x_offset
-  y_offset
-  x_range
-  y_range
+This node subscribes to the Trajectory topic 'trajectory_input'. When a Trajectory message is received the contents are parsed into a GCode file named output.gcode, which is saved into the mill_controller directory. The node then publishes a message on the Bool topic 'gcode_ready_flag'. The node will not accept coordinates outside the 500mmx500mm machine workspace, but it presumes that the G54 workspace has been set up as described in the [Resetting the Workspace Origin] section of the README.
 '''
 
 '''

@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
 """
-This script contains a ROS node that subscribes to a string input topic. When a string is received, the node will parse it as the nae of a .csv file in the mill_controller/trajectories/ directory. It will attempt to open that file at that location and parse the contents into a Trajectory message. The message will be published to the topic /trajectory_input.
+This script contains a ROS node that subscribes to csv_name_topic. When a String message is received over that topic, the node will parse it as the name of a .csv file in the mill_controller/trajectories/ directory. It will attempt to open that file at that location and parse the contents into a Trajectory message. The message will be published to the topic trajectory_input.
 """
 '''
 TODO
-Add more advanced argument parsing, probably flag based. Current version is very delicate to unexpected input.
+Add more advanced argument parsing, probably flag based. Current version is very delicate to unexpected input. Argparse would be a good module for this
 '''
 
 import rospkg

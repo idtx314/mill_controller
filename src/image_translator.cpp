@@ -1,6 +1,5 @@
 /*
-This script contains a ROS node that receives Image messages over the topic 'processed_image', translates them into OpenCV images, builds a PCL point cloud based on the locations of black and white pixels in the image, translates the PCL point cloud into a PointCloud2 message, and publishes the message.
-The node also runs a PCL visualizer window for debug purposes.
+This node subscribes to the Image topic 'processed_image'. When an Image message is received it is translated into an OpenCV image and used to build a PCL point cloud based on the locations of black and white pixels in the image. The point cloud is translated into a PointCloud2 message and published on the PointCloud2 topic 'camera/depth/points'. A PCL visualizer window displays the point cloud during processing.
 */
 
 //TODO
