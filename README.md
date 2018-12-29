@@ -449,14 +449,8 @@ The user may use ROS's remapping syntax, "variable:=value", at the time of launc
 
 
 ### Sections Unwritten
-Launch files and arguments
-    The limits of the input ranges will correspond to the working material's dimensions on the x and y axes, with those dimensions also being possible launch arguments. 
-    Explain main launch file and available arguments for changing.
 Input method options notes
   string, csv, and direct trajectory message
-Launch Files and Nodes
-    Using the black_box node? Maybe just add to node explanations
-    Each node has a description in the script. I can probably save a lot of work with that.
 future development
 assumptions
   camera name
