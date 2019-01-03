@@ -207,22 +207,32 @@ To identify the port of the X-Carve
 These are visual instructions for attaching the marker holder to the side of the X-Carve and loading it with a Marker.
 
 1. Collect the upper and lower portions of the marker holder, a fine point sharpie marker, a spring, and 3 M4 screws of approximately 8mm length, along with an appropriate screwdriver.
+![Supplies](./images/marker.png)
 
 2. Facing the X-Carve from the front, the 3 screw holes are on the left side of the mill carriage.
+![Carriage](./images/marker.png)
 
 3. Attach the lower marker holder to the lower two screw holes on the mill carriage.
+![Lower Holder 1](./images/marker.png)
+![Lower Holder 2](./images/marker.png)
 
 4. Remove the cap from the sharpie marker and place the tip into the lower marker holder.
+![Marker](./images/marker.png)
 
 5. Attach the upper marker holder to the upper screw hole on the mill carriage. Leave the screw loose enough that the holder can slide freely along its screw slot.
+![Upper Holder](./images/marker.png)
 
 6. Place the spring into the upper marker holder and slide the upper marker holder down onto the top of the sharpie. Allow the upper marker holder to drop onto the marker freely until the force of the spring holds it up.
+![Spring](./images/marker.png)
 
 7. Press the upper marker holder against the side of the lower marker holder so that the sharpie is held vertically, and then tighten the screw on the upper marker holder to secure it in place.
+![Secure](./images/marker.png)
+![Check](./images/marker.png)
+![Complete](./images/marker.png)
 
 ### Launch Files, Nodes, and Arguments
 The package includes a handful of launch files that cover most intended use cases, preventing the user from having to launch nodes directly through rosrun or script execution.  
-The user may use ROS's remapping syntax, "variable:=value", at the time of launch to alter the settings being used by the system. If they are not changed, these settings have default values consistent with a pen plotter using a black ink pen and white paper. These default values can also be changed by editing the launch files themselves.
+The user may use ROS's remapping syntax, "variable:=value", at the time of launch to alter the settings being used by the system. If they are not changed, these settings have default values consistent with a pen plotter using a black ink marker and white paper. These default values can also be changed by editing the launch files themselves.
 
 ##### Launch Files
   * image_calibration.launch: Launches the nodes needed to calibrate the image alignments used during image processing. A full calibration should be run whenever the camera is moved relative to the workspace. A normal calibration should be run whenever the location or dimensions of the material being worked with by the mill changes.  
