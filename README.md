@@ -207,28 +207,30 @@ To identify the port of the X-Carve
 These are visual instructions for attaching the marker holder to the side of the X-Carve and loading it with a Marker.
 
 1. Collect the upper and lower portions of the marker holder, a fine point sharpie marker, a spring, and 3 M4 screws of approximately 8mm length, along with an appropriate screwdriver.
-![Supplies](./images/marker.png)
+![Supplies](./images/supplies.jpg)
 
 2. Facing the X-Carve from the front, the 3 screw holes are on the left side of the mill carriage.
-![Carriage](./images/marker.png)
+![Carriage](./images/carriage.jpg)
 
 3. Attach the lower marker holder to the lower two screw holes on the mill carriage.
-![Lower Holder 1](./images/marker.png)
-![Lower Holder 2](./images/marker.png)
+![Lower Holder 1](./images/marker1.png)
+![Lower Holder 2](./images/marker2.png)
+![Lower Holder 3](./images/marker3.png)
 
-4. Remove the cap from the sharpie marker and place the tip into the lower marker holder.
-![Marker](./images/marker.png)
+4. Attach the upper marker holder to the upper screw hole on the mill carriage. Leave the screw loose enough that the holder can slide freely along its screw slot.
+![Upper Holder 1](./images/marker4.png)
+![Upper Holder 2](./images/marker5.png)
 
-5. Attach the upper marker holder to the upper screw hole on the mill carriage. Leave the screw loose enough that the holder can slide freely along its screw slot.
-![Upper Holder](./images/marker.png)
+5. Place the spring into the upper marker holder and slide the upper marker holder down onto the top of the sharpie. Allow the upper marker holder to drop onto the marker freely until the force of the spring holds it up.
+![Spring](./images/marker6.png)
 
-6. Place the spring into the upper marker holder and slide the upper marker holder down onto the top of the sharpie. Allow the upper marker holder to drop onto the marker freely until the force of the spring holds it up.
-![Spring](./images/marker.png)
+6. Remove the cap from the sharpie marker and place the tip into the lower marker holder.
+![Marker](./images/marker7.png)
 
-7. Press the upper marker holder against the side of the lower marker holder so that the sharpie is held vertically, and then tighten the screw on the upper marker holder to secure it in place.
-![Secure](./images/marker.png)
-![Check](./images/marker.png)
-![Complete](./images/marker.png)
+7. Slide the upper marker holder onto the top of the marker and hold it against the side of the lower marker holder so that the sharpie is held vertically. Tighten the screw on the upper marker holder to secure it in place.
+![Secure](./images/marker8.png)
+![Check](./images/marker9.png)
+![Complete](./images/marker10.png)
 
 ### Launch Files, Nodes, and Arguments
 The package includes a handful of launch files that cover most intended use cases, preventing the user from having to launch nodes directly through rosrun or script execution.  
