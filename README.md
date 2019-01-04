@@ -203,10 +203,9 @@ To identify the port of the X-Carve
 
 
 ### Connecting the Marker Holder
-    TODO pictures here
-These are visual instructions for attaching the marker holder to the side of the X-Carve and loading it with a Marker.
+These are visual instructions for attaching the marker holder to the side of the X-Carve and loading a marker into it.
 
-1. Collect the upper and lower portions of the marker holder, a fine point sharpie marker, a spring, and 3 M4 screws of approximately 8mm length, along with an appropriate screwdriver.
+1. Collect the upper and lower portions of the marker holder, a fine point sharpie marker, a spring, and three M4 screws of at least 6mm length, along with an appropriate screwdriver.
 ![Supplies](./images/supplies.jpg)
 
 2. Facing the X-Carve from the front, the 3 screw holes are on the left side of the mill carriage.
@@ -221,14 +220,16 @@ These are visual instructions for attaching the marker holder to the side of the
 ![Upper Holder 1](./images/marker4.png)
 ![Upper Holder 2](./images/marker5.png)
 
-5. Place the spring into the upper marker holder and slide the upper marker holder down onto the top of the sharpie. Allow the upper marker holder to drop onto the marker freely until the force of the spring holds it up.
+5. Place the spring into the upper marker holder. 
 ![Spring](./images/marker6.png)
 
 6. Remove the cap from the sharpie marker and place the tip into the lower marker holder.
 ![Marker](./images/marker7.png)
 
-7. Slide the upper marker holder onto the top of the marker and hold it against the side of the lower marker holder so that the sharpie is held vertically. Tighten the screw on the upper marker holder to secure it in place.
+7. Rotate the upper marker holder to rest against the lower marker holder. Allow the upper marker holder to drop onto the marker freely until the force of the spring holds it up. Hold the upper marker holder gently against the side of the lower marker holder so that the sharpie is held vertically. Tighten the screw on the upper marker holder to secure it in place.
 ![Secure](./images/marker8.png)
+
+8. Check that the marker can be moved up and down by a few millimeters with gentle force. The marker holder is correctly assembled and ready to use.
 ![Check](./images/marker9.png)
 ![Complete](./images/marker10.png)
 
