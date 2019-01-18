@@ -39,6 +39,7 @@ import serial
 import time
 from std_msgs.msg import Bool
 
+_homed = False
 
 # Use this publisher to send the translated input
 pub = rospy.Publisher('gcode_sent_flag',Bool,queue_size=1)
@@ -67,8 +68,11 @@ def callback(input):
     s.flushInput()
 
     # # Command grbl to home the machine and wait until complete
-    # s.write("$H" + '\n')
-    # grbl_out = s.readline()
+    if not _homed:
+        s.write("$H" + '\n')
+        grbl_out = s.readline()
+        _homed = True
+
 
     # Stream g-code to grbl
     for line in f:
