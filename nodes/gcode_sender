@@ -48,6 +48,8 @@ pub = rospy.Publisher('gcode_sent_flag',Bool,queue_size=1)
 def callback(input):
     # Upon receiving a message, reads a GCode file and sends the commands within to a GRBL controller over a serial connection
 
+    global _homed
+
     # Get serial port name
     port = rospy.get_param("usb_port", '/dev/ttyUSB0')
 
