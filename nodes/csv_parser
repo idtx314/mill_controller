@@ -11,6 +11,7 @@ Add more advanced argument parsing, probably flag based. Current version is very
 import rospkg
 import rospy
 import sys
+import numpy as np
 from std_msgs.msg import String
 from mill_controller.msg import Trajectory
 
@@ -26,33 +27,56 @@ def callback(input):
     rospack = rospkg.RosPack()
     path = rospack.get_path('mill_controller') + '/trajectories/'+input.data
 
-    # Attempt to open a file at the location
+    # # Attempt to open a file at the location
+    # try:
+    #     f = open(path, "r")
+    # except OSError:
+    #     rospy.logerr("Error opening file. Path Invalid or malformed.")
+    #     return 1
+
+    # Read file into an array, splitting on commas
     try:
-        f = open(path, "r")
-    except OSError:
+        arr = np.loadtxt(path, delimiter=',')
+    except IOError:
         rospy.logerr("Error opening file. Path Invalid or malformed.")
+        return 1
+    except ValueError as e:
+        rospy.logerr(e)
         return 1
 
     # Create Trajectory message
     msg = Trajectory()
 
-    # Attempt to parse csv file into Trajectory message
-    for line in f:
-        line = line.strip()
-        line = line.split(',')
+    # Increment through rows (arr.shape[0])
+        # append 0th, 1st, 2nd, 3rd element to msg.x, .y, .z, .t
+    for row in range(arr.shape[0]):
         try:
-            msg.x.append(float(line[0]))
-            msg.y.append(float(line[1]))
-            msg.z.append(float(line[2]))
-            msg.t.append(float(line[3]))
+            msg.x.append(float(arr[row][0]))
+            msg.y.append(float(arr[row][1]))
+            msg.z.append(float(arr[row][2]))
+            msg.t.append(float(arr[row][3]))
         except ValueError:
             rospy.logerr("Unable to parse input in line "+str(msg.length+1))
-            f.close()
             return 1
         msg.length += 1
 
-    # Close the file
-    f.close()
+    # # Attempt to parse csv file into Trajectory message
+    # for line in f:
+    #     line = line.strip()
+    #     line = line.split(',')
+    #     try:
+    #         msg.x.append(float(line[0]))
+    #         msg.y.append(float(line[1]))
+    #         msg.z.append(float(line[2]))
+    #         msg.t.append(float(line[3]))
+    #     except ValueError:
+    #         rospy.logerr("Unable to parse input in line "+str(msg.length+1))
+    #         f.close()
+    #         return 1
+    #     msg.length += 1
+
+    # # Close the file
+    # f.close()
 
     # Publish the message
     pub.publish(msg)
