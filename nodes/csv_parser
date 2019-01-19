@@ -27,13 +27,6 @@ def callback(input):
     rospack = rospkg.RosPack()
     path = rospack.get_path('mill_controller') + '/trajectories/'+input.data
 
-    # # Attempt to open a file at the location
-    # try:
-    #     f = open(path, "r")
-    # except OSError:
-    #     rospy.logerr("Error opening file. Path Invalid or malformed.")
-    #     return 1
-
     # Read file into an array, splitting on commas
     try:
         arr = np.loadtxt(path, delimiter=',')
@@ -47,36 +40,17 @@ def callback(input):
     # Create Trajectory message
     msg = Trajectory()
 
-    # Increment through rows (arr.shape[0])
-        # append 0th, 1st, 2nd, 3rd element to msg.x, .y, .z, .t
+    # Increment through each row of data and append the information into Trajectory message
     for row in range(arr.shape[0]):
         try:
-            msg.x.append(float(arr[row][0]))
-            msg.y.append(float(arr[row][1]))
-            msg.z.append(float(arr[row][2]))
-            msg.t.append(float(arr[row][3]))
+            msg.x.append(arr[row][0])
+            msg.y.append(arr[row][1])
+            msg.z.append(arr[row][2])
+            msg.t.append(arr[row][3])
         except ValueError:
             rospy.logerr("Unable to parse input in line "+str(msg.length+1))
             return 1
         msg.length += 1
-
-    # # Attempt to parse csv file into Trajectory message
-    # for line in f:
-    #     line = line.strip()
-    #     line = line.split(',')
-    #     try:
-    #         msg.x.append(float(line[0]))
-    #         msg.y.append(float(line[1]))
-    #         msg.z.append(float(line[2]))
-    #         msg.t.append(float(line[3]))
-    #     except ValueError:
-    #         rospy.logerr("Unable to parse input in line "+str(msg.length+1))
-    #         f.close()
-    #         return 1
-    #     msg.length += 1
-
-    # # Close the file
-    # f.close()
 
     # Publish the message
     pub.publish(msg)
