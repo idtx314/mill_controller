@@ -24,7 +24,7 @@ pub = rospy.Publisher('processed_image',Image,queue_size=1)
 converter = CvBridge()
 
 # Set threshold for color processing
-threshold = 550
+threshold = 250
 
 
 # Calibration Globals

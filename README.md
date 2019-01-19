@@ -49,21 +49,23 @@ It will be necessary to perform a NORMAL calibration of the camera each time you
 If the position of the camera itself is adjusted, or the camera is detached and re-attached, then a FULL calibration will be necessary.  
 If images of the material appear to be warped or misaligned, then try recalibrating the camera by following these steps.  
 
-1. Have the camera plugged into the USB port. The camera driver used by the package is compatible with most USB cameras. 
+1. Use the instructions in the [Operating the X-Carve Directly] section to move the mill carriage to the edge of the workspace, so that the camera has an unobstructed field of view.
 
-2. Identify the port name assigned to your camera. See the [How to Identify Assigned USB and video Ports] section for more instructions on this. 
+2. Have the camera plugged into the USB port. The camera driver used by the package is compatible with most USB cameras. 
 
-3. In your terminal, move into your catkin workspace by entering, for example, `cd ~/catkin_ws`.
+3. Identify the port name assigned to your camera. See the [How to Identify Assigned USB and video Ports] section for more instructions on this. 
 
-4. Source your development setup.\*sh file, for example by entering `source devel/setup.bash` if you are using a bash terminal.
+4. In your terminal, move into your catkin workspace by entering, for example, `cd ~/catkin_ws`.
 
-5. Enter `roslaunch mill_controller image_calibration.launch`. If your video port is not /dev/video1, add the argument ` video_device:=/dev/video#`, replacing # with the number of your video port name. The launch file will begin a NORMAL calibration by default. If you wish to perform a FULL calibration, add the argument `calibration:=FULL`
+5. Source your development setup.\*sh file, for example by entering `source devel/setup.bash` if you are using a bash terminal.
 
-6. You should be presented with two windows: an image of the X-Carve workspace, and a window with instructions. If the mill carriage is blocking the image, consider moving it by operating the X-Carve directly and sending the command `G0 X250 Y500` while in G90 and G21 modes. See the [Operating the X-Carve Directly] section for more details.
+6. Enter `roslaunch mill_controller image_calibration.launch`. If your video port is not /dev/video1, add the argument ` video_device:=/dev/video#`, replacing # with the number of your video port name. The launch file will begin a NORMAL calibration by default. If you wish to perform a FULL calibration, add the argument `calibration:=FULL`
+
+7. You should be presented with two windows: an image of the X-Carve workspace, and a window with instructions. If the mill carriage is blocking the image, consider moving it by operating the X-Carve directly and sending the command `G0 X250 Y500` while in G90 and G21 modes. See the [Operating the X-Carve Directly] section for more details.
 
 ![calibration window](./images/im_calibration4.png)
 
-6. The image alignment script will guide you through calibrating the location of the X-Carve cutting board and the material you intend to be working with in the image taken from your webcam. This information will be used in image processing so that output information will consist of just the working material rather than the whole image.
+8. The image alignment script will guide you through calibrating the location of the X-Carve cutting board and the material you intend to be working with in the image taken from your webcam. This information will be used in image processing so that output information will consist of just the working material rather than the whole image.
 
 ### Preparing a Trajectory Using .csv File Input.
 Assumptions in instructions:
