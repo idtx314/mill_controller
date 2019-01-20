@@ -481,6 +481,7 @@ securing material
 * Occupancy messages don't actually have all the unoccupied points. Related!
 * The usb_cam node may enter a state where it will fail to start after being launched several times. The error "VIDIOC_S_FMT error 5, Input/output error" will be displayed. If this occurs you should shut down any launched nodes, unplug the usb camera, wait five seconds, and then plug in the usb camera.
 * Currently the camera is viewing the workspace upside down relative to the workspace's reference frame. This can be worked around by rotating the corners to match the workspace orientation during image calibration, as demonstrated in the [An Example Run in Video] section's calibration video.
+* Whenever the X-Carve is first turned on, or when its usb cable is unplugged, the machine enters an Alarm mode and will not respond to move commands. If this occurs you may hear brief bursts of noise from the motors whenever a move command is received, but the mill carriage will remain stationary. To resolve this issue, you can use the instructions in [Operating the X-Carve Directly] in order to home the X-Carve again, de-activating the alarm mode. You can also unlock the machine by sending a `$X` command, but this can be dangerous if the machine has lost track of its position.
 
 
 ### References
