@@ -22,6 +22,7 @@ _mouse = 0
 _mats = []
 # Corner order: top left, top right, bottom right, bottom left
 _corners = [(100,100),(200,100),(200,200),(100,200)]
+_labels = ["TL", "TR", "BR", "BL"]
 _m_width = rospy.get_param("m_width", 279.4)
 _m_height = rospy.get_param("m_height", 215.9)
 _m_ratio = _m_height/_m_width
@@ -120,6 +121,7 @@ def calibrate_workspace(img):
             img_c = img.copy()
             for i in range(4):
                 img_c = cv2.circle(img_c,_corners[i],10,(255,255,255))
+                img_c = cv2.putText(img_c, _labels[i], (_corners[i][0]+12,_corners[i][1]-5), cv2.FONT_HERSHEY_PLAIN, 2, (0,0,0))
             cv2.imshow("1",img_c)
 
             # Wait for enter
@@ -211,6 +213,7 @@ def calibrate_materialspace(img):
             img_c = img.copy()
             for i in range(4):
                 img_c = cv2.circle(img_c,_corners[i],10,(255,255,255))
+                img_c = cv2.putText(img_c, _labels[i], (_corners[i][0]+12,_corners[i][1]-5), cv2.FONT_HERSHEY_PLAIN, 2, (0,0,0))
             cv2.imshow("1",img_c)
 
             # Wait for enter
