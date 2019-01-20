@@ -59,7 +59,11 @@ def callback(input):
 
     # Perform visual processing on the image to extract relevant data.
     # Convert the aligned image to grayscale.
+    gray_image = cv2.cvtColor(aligned_img, cv2.COLOR_BGR2GRAY)
+
     # Use Otsu's method to determine an appropriate threshold for the image and apply it to the grayscale image to produce a binary image.
+    (thresh, mask_image) = cv2.threshold(gray_image, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+
     # Use the binary image as a mask to set each pixel of the aligned image to white or black.
 
 
