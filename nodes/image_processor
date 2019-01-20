@@ -53,10 +53,6 @@ def callback(input):
     semi_aligned_img = cv2.warpPerspective(cv_image, _ws_hom, (width,width))
     aligned_img = cv2.warpPerspective(semi_aligned_img, _ms_hom, (width,height2))
 
-
-
-
-
     # Perform visual processing on the image to extract relevant data.
     # Convert the aligned image to grayscale.
     gray_image = cv2.cvtColor(aligned_img, cv2.COLOR_BGR2GRAY)
@@ -64,35 +60,22 @@ def callback(input):
     # Use Otsu's method to determine an appropriate threshold for the image and apply it to the grayscale image to produce a binary image.
     (thresh, mask_image) = cv2.threshold(gray_image, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
 
-    # Use the binary image as a mask to set each pixel of the aligned image to white or black.
+    # Use the binary image as a mask to set each pixel of the aligned image to white or black. Masked pixels should be black. Unmasked pixels should be white.
+    # Extract a tuple containing the number of (rows, columns, channels).
+    (rows,cols,chans)  = aligned_img.shape
 
-
-    # # Extract a tuple containing the number of (rows, columns, channels).
-    # (rows,cols,chans)  = aligned_img.shape
-
-    # # Cycle through each row
-    # for row in range(rows):
-    #     # Cycle through each column
-    #     for col in range(cols):
-    #         total = 0
-    #         # Cycle through each channel
-    #         for chan in range(chans):
-    #             # Sum the intensity of the channels
-    #             total += aligned_img.item(row,col,chan)
-
-    #         # Cycle through each channel
-    #         for chan in range(chans):
-    #             # If the total intensity is less than the threshold
-    #             if (total < threshold):
-    #                 # Set color to black
-    #                 aligned_img.itemset((row,col,chan),0)
-    #             else:
-    #                 # Set the color to white
-    #                 aligned_img.itemset((row,col,chan),255)
-
-
-
-
+    # Cycle through each row
+    for row in range(rows):
+        # Cycle through each column
+        for col in range(cols):
+            # If this pixel is white in the binary image
+            if mask_image[row,col]:
+                # Set pixel to white in aligned image
+                aligned_img[row,col] = [255,255,255]
+            # If the pixel is not white
+            else:
+                # Set pixel to black in aligned image
+                aligned_img[row,col] = [0,0,0]
 
     # Translate processed cv2 image back to an Image message using existing encoding. This will be a generic encoding like 8UC3.
     msg = converter.cv2_to_imgmsg(aligned_img,"passthrough")
