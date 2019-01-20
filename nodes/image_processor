@@ -35,7 +35,7 @@ _ms_hom = False
 
 def callback(input):
     global _ws_hom, _ms_hom
-    # The callback accepts an Image message, performs visual processing, and publishes the result. Darker pixels will be changed to black, non-dark pixels will be made white.
+    # The callback accepts an Image message, performs visual processing, and publishes the result. Darker pixels will be changed to black, less-dark pixels will be made white.
 
     # Translate Image message into a cv2 image assuming bgr8 encoding. The image will revert to a more general CV encoding, like 8UC3.
     cv_image = converter.imgmsg_to_cv2(input,"bgr8")
@@ -53,32 +53,44 @@ def callback(input):
     semi_aligned_img = cv2.warpPerspective(cv_image, _ws_hom, (width,width))
     aligned_img = cv2.warpPerspective(semi_aligned_img, _ms_hom, (width,height2))
 
+
+
+
+
     # Perform visual processing on the image to extract relevant data.
-    # Extract a tuple containing the number of (rows, columns, channels).
-    (rows,cols,chans)  = aligned_img.shape
-
-    # Cycle through each row
-    for row in range(rows):
-        # Cycle through each column
-        for col in range(cols):
-            total = 0
-            # Cycle through each channel
-            for chan in range(chans):
-                # Sum the intensity of the channels
-                total += aligned_img.item(row,col,chan)
-
-            # Cycle through each channel
-            for chan in range(chans):
-                # If the total intensity is less than the threshold
-                if (total < threshold):
-                    # Set color to black
-                    aligned_img.itemset((row,col,chan),0)
-                else:
-                    # Set the color to white
-                    aligned_img.itemset((row,col,chan),255)
+    # Convert the aligned image to grayscale.
+    # Use Otsu's method to determine an appropriate threshold for the image and apply it to the grayscale image to produce a binary image.
+    # Use the binary image as a mask to set each pixel of the aligned image to white or black.
 
 
-    # Translate cv2 image back to an Image message using existing encoding. This will be a generic encoding like 8UC3.
+    # # Extract a tuple containing the number of (rows, columns, channels).
+    # (rows,cols,chans)  = aligned_img.shape
+
+    # # Cycle through each row
+    # for row in range(rows):
+    #     # Cycle through each column
+    #     for col in range(cols):
+    #         total = 0
+    #         # Cycle through each channel
+    #         for chan in range(chans):
+    #             # Sum the intensity of the channels
+    #             total += aligned_img.item(row,col,chan)
+
+    #         # Cycle through each channel
+    #         for chan in range(chans):
+    #             # If the total intensity is less than the threshold
+    #             if (total < threshold):
+    #                 # Set color to black
+    #                 aligned_img.itemset((row,col,chan),0)
+    #             else:
+    #                 # Set the color to white
+    #                 aligned_img.itemset((row,col,chan),255)
+
+
+
+
+
+    # Translate processed cv2 image back to an Image message using existing encoding. This will be a generic encoding like 8UC3.
     msg = converter.cv2_to_imgmsg(aligned_img,"passthrough")
 
     # Assert encoding. CV generally uses bgr8.
