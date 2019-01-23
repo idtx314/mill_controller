@@ -111,11 +111,13 @@ def calibrate_workspace(img):
 
         # Acquire corner selection from user
         # Load instructions on blank copy
-        inst = cv2.putText(_mats[0].copy(), "Click and drag the circles", (20,25),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
-        inst = cv2.putText(inst.copy(), "to the corners of the workspace.", (20,50),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
-        inst = cv2.putText(inst.copy(), "Then press Enter.", (20,75),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
-        inst = cv2.putText(inst.copy(), "Circles correspond to the:", (20,100),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))        inst = cv2.putText(inst.copy(), "Top Left, Top Right, Bottom Left, or Bottom Right corner.", (20,125),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
-        inst = cv2.putText(inst.copy(), "Press q to quit.", (20,175),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
+        inst = cv2.putText(_mats[0].copy(), "Click and drag the circles to the", (20,25),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
+        inst = cv2.putText(inst.copy(), "corners of the workspace.", (20,50),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
+        inst = cv2.putText(inst.copy(), "Circles correspond to the:", (20,75),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
+        inst = cv2.putText(inst.copy(), "Top Left, Top Right, Bottom Left, or Bottom Right corner.", (20,100),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
+        inst = cv2.putText(inst.copy(), "or Bottom Right corner.", (20,125),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
+        inst = cv2.putText(inst.copy(), "Press Enter to confirm.", (20,175),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
+        inst = cv2.putText(inst.copy(), "Press q to quit.", (20,200),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
         cv2.imshow("0",inst)
         # Wait for feedback
         while(1):
@@ -204,11 +206,13 @@ def calibrate_materialspace(img):
 
         # Acquire corner selection from user
         # Load instructions on blank copy
-        inst = cv2.putText(_mats[0].copy(), "Click and drag the circles", (20,25),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
-        inst = cv2.putText(inst.copy(), "to the corners of the workspace.", (20,50),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
-        inst = cv2.putText(inst.copy(), "Then press Enter.", (20,75),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
-        inst = cv2.putText(inst.copy(), "Circles correspond to the:", (20,100),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))        inst = cv2.putText(inst.copy(), "Top Left, Top Right, Bottom Left, or Bottom Right corner.", (20,125),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
-        inst = cv2.putText(inst.copy(), "Press q to quit.", (20,175),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
+        inst = cv2.putText(_mats[0].copy(), "Click and drag the circles to the", (20,25),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
+        inst = cv2.putText(inst.copy(), "corners of the workspace.", (20,50),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
+        inst = cv2.putText(inst.copy(), "Circles correspond to the:", (20,75),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
+        inst = cv2.putText(inst.copy(), "Top Left, Top Right, Bottom Left, or Bottom Right corner.", (20,100),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
+        inst = cv2.putText(inst.copy(), "or Bottom Right corner.", (20,125),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
+        inst = cv2.putText(inst.copy(), "Press Enter to confirm.", (20,175),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
+        inst = cv2.putText(inst.copy(), "Press q to quit.", (20,200),cv2.FONT_HERSHEY_PLAIN,2,(255,255,255))
         cv2.imshow("0",inst)
         # Wait for feedback
         while(1):
