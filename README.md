@@ -12,7 +12,7 @@
 This is the code of a ROS package designed to provide computer vision based feedback control for an X-Carve CNC mill configured to operate as a pen plotter with time controlled x, y, and z input. The package has several methods of accepting (x,y,z,time) trajectories, which it then parses into GCode and sends to the X-Controller to be executed.  
 If the user has set a time horizon, the mill will operate until the appropriate timestamp in the trajectory is reached, then stop operating and move the equipment away from the material. Images of the material are taken by a fixed usb camera and then processed to identify locations where the mill has drawn on the paper. This data is visualized in Rviz, and published to ROS topics in a variety of formats.  
 The published data can be used to determine how well the mill has performed in executing the trajectory so far, and what alterations to the planned trajectory are necessary to achieve the desired end result of the trajectory planner.  
-The motivation underlying the construction of this project is to support the ergodic trajectory research of Ahalya Prabhakar and the Neuroscience and Robotics Laboratory at Northwestern University.  
+The motivation underlying the construction of this project is to support the ergodic trajectory research of Ahalya Prabhakar(1,2,3) and the Neuroscience and Robotics Laboratory at Northwestern University.  
 
 ## Build Instructions
     This package was developed on Linux Ubuntu 16.04 (Xenial Xerus), with ROS Kinetic Kame. Comptibility with earlier or later versions of this software is not guaranteed.
@@ -468,16 +468,6 @@ The user may use ROS's remapping syntax, "variable:=value", at the time of launc
     * None
 
 
-
-### Sections Unwritten
-assumptions
-  camera name
-  catkin ws
-  video#
-  ttyusb#
-  trajectory name
-
-
 ### Known bugs
 * Occupancy messages don't have reliable dimensions. The dimensions are based on the octomap, which automatically limits its own dimensions to the smallest dimensions that will fit the point cloud input.
 * Occupancy messages don't actually have all the unoccupied points. This is related to the above issue.
@@ -486,6 +476,17 @@ assumptions
 * Whenever the X-Carve is first turned on, or when its usb cable is unplugged, the machine enters an Alarm mode and will not respond to move commands. If this occurs you may hear brief bursts of noise from the motors whenever a move command is received, but the mill carriage will remain stationary. To resolve this issue, you can use the instructions in [Operating the X-Carve Directly] in order to home the X-Carve again, de-activating the alarm mode. You can also unlock the machine by sending a `$X` command, but this can be dangerous if the machine has lost track of its position.
 
 
+### Libraries and Scripts Used
+1. simplestream.py (https://github.com/grbl/grbl/blob/master/doc/script/simple_stream.py)
+2. ROS (http://www.ros.org/)
+3. PCL (http://www.pointclouds.org/)
+4. OpenCV (https://opencv.org/)
+5. Octomap (https://github.com/OctoMap/octomap)
+
 ### References
-This section should contain both references to Ahalya's research from the introduction and to 3rd party libraries and packages used in creating the project.
-simplestream.py
+1. Abraham, I., A. Prabhakar, M. J. Z. Hartmann, and T. D. Murphey, "Ergodic Exploration using Binary Sensing for Non-Parametric Shape Estimation", IEEE Robotics and Automation Letters, vol. 2, issue 2, pp. 827-834, 2017.
+2. Prabhakar, A., A. Mavrommati, J. A. Schultz, and T. D. Murphey, "Autonomous Visual Rendering using Physical Motion", Workshop on the Algorithmic Foundations in Robotics (WAFR) 2016, 2016.
+3. Prabhakar, A., K. Flaßkamp, and T. D. Murphey, "Symplectic Integration for Optimal Ergodic Control", IEEE Int. Conf. on Decision and Control (CDC) 2015, 2015.
+4. A. Hornung,. K.M. Wurm, M. Bennewitz, C. Stachniss, and W. Burgard, "OctoMap: An Efficient Probabilistic 3D Mapping Framework Based on Octrees" in Autonomous Robots, 2013; DOI: 10.1007/s10514-012-9321-0. Software available at http://octomap.github.com.
+
+
