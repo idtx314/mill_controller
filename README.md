@@ -145,8 +145,6 @@ Output representing the state of the working material is provided by mill_contro
 
 
 ### An Example Run in Video
-    Example Run through, including input and output.
-
 ##### Calibrating the Workspace
 [![Mill Calibration](./images/thumb_calibration.png)](https://vimeo.com/306694098)
 
@@ -157,7 +155,7 @@ Output representing the state of the working material is provided by mill_contro
 
 ## Reference Instructions and Information
 ### Operating the X-Carve Directly
-The X-Carve uses a customised [grbl] controller. The specifics of grbl are beyond the scope of this readme, but the controller accepts most standard gcode commands. These instructions will allow you to operate the X-Carve directly using the program [Screen].
+The X-Carve uses a customised [Grbl] controller. The specifics of Grbl are beyond the scope of this readme, but the controller accepts most standard gcode commands. These instructions will allow you to operate the X-Carve directly using the program [Screen].
 
 1. Plug the X-Carve USB cord into your computers USB port and turn the X-Carve on.
 
@@ -169,7 +167,7 @@ The X-Carve uses a customised [grbl] controller. The specifics of grbl are beyon
 
 5. You will need to home the X-Carve before it is ready to use. Type `$H` and press `Enter`. You will not see the text you type, but the X-Carve should begin seeking its home position.
 
-6. Once the X-Carve has homed, an `ok` will appear in your terminal. The X-Carve is now ready to receive further commands. A full list of commands can be found [TODO]
+6. Once the X-Carve has homed, an `ok` will appear in your terminal. The X-Carve is now ready to receive further commands. A full list of supported commands can be found [at https://github.com/gnea/grbl/wiki/Grbl-v1.1-Commands], and definitions of the Gcode commands can be found [at https://www.cnccookbook.com/g-code-m-code-reference-list-cnc-mills/].
 
 ### Resetting the Workspace Origin
 The origin of the X-Carve standard workspace has been designated as being in the bottom left of the 500mm by 500mm silkscreen grid drawn on the X-Carve base board, from the perspective of a person standing in front of the X-Carve and looking directly at it. The official designation of this workspace is G54. Should the origin need to be reset at some point, follow these instructions.
