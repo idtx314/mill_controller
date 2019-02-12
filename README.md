@@ -116,6 +116,8 @@ These instructions will guide you through running a trajectory of your own.
 
 4. Connect your X-Carve and USB camera to your computer. Turn the X-Carve on using the switch at the back of the X-Controller.
 
+4. Secure the working material to the cutting board. Double sided tape is the most straightforward method of doing this. Clamps should not be used unless they can be kept out of the imaging area. On default settings your material should be an 11"x8.5" sheet of paper placed in the bottom left corner of the workspace, with its long side parallel to the x-axis. To change the material size, location, or orientation reference the [Launch Files, Nodes, and Arguments] section.
+
 4. Calibrate your workspace and the location of the material for imaging by following the instructions in the [Calibrating The Workspace and Material] section. If none of your calibration data has changed since the last time you calibrated, then you may skip this step and the most recent data will be used.
 
 5. Launch the mill controller by entering `roslaunch mill_controller mill_controller.launch`.  
@@ -167,7 +169,7 @@ The X-Carve uses a customised [Grbl] controller. The specifics of Grbl are beyon
 
 5. You will need to home the X-Carve before it is ready to use. Type `$H` and press `Enter`. You will not see the text you type, but the X-Carve should begin seeking its home position.
 
-6. Once the X-Carve has homed, an `ok` will appear in your terminal. The X-Carve is now ready to receive further commands. A full list of supported commands can be found [at https://github.com/gnea/grbl/wiki/Grbl-v1.1-Commands], and definitions of the Gcode commands can be found [at https://www.cnccookbook.com/g-code-m-code-reference-list-cnc-mills/].
+6. Once the X-Carve has homed, an `ok` will appear in your terminal. The X-Carve is now ready to receive further commands. A full list of Grbl supported commands can be found [at https://github.com/gnea/grbl/wiki/Grbl-v1.1-Commands], and definitions of the Gcode commands can be found [at https://www.cnccookbook.com/g-code-m-code-reference-list-cnc-mills/].
 
 ### Resetting the Workspace Origin
 The origin of the X-Carve standard workspace has been designated as being in the bottom left of the 500mm by 500mm silkscreen grid drawn on the X-Carve base board, from the perspective of a person standing in front of the X-Carve and looking directly at it. The official designation of this workspace is G54. Should the origin need to be reset at some point, follow these instructions.
@@ -192,9 +194,9 @@ To identify the port of your usb camera:
 
 3. Reconnect the camera.
 
-3. In the terminal, enter `ls /dev/video*` again.
+4. In the terminal, enter `ls /dev/video*` again.
 
-4. Compare the two lists. The name that appeared when you reconnected your camera is the camera's port name. If it isn't `/dev/video1`, then you should substitute your port name whenever the camera port is used in these instructions.
+5. Compare the two lists. The name that appeared when you reconnected your camera is the camera's port name. If it isn't `/dev/video1`, then you should substitute your port name whenever the camera port is used in these instructions.
 
 To identify the port of the X-Carve
 1. Disconnect the X-Carve.
@@ -203,9 +205,9 @@ To identify the port of the X-Carve
 
 3. Reconnect the X-Carve.
 
-3. In the terminal, enter `ls /dev/ttyUSB*` again.
+4. In the terminal, enter `ls /dev/ttyUSB*` again.
 
-4. Compare the two lists. The name that appeared when you reconnected the X-Carve is the X-Carve's port name. If it isn't `/dev/ttyUSB0`, then you should substitute your port name whenever the USB port is used in these instructions.
+5. Compare the two lists. The name that appeared when you reconnected the X-Carve is the X-Carve's port name. If it isn't `/dev/ttyUSB0`, then you should substitute your port name whenever the USB port is used in these instructions.
 
 
 ### Connecting the Marker Holder
@@ -468,21 +470,17 @@ The user may use ROS's remapping syntax, "variable:=value", at the time of launc
 
 
 ### Sections Unwritten
-Input method options notes
-  string, csv, and direct trajectory message
-future development
 assumptions
   camera name
   catkin ws
   video#
   ttyusb#
   trajectory name
-securing material
 
 
 ### Known bugs
 * Occupancy messages don't have reliable dimensions. The dimensions are based on the octomap, which automatically limits its own dimensions to the smallest dimensions that will fit the point cloud input.
-* Occupancy messages don't actually have all the unoccupied points. Related!
+* Occupancy messages don't actually have all the unoccupied points. This is related to the above issue.
 * The usb_cam node may enter a state where it will fail to start after being launched several times. The error "VIDIOC_S_FMT error 5, Input/output error" will be displayed. If this occurs you should shut down any launched nodes, unplug the usb camera, wait five seconds, and then plug in the usb camera.
 * Currently the camera is viewing the workspace upside down relative to the workspace's reference frame. This can be worked around by rotating the corners to match the workspace orientation during image calibration, as demonstrated in the [An Example Run in Video] section's calibration video.
 * Whenever the X-Carve is first turned on, or when its usb cable is unplugged, the machine enters an Alarm mode and will not respond to move commands. If this occurs you may hear brief bursts of noise from the motors whenever a move command is received, but the mill carriage will remain stationary. To resolve this issue, you can use the instructions in [Operating the X-Carve Directly] in order to home the X-Carve again, de-activating the alarm mode. You can also unlock the machine by sending a `$X` command, but this can be dangerous if the machine has lost track of its position.
