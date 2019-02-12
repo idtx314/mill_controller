@@ -1,17 +1,25 @@
+<!-- 
+  TODO:
+  Add in section links
+  Add step to calibrate workspace to setup
+  Move Videos to youtube
+  Add image flipping code and take new calibration video
+-->
+
 # Introduction
-This is the code of a ROS package designed to provide computer vision based feedback control for an X-Carve CNC mill configured to operate as a pen plotter with time controlled x, y, and z input. The package has several methods of accepting (x,y,z,time) trajectories, which it then parses into GCode and sends to the mill to execute.  
-After a given time horizon has passed, the mill is instructed to stop operating and move the equipment away from the material. Images of the material are taken by a fixed usb camera and then processed by the package to identify locations where the mill has drawn on the paper. This data is visualized in Rviz, and published to ROS topics in a variety of formats.  
+This is the code of a ROS package designed to provide computer vision based feedback control for an X-Carve CNC mill configured to operate as a pen plotter with time controlled x, y, and z input. The package has several methods of accepting (x,y,z,time) trajectories, which it then parses into GCode and sends to the X-Controller to be executed.  
+If the user has set a time horizon, the mill will operate until the appropriate timestamp in the trajectory is reached, then stop operating and move the equipment away from the material. Images of the material are taken by a fixed usb camera and then processed to identify locations where the mill has drawn on the paper. This data is visualized in Rviz, and published to ROS topics in a variety of formats.  
 The published data can be used to determine how well the mill has performed in executing the trajectory so far, and what alterations to the planned trajectory are necessary to achieve the desired end result of the trajectory planner.  
-The motivation underlying the construction of this project is to support the ergodic trajectory research of Ahalya Prabhakar and the Neuroscience and Robotics Laboratory at Northwestern University. As part of the lab's ongoing mandate to explore behaviour and brain function in living beings by implementing similar behaviour in robotic platforms, Ahalya's research explores the remarkably organic results of using time sensitive x, y, and z trajectories to guide activities such as drawing and exploring. 
+The motivation underlying the construction of this project is to support the ergodic trajectory research of Ahalya Prabhakar and the Neuroscience and Robotics Laboratory at Northwestern University.  
 
 ## Build Instructions
-    This package was developed on Linux Ubuntu 16.04 (Xenial Xerus), with ROS Kinetic Kame.
+    This package was developed on Linux Ubuntu 16.04 (Xenial Xerus), with ROS Kinetic Kame. Comptibility with earlier or later versions of this software is not guaranteed.
 
 1. Install ROS on your system following the instructions listed here: http://wiki.ros.org/ROS/Installation.
 
 2. Create a catkin workspace using the methods described here: http://wiki.ros.org/ROS/Tutorials/InstallingandConfiguringROSEnvironment. This directory will be referred to as "catkin_ws" during the rest of these instructions.
 
-3. (TODO) Install dependencies: I have tried to list as many system and package dependencies as I can in the package.xml, but no rules have been created for rosdep, and the list is likely incomplete. These are a few of the major dependencies to get you started, if you're intent on building the package yourself.
+3. Install dependencies: Ensure that you have the following dependencies. Note that this list may be incomplete, but should cover most requirements not included in the standard ROS installation:
   1. ros-kinetic-octomap-mapping
   2. ros-kinetic-octomap-rviz-plugins
   3. ros-kinetic-image-view
@@ -29,8 +37,6 @@ If all dependencies are installed correctly, the package should now be ready to 
 
 
 ## Run Instructions
-    Lots of images and video in this section
-
 ### Calibrating the Camera
 The camera_calibration package contains tools to identify and compensate for any imperfections in your camera lens, and is fully compatible with most ROS camera drivers. Find detailed information on the package [here], and a tutorial on using it [here]. Be sure to set the image topic and camera name correctly.:
 
@@ -48,8 +54,9 @@ Assumptions in instructions:
 It will be necessary to perform a NORMAL calibration of the camera each time you want to change the size or location of your material.  
 If the position of the camera itself is adjusted, or the camera is detached and re-attached, then a FULL calibration will be necessary.  
 If images of the material appear to be warped or misaligned, then try recalibrating the camera by following these steps.  
+You can see a video of the calibration interface being used in the [Calibrating the Workspace] section.
 
-1. Use the instructions in the [Operating the X-Carve Directly] section to move the mill carriage to the edge of the workspace, so that the camera has an unobstructed field of view.
+1. Use the instructions in the [Operating the X-Carve Directly] section to move the mill carriage to the edge of the workspace, so that the camera has an unobstructed field of view. You can use the commands `G90 G21` and `G0 X250 Y500` once you are connected to the X-Controller command interface.
 
 2. Have the camera plugged into the USB port. The camera driver used by the package is compatible with most USB cameras. 
 
@@ -57,11 +64,11 @@ If images of the material appear to be warped or misaligned, then try recalibrat
 
 4. In your terminal, move into your catkin workspace by entering, for example, `cd ~/catkin_ws`.
 
-5. Source your development setup.\*sh file, for example by entering `source devel/setup.bash` if you are using a bash terminal.
+5. Source your development "setup.\*sh" file, for example by entering `source devel/setup.bash` if you are using a bash terminal.
 
 6. Enter `roslaunch mill_controller image_calibration.launch`. If your video port is not /dev/video1, add the argument ` video_device:=/dev/video#`, replacing # with the number of your video port name. The launch file will begin a NORMAL calibration by default. If you wish to perform a FULL calibration, add the argument `calibration:=FULL`
 
-7. You should be presented with two windows: an image of the X-Carve workspace, and a window with instructions. If the mill carriage is blocking the image, consider moving it by operating the X-Carve directly and sending the command `G0 X250 Y500` while in G90 and G21 modes. See the [Operating the X-Carve Directly] section for more details.
+7. You should be presented with two windows: an image of the X-Carve workspace, and a window with instructions. If the mill carriage is blocking the image, refer to step 1.
 
 ![calibration window](./images/im_calibration4.png)
 
@@ -149,7 +156,7 @@ TODO Interpreting Occupancy messages
 [![Example Run](./images/thumb_example_run.png)](https://vimeo.com/308028935)
 
 
-
+## Reference Instructions and Information
 ### Operating the X-Carve Directly
 The X-Carve uses a customised [grbl] controller. The specifics of grbl are beyond the scope of this readme, but the controller accepts most standard gcode commands. These instructions will allow you to operate the X-Carve directly using the program [Screen].
 
