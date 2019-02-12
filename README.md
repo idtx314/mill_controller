@@ -4,6 +4,8 @@
   Add step to calibrate workspace to setup
   Move Videos to youtube
   Add image flipping code and take new calibration video
+  Interpreting Mill Controller Output section
+  Add new output that's more useful
 -->
 
 # Introduction
@@ -77,7 +79,7 @@ You can see a video of the calibration interface being used in the [Calibrating 
 ### Preparing a Trajectory Using .csv File Input.
 Assumptions in instructions:
     1. Your catkin workspace is in the user's home folder and is named "catkin_ws"
-While there are a number of possible input methods for the mill controller, the most straightforward and flexible one is to use .csv files to store your trajectory input. 
+There are a number of possible input methods for the mill controller, but the most straightforward and flexible one is to use csv files to store your trajectory input. 
 You will need to store csv files in the trajectories/ directory of the installed mill_controller package in your catkin workspace's src/ directory. To navigate a terminal here, for example, you might enter `cd ~/catkin_ws/src/mill_controller/trajectories/`.
 These instructions will walk you through examining an example csv file, creating a simple csv file of your own, and having it read as trajectory input.
 
@@ -89,19 +91,20 @@ These instructions will walk you through examining an example csv file, creating
 ![example.csv](./images/csv.png)
 
    This is the correct format for trajectory input. Each line represents a distinct x,y,z point along the trajectory at a given time t.  
-   The value of each piece of information can be written as integers or decimal numbers representing percentage of material dimension and seconds, arranged in the format x,y,z,t.  
+   The values can be written as integers or decimal numbers. Values for x,y, and z must be within the set input range, which is from 0 to 1 by default. The value for t should be in seconds. The format is "x,y,z,t".  
    The material origin is considered to be in bottom left corner of the material, with positive x toward the material's bottom right corner and positive y toward the material's top left corner.  
-   The appropriate input ranges of x and y can be set when you start the mill controller. See the [Launch Files, Nodes, and Arguments] section for a more complete explanation of input range. By default the input ranges are from 0.0 to 1.0, representing percentage of the material's dimension along that axis.  
+   The appropriate input ranges of x, y, and z can be set when you start the mill controller. See the [Launch Files, Nodes, and Arguments] section for a more complete explanation of input range. By default the input ranges are from 0.0 to 1.0, representing percentage of the material's dimension along that axis.  
    This example file contains a 2 point trajectory, from (x=10%, y=20%, z=30%) at t=4.0 seconds to (x=50%, y=60%, z=70%) at t=8.0 seconds.  
-   No spaces should be included in a line. Trajectories do not need to start at 0 seconds, although the mill controller will generally treat them as though they had.  
+   The first point on a trajectory does not need to be at 0 seconds, but the mill controller will always count up from 0 when applying a time horizon.  
 
 4. To create your own csv file, open an empty file and add lines to it following the format demonstrated in the last step. Once you are finished adding lines, save your file in the "trajectories/" directory as "your_file.csv"
 
-5. Refer to the section below to have the mill controller run your trajectory on the X-Carve.
+5. Refer to the [Running a Trajectory] section to have the mill controller run your trajectory on the X-Carve.
 
 ### Running a Trajectory
 Assumptions in instructions:
 1. Your catkin workspace is in the user's home folder and is named "catkin_ws"
+2. Your trajectory is in a csv file named "your_file.csv"
 
 These instructions will guide you through running a trajectory of your own.
 
@@ -109,14 +112,14 @@ These instructions will guide you through running a trajectory of your own.
 
 2. Source your development setup.\*sh file, for example by entering `source devel/setup.bash` if you are using a bash terminal.
 
-3. Have a trajectory csv file as described in [Preparing a Trajectory Using csv Input] section. This should be in the mill_controller/trajectories/ directory. We will call this "my_trajectory.csv" in these instructions.
+3. Have a trajectory csv file as described in the [Preparing a Trajectory Using csv Input] section. This should be in the mill_controller/trajectories/ directory.
 
 4. Connect your X-Carve and USB camera to your computer. Turn the X-Carve on using the switch at the back of the X-Controller.
 
 4. Calibrate your workspace and the location of the material for imaging by following the instructions in the [Calibrating The Workspace and Material] section. If none of your calibration data has changed since the last time you calibrated, then you may skip this step and the most recent data will be used.
 
 5. Launch the mill controller by entering `roslaunch mill_controller mill_controller.launch`.  
-By default, the mill controller will expect you to be placing an 11"x8.5" piece of paper in the lower left corner of the workspace, with the long side parallel to the workspace's bottom edge. You can customize the dimensions, location, and rotation of the material by adding input arguments to the command. These arguments are explained in detail in the [Launch Files, Nodes, and Arguments] section. For example: to change the position of the material's origin to 200mm on the x axis and 150mm on the y axis in the machine workspace, we would instead enter the command:  
+By default, the mill controller will expect you to be placing an 11"x8.5" piece of paper in the lower left corner of the workspace, with the long side parallel to the workspace's bottom edge. You can customize the dimensions, location, and rotation of the material by adding input arguments to the command. These arguments are explained in detail in the [Launch Files, Nodes, and Arguments] section.<!-- todo: move --> For example: to change the position of the material's origin to 200mm on the x axis and 150mm on the y axis in the machine workspace, we would instead enter the command:  
 `roslaunch mill_controller mill_controller.launch x_offset:=200 y_offset:=150`
 
    You should also change the usb port and video port if necessary using the appropriate arguments. Determining what video port your camera is on is described in the [Calibrating the Workspace and Material] section. You can identify the usb port your X-Carve has been assigned by using the same method with the command `ls /dev/ttyUSB*`.
@@ -130,19 +133,15 @@ By default, the mill controller will expect you to be placing an 11"x8.5" piece 
 
 
 ### Interpreting Mill Controller Output
-Using mill_controller.launch provides a set of 
+Output representing the state of the working material is provided by mill_controller.launch in a number of formats.  
 
-/octomap_to_cloud is a marker message based on pointcloud centers. This corresponds to /octomap_point_cloud_centers published by the /octomap_server node.
-/camera_depth_points is a pointcloud2 message representing every white pixel in the processed image. This represents the full data before it is passed to octomap to be, essentially, decimated.
 
-/occupied_cells_vis_array is a MarkerArray topic that represents regions of the picture that contain white pixels with a green cube. 
-/free_cells_vis_array is a MarkerArray topic that cells known to be unoccupied with a green cube. Because of how the octomap is generated, not all cells in the array are known. This greatly reduces the usefulness of the topic.
+* The "/camera_depth_points" topic publishes PointCloud2 messages representing every white pixel in the processed image. This represents the full data before it is translated into an octomap at a lower resolution.  
+* The "/occupied_cells_vis_array" topic publishes MarkerArray messages representing the octomap created from the data on "/camera_depth_points". Regions of the image that contain white pixels are considered occupied cells in the octomap and are represented with a green cube in the MarkerArray messages.
+* The "/free_cells_vis_array" topic publishes MarkerArray messages representing octomap cells known to be unoccupied with a green cube. Because of how the octomap is generated, however, not all cells in the array are known. This greatly reduces the usefulness of the topic.
+* The "/octomap_to_cloud" topic publishes Marker messages representing the centers of occupied cells in the material octomap. This should correspond to the "/octomap_point_cloud_centers" messages published by the /octomap_server node, and is mostly for validation.  
+* The "/octomap_to_occupancy" topic publishes Occupancy messages as defined in the mill_controller package. These contain the dimensions of an array representing the contents of the octomap, along with the index values of all unoccupied cells in that array. Combining this information allows the array to be reconstructed.
 
-/octomap_to_occupancy is an Occupancy message as defined in the mill_controller package. This contains the dimensions of the full array
-
-TODO Interpreting Occupancy messages
-
-    Explain the helper class if I've actually finished it.
 
 
 ### An Example Run in Video
