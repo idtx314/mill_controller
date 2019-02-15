@@ -148,11 +148,11 @@ Output representing the state of the working material is provided by mill_contro
 
 ### An Example Run in Video
 ##### Calibrating the Workspace
-[![Mill Calibration](./images/thumb_calibration.png)](https://vimeo.com/306694098)
+[![Mill Calibration](./images/thumb_calibration.png)](https://youtu.be/YUvkAvEbf14)
 
 
 ##### Operating the Mill
-[![Example Run](./images/thumb_example_run.png)](https://vimeo.com/308028935)
+[![Example Run](./images/thumb_example_run.png)](https://youtu.be/BPGvnV0WLSQ)
 
 
 ## Reference Instructions and Information
